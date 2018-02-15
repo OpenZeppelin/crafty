@@ -3,16 +3,12 @@ pragma solidity ^0.4.17;
 contract Crafty {
   mapping (address => uint256) private resources;
 
-  function resourcesOf(address owner) public view
-  returns(uint256) {
-    return resources[owner];
+  function resourcesOf(address player) public view returns (uint256) {
+    return resources[player];
   }
 
-  function getResource() public
-  returns(bool) {
-    address owner = msg.sender;
-    resources[owner] += 1;
-
-    return true;
+  function getResource() public {
+    address player = msg.sender;
+    resources[player] += 1;
   }
 }
