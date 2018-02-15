@@ -3,3 +3,6 @@ node_modules
 
 # Truffle artifacts
 build
+
+# Test logs
+*.log
