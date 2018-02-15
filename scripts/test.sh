@@ -7,13 +7,13 @@
 
 # Start the blockchain as a background process to allow the testing suite to
 # connect to it
-npx ganache-cli -d &>blockchain.log &
+npx ganache-cli -d &>logs/blockchain.log &
 blockchain_pid=$! # $! holds the pid of the last executed process
 
 # Give it some time to start and print the initial logs (which hold addresses
 # and balance)
 sleep 2
-cat blockchain.log
+cat logs/blockchain.log
 
 # Compile, deploy and test
 npx truffle migrate && npx truffle test

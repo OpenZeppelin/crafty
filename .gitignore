@@ -4,5 +4,6 @@ node_modules
 # Truffle artifacts
 build
 
-# Test logs
-*.log
+# Logs
+logs/*
+!logs/.gitkeep
