@@ -18,6 +18,7 @@
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
     "ganache-cli": "^6.0.3",
-    "truffle": "^4.0.6"
+    "truffle": "^4.0.6",
+    "underscore": "^1.8.3"
   }
 }
