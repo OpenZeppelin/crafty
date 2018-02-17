@@ -1,3 +1,12 @@
 language: node_js
 node_js:
   - "8.9.4"
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: app
+  github_token: $GITHUB_API_KEY
+  target-branch: gh-pages
+  on:
+    branch: master
