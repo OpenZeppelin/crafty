@@ -4,7 +4,8 @@
   "description": "",
   "main": "truffle.js",
   "scripts": {
-    "test": "bash scripts/test.sh"
+    "test": "bash scripts/test.sh",
+    "build": "npx truffle compile && rsync build/contracts/* app/contracts/ --exclude=Migrations.json"
   },
   "repository": {
     "type": "git",

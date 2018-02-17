@@ -7,3 +7,7 @@ build
 # Logs
 logs/*
 !logs/.gitkeep
+
+# Built contracts
+app/contracts/*
+!app/contracts/.gitkeep
