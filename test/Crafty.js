@@ -24,9 +24,9 @@ contract("Crafty", accounts => {
   });
 
   it("resources can be acquired multiple times", async() => {
-    _.times(5, async() => {
-      await crafty.getResource("wood");
-    });
+    Promise.all(_.range(5).map(() => {
+      crafty.getResource("wood");
+    }));
 
     const balance = await crafty.resourcesOf(player, "wood");
     assert(balance.eq(5));
@@ -37,7 +37,7 @@ contract("Crafty", accounts => {
     await crafty.getResource("iron");
 
     const wood_balance = await crafty.resourcesOf(player, "wood");
-    const iron_balance = await crafty.resourcesOf(player, "wood");
+    const iron_balance = await crafty.resourcesOf(player, "iron");
 
     assert(wood_balance.eq(1));
     assert(iron_balance.eq(1));
