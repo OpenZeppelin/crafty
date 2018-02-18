@@ -31,7 +31,7 @@ App = {
 
   loadRules: async function() {
     App.rules = await $.getJSON("rules.json");
-    layoutInventory();
+    layoutRules();
 
     accountChange(web3js.eth.accounts[0]);
     setInterval(() => {
@@ -62,24 +62,35 @@ function accountChange(account) {
   }
 }
 
-function layoutInventory() {
-  let list = $("<ul></ul>");
+function layoutRules() {
+  // Inventory
+  const list = $("<ul></ul>");
   App.rules.resources.forEach(res_name => {
-    let li = $(`<li>${res_name}: </li>`).addClass("first-letter").append($("<span></span>").attr("id", `res-${res_name}-amount`));
+    const li = $(`<li>${res_name}: </li>`).addClass("first-letter").append($("<span></span>").attr("id", `inv-res-${res_name}-amount`));
     list.append(li);
   });
   list.appendTo("#inventory");
+
+  // Actions
+  const list_group = $(`<div class="list-group"></div>`);
+  App.rules.resources.forEach(res_name => {
+    const button = $(`<button type="button" id="actn-get-${res_name}">Get ${res_name}</button>`);
+    button.addClass("list-group-item").addClass("list-group-item-action");
+    button.click(() => App.crafty.getResource(res_name));
+    list_group.append(button);
+  });
+  list_group.appendTo("#actions");
 }
 
 async function updateInventory() {
-  let inventory = await Promise.all(App.rules.resources.map(
+  const inventory = await Promise.all(App.rules.resources.map(
     res_name => App.crafty.resourcesOf(App.user_account, res_name).then(amount => {
       return {name: res_name, amount: amount};
     })
   ));
 
   inventory.forEach(res => {
-    $(`#res-${res.name}-amount`).text(res.amount);
+    $(`#inv-res-${res.name}-amount`).text(res.amount);
   });
 }
 
