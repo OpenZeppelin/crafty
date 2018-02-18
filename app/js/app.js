@@ -11,43 +11,54 @@ App = {
 
       const netname = netnames[netId] || "unknown";
       $("#network").text(netname)
-    });
 
-    $.getJSON("contracts/Crafty.json").then(crafty_artifact => {
-      const contract = TruffleContract(crafty_artifact);
-      contract.setProvider(web3js.currentProvider);
+      $.getJSON("contracts/Crafty.json").then(crafty_artifact => {
+        const contract = TruffleContract(crafty_artifact);
+        contract.setProvider(web3js.currentProvider);
 
-      const crafty_address = "0xe6e0450c64eedcc11d6b815caf3c453d44f2d06b";
-      this.crafty = contract.at(crafty_address);
-      web3js.eth.getCode(crafty_address, (err, code) => {
-        if (code !== crafty_artifact.deployedBytecode) {
-          $("#no-crafty-deployed").modal("show");
-        }
+        const crafty_address = getCraftyAddress(netId);
+        App.crafty = contract.at(crafty_address);
+        web3js.eth.getCode(crafty_address, (err, code) => {
+          if (code === crafty_artifact.deployedBytecode) {
+            App.loadRules();
+          } else {
+            showError("<p>Could not find an up-to-date Crafty smart contract in this network. Deploy one before continuing.</p>");
+          }
+        });
       });
     });
+  },
 
-    $.getJSON("rules.json").then(data => {
-      this.rules = data;
-    }).then(() => {
-      layoutInventory();
-    });
+  loadRules: async function() {
+    App.rules = await $.getJSON("rules.json");
+    layoutInventory();
 
-    setInterval(updateAccount, 100);
+    accountChange(web3js.eth.accounts[0]);
+    setInterval(() => {
+      const selected_acc = web3js.eth.accounts[0];
+      if (App.user_account !== selected_acc) {
+        accountChange(selected_acc);
+      }
+    }, 100);
   }
 }
 
-function updateAccount() {
-  if (web3js.eth.accounts.length > 0) {
-    $("#no-eth-account").modal("hide");
+function getCraftyAddress(netId) {
+  const crafty_addresses = {
+  }
 
-    const selected_acc = web3js.eth.accounts[0];
-    if ((typeof(App.user_account) === "undefined") || (App.user_account !== selected_acc)) {
-      App.user_account = selected_acc;
-      $("#user-account").text(App.user_account);
-      updateInventory();
-    }
+  return crafty_addresses[netId] || "0xb69cd8176616b5252dd97fc2f56aef9b1f6aaa60";
+}
+
+function accountChange(account) {
+  App.user_account = account;
+  $("#user-account").text(App.user_account);
+
+  if (account) {
+    hideError(); // A bit hacky - this clears the (possible) previous no account error
+    updateInventory();
   } else {
-    $("#no-eth-account").modal("show");
+    showError("<p>An Ethereum account needs to be selected in the Ethereum browser extension in order to use this dApp.</p>");
   }
 }
 
@@ -82,6 +93,21 @@ window.addEventListener('load', () => {
 
     App.init();
   } else {
-    $("#no-eth-browser").modal("show");
+    showError(`
+      <p>An Ethereum browser (such as <a href="https://metamask.io/">MetaMask</a> or <a href="https://github.com/ethereum/mist">Mist</a>) is required to use this dApp.</p>
+      <div style="display: flex; justify-content: center;">
+        <a href="https://metamask.io/" style="text-align: center">
+          <img src="assets/download-metamask-dark.png" style="max-width: 70%">
+        </a>
+      </div>`);
   }
 })
+
+function showError(content) {
+  $("#modal-body").append($(content));
+  $("#modal-dialog").modal("show");
+}
+
+function hideError() {
+  $("#modal-dialog").modal("hide");
+}
