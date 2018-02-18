@@ -23,6 +23,10 @@
       li.first-letter {
         text-transform: capitalize;
       }
+
+      .modal {
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
     </style>
   </head>
   <body>
@@ -50,7 +54,20 @@
         </div>
       </div>
     </div>
-
+    <div class="modal fade" id="no-eth-browser" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-body">
+            <p>An Ethereum browser (such as <a href="https://metamask.io/">MetaMask</a> or <a href="https://github.com/ethereum/mist">Mist</a>) is required to use this dApp.</p>
+            <div style="display: flex; justify-content: center;">
+              <a href="https://metamask.io/" style="text-align: center">
+                <img src="assets/download-metamask-dark.png" style="max-width: 70%">
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- JQuery (must be loaded before Bootstrap's JavaScript plugins) -->
     <script src="js/jquery-3.3.1.min.js"></script>
     <!-- Bootstrap -->

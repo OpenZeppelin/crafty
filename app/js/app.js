@@ -60,11 +60,9 @@ async function updateInventory() {
 
 window.addEventListener('load', () => {
   if (typeof web3 !== "undefined") {
-    console.log("Metamask detected -- using as web3 provider");
     web3js = new Web3(web3.currentProvider);
     App.init();
-
   } else {
-    console.log("No Metamask -- cannot continue");
+    $("#no-eth-browser").modal("show");
   }
 })
