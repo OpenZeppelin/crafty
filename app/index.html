@@ -51,9 +51,13 @@
       <div class="row">
         <div class="col">
           <a href="https://github.com/nventuro/crafty" class="ssk ssk-icon ssk-lg ssk-github float-right"></a>
+          <a id="using-metamask" href="https://metamask.io/" class="float-right" style="display: none;"">
+            <img src="assets/metamask-dark.png" style="height: 32px">
+          </a>
         </div>
       </div>
     </div>
+    <!-- No Ethereum browser -->
     <div class="modal fade" id="no-eth-browser" data-backdrop="static">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -68,6 +72,17 @@
         </div>
       </div>
     </div>
+    <!-- No Ethereum account -->
+    <div class="modal fade" id="no-eth-account" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-body">
+            <p>An Ethereum account needs to be selected in the Ethereum browser extension in order to use this dApp.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- JQuery (must be loaded before Bootstrap's JavaScript plugins) -->
     <script src="js/jquery-3.3.1.min.js"></script>
     <!-- Bootstrap -->

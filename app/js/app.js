@@ -26,14 +26,22 @@ App = {
       layoutInventory();
     });
 
-    this.user_account = undefined;
-    setInterval(() => {
-      if (typeof(this.user_account) === "undefined" || this.user_account !== web3js.eth.accounts[0]) {
-        this.user_account = web3js.eth.accounts[0];
-        $("#user-account").text(this.user_account);
-        updateInventory();
-      }
-    }, 100);
+    setInterval(updateAccount, 100);
+  }
+}
+
+function updateAccount() {
+  if (web3js.eth.accounts.length > 0) {
+    $("#no-eth-account").modal("hide");
+
+    const selected_acc = web3js.eth.accounts[0];
+    if ((typeof(App.user_account) === "undefined") || (App.user_account !== selected_acc)) {
+      App.user_account = selected_acc;
+      $("#user-account").text(App.user_account);
+      updateInventory();
+    }
+  } else {
+    $("#no-eth-account").modal("show");
   }
 }
 
@@ -61,6 +69,11 @@ async function updateInventory() {
 window.addEventListener('load', () => {
   if (typeof web3 !== "undefined") {
     web3js = new Web3(web3.currentProvider);
+    const provider = web3js.currentProvider;
+    if (provider.isMetaMask) {
+      $("#using-metamask").css("display", "inline")
+    }
+
     App.init();
   } else {
     $("#no-eth-browser").modal("show");
