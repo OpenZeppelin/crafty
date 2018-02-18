@@ -19,6 +19,10 @@
         color: rgb(70, 70, 70);
         font-weight: bold;
       }
+
+      li.first-letter {
+        text-transform: capitalize;
+      }
     </style>
   </head>
   <body>
@@ -27,6 +31,16 @@
       <div class="row">
         <div class="col" style="text-align: center">
           <h1>Crafty.eth</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" id="inventory">
+          <h4>Inventory:</h4>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col" id="inventory">
+          <h6>Ethereum account: <b><span id="user-account"></span></b></h6>
         </div>
       </div>
       <div class="row">
@@ -40,6 +54,10 @@
     <script src="js/jquery-3.3.1.min.js"></script>
     <!-- Bootstrap -->
     <script src="js/bootstrap.min.js"></script>
+    <!-- web3 -->
+    <script src="js/web3.min.js"></script>
+    <!-- Truffle contract -->
+    <script src="js/truffle-contract.min.js"></script>
     <!-- Custom JS -->
     <script src="js/app.js"> </script>
   </body>
