@@ -1,5 +1,18 @@
 App = {
   init: function() {
+    web3js.version.getNetwork((err, netId) => {
+      const netnames = {
+        "1": "mainnet",
+        "2": "Morden (testnet - deprecated)",
+        "3": "Ropsten (testnet)",
+        "4": "Rinkeby (testnet)",
+        "42": "Kovan (testnet)"
+      }
+
+      const netname = netnames[netId] || "unknown";
+      $("#network").text(netname)
+    });
+
     $.getJSON("contracts/Crafty.json").then(crafty_artifact => {
       const contract = TruffleContract(crafty_artifact);
       contract.setProvider(web3js.currentProvider);
