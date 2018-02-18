@@ -17,7 +17,13 @@ App = {
       const contract = TruffleContract(crafty_artifact);
       contract.setProvider(web3js.currentProvider);
 
-      this.crafty = contract.at("0x604420d0b12d07fc64e43774bf051354e6217207");
+      const crafty_address = "0xe6e0450c64eedcc11d6b815caf3c453d44f2d06b";
+      this.crafty = contract.at(crafty_address);
+      web3js.eth.getCode(crafty_address, (err, code) => {
+        if (code !== crafty_artifact.deployedBytecode) {
+          $("#no-crafty-deployed").modal("show");
+        }
+      });
     });
 
     $.getJSON("rules.json").then(data => {
