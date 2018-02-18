@@ -1,8 +1,8 @@
-module.exports = async(promise) => {
+module.exports = async function (promise) {
   try {
     await promise;
   } catch (error) {
     return;
   }
-  assert.fail("Expected throw not received");
+  assert.fail('Expected throw not received');
 };

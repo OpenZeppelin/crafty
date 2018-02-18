@@ -1,0 +1,46 @@
+{
+  "parser": "babel-eslint",
+  "plugins": ["async-await"],
+  "env": {
+    "es6": true,
+    "node": true,
+    "mocha": true,
+    "browser": true
+  },
+  "globals" : {
+    "artifacts": false,
+    "contract": false,
+    "assert": false,
+    "$": false,
+    "web3": false,
+    "Web3": false,
+    "web3js": false,
+    "TruffleContract": false
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "indent": ["error", 2, {"SwitchCase": 1}],
+    "camelcase": ["error", {"properties": "always"}],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "semi": ["error", "always"],
+    "key-spacing": ["error"],
+    "curly": ["error"],
+    "no-var": ["error"],
+    "eqeqeq": ["error"],
+    "no-trailing-spaces": ["error", { "skipBlankLines": true }],
+    "eol-last": ["error"],
+    "no-console": "off",
+    "linebreak-style": ["error", "unix"],
+    "computed-property-spacing": ["error"],
+    "no-whitespace-before-property": ["error"],
+    "space-before-blocks": ["error"],
+    "space-before-function-paren": ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
+    "space-in-parens": ["error"],
+    "space-infix-ops": ["error", {"int32Hint": true}],
+    "space-unary-ops": ["error", {"words": true, "nonwords": false}],
+    "object-curly-spacing": ["error"],
+    "array-bracket-spacing": ["error"],
+    "async-await/space-after-async": ["error", 1],
+    "async-await/space-after-await": ["error", 1]
+  }
+}
