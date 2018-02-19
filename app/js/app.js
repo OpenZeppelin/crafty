@@ -60,6 +60,23 @@ const App = {
         accountChange(selectedAcc);
       }
     }, 100);
+
+    web3js.eth.getBlock('latest', false, (err, block) => {
+      App.lastBlock = block;
+
+      moment.relativeTimeThreshold('ss', 5);
+      setInterval(() => {
+        $('#last-block').text(`#${App.lastBlock.number} (${moment.unix(App.lastBlock.timestamp).fromNow()})`);
+      }, 100);
+
+      web3js.eth.filter('latest').watch((error, result) => {
+        web3js.eth.getBlock(result, false, (err, block) => {
+          App.lastBlock = block;
+          $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
+          updateInventory();
+        });
+      });
+    });
   }
 };
 

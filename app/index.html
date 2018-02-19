@@ -40,8 +40,17 @@
         </div>
       </div>
       <div class="row">
-        <div class="col" id="inventory">
-          <h4>Inventory:</h4>
+        <div class="col">
+          <div class="row">
+            <div class="col" id="inventory">
+              <h4>Inventory:</h4>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <h6>Last block: <span id="last-block"></span></h6>
+            </div>
+          </div>
         </div>
         <div class="col" id="actions">
           <h4>Actions:</h4>
@@ -85,6 +94,8 @@
     <script src="js/web3.min.js"></script>
     <!-- Truffle contract -->
     <script src="js/truffle-contract.min.js"></script>
+    <!-- Moment -->
+    <script src="js/moment.min.js"></script>
     <!-- Custom JS -->
     <script src="js/app.js"> </script>
   </body>

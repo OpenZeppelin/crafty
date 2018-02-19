@@ -9,7 +9,7 @@ contract('Crafty', accounts => {
   const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
   const player = accounts[0];
 
-  describe('rules', () => {
+  describe('Rules', () => {
     it('has resources', () => {
       assert.isAtLeast(rules.resources.length, 1);
     });
@@ -21,7 +21,7 @@ contract('Crafty', accounts => {
     });
   });
 
-  describe('contract', () => {
+  describe('Contract', () => {
     beforeEach(async () => {
       crafty = await Crafty.new();
     });

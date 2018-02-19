@@ -5,17 +5,18 @@
     "es6": true,
     "node": true,
     "mocha": true,
-    "browser": true
+    "browser": true,
+    "jquery": true
   },
   "globals" : {
     "artifacts": false,
     "contract": false,
     "assert": false,
-    "$": false,
     "web3": false,
     "Web3": false,
     "web3js": false,
-    "TruffleContract": false
+    "TruffleContract": false,
+    "moment": false
   },
   "extends": "eslint:recommended",
   "rules": {
