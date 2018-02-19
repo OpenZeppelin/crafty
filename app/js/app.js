@@ -39,7 +39,7 @@ const App = {
         const craftyAddress = getCraftyAddress(netId);
         App.crafty = contract.at(craftyAddress);
         web3js.eth.getCode(craftyAddress, (err, code) => {
-          if (code === craftyArtifact.deployedBytecode) {
+          if (code.length > '0x'.length) {
             App.loadRules();
           } else {
             showError('<p>Could not find an up-to-date Crafty smart contract in this network. Deploy one before continuing.</p>');
@@ -66,22 +66,25 @@ const App = {
 
       moment.relativeTimeThreshold('ss', 5);
       setInterval(() => {
-        $('#last-block').text(`#${App.lastBlock.number} (${moment.unix(App.lastBlock.timestamp).fromNow()})`);
+        $('#last-block').text(`#${App.lastBlock.number} (mined ${moment.unix(App.lastBlock.timestamp).fromNow()})`);
       }, 100);
 
-      web3js.eth.filter('latest').watch((error, result) => {
-        web3js.eth.getBlock(result, false, (err, block) => {
-          App.lastBlock = block;
-          $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
-          updateInventory();
+      setInterval(() => {
+        web3js.eth.getBlock('latest', false, (err, block) => {
+          if (block.number !== App.lastBlock.number) {
+            App.lastBlock = block;
+            $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
+            updateInventory();
+          }
         });
-      });
+      }, 1000);
     });
   }
 };
 
 function getCraftyAddress(netId) {
   const craftyAddresses = {
+    '3': '0x8bd6c3c90ad24c4d5417d8e6c96e9638ac17b597'
   };
 
   return craftyAddresses[netId] || '0xb69cd8176616b5252dd97fc2f56aef9b1f6aaa60';
