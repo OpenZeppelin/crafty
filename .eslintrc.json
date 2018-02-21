@@ -16,7 +16,8 @@
     "Web3": false,
     "web3js": false,
     "TruffleContract": false,
-    "moment": false
+    "moment": false,
+    "toastr": false
   },
   "extends": "eslint:recommended",
   "rules": {

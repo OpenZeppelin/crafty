@@ -1,4 +1,48 @@
+const netInfo = {
+  '1': {
+    'name': 'mainnet',
+    'txUrl': tx => `https://etherscan.io/tx/${tx}`
+  },
+  '2': {
+    'name': 'Morden (testnet - deprecated)',
+    'txUrl': () => ``
+  },
+  '3': {
+    'name': 'Ropsten (testnet)',
+    'txUrl': tx => `https://ropsten.etherscan.io/tx/${tx}`
+  },
+  '4': {
+    'name': 'Rinkeby (testnet)',
+    'txUrl': tx => `https://rinkeby.etherscan.io/tx/${tx}`
+  },
+  '42': {
+    'name': 'Kovan (testnet)',
+    'txUrl': tx => `https://kovan.etherscan.io/tx/${tx}`
+  }
+};
+
+function netName(netId) {
+  return netInfo[netId] ? netInfo[netId].name : 'unknown';
+}
+
+function netTXUrl(netId) {
+  return netInfo[netId] ? netInfo[netId].txUrl : () => '';
+}
+
 window.addEventListener('load', () => {
+  toastr.options = {
+    'positionClass': 'toast-bottom-center',
+    'preventDuplicates': false,
+    'showDuration': '300',
+    'hideDuration': '1000',
+    'timeOut': '5000',
+    'extendedTimeOut': '1000',
+    'showEasing': 'swing',
+    'hideEasing': 'linear',
+    'showMethod': 'fadeIn',
+    'hideMethod': 'fadeOut'
+  };
+
   if (typeof web3 !== 'undefined') {
     this.web3js = new Web3(web3.currentProvider);
     const provider = web3js.currentProvider;
@@ -21,22 +65,16 @@ window.addEventListener('load', () => {
 const App = {
   init: function () {
     web3js.version.getNetwork((err, netId) => {
-      const netnames = {
-        '1': 'mainnet',
-        '2': 'Morden (testnet - deprecated)',
-        '3': 'Ropsten (testnet)',
-        '4': 'Rinkeby (testnet)',
-        '42': 'Kovan (testnet)'
-      };
+      this.netId = netId;
 
-      const netname = netnames[netId] || 'unknown';
+      const netname = netName(this.netId);
       $('#network').text(netname);
 
       $.getJSON('contracts/Crafty.json').then(craftyArtifact => {
         const contract = TruffleContract(craftyArtifact);
         contract.setProvider(web3js.currentProvider);
 
-        const craftyAddress = getCraftyAddress(netId);
+        const craftyAddress = getCraftyAddress(this.netId);
         App.crafty = contract.at(craftyAddress);
         web3js.eth.getCode(craftyAddress, (err, code) => {
           if (code.length > '0x'.length) {
@@ -111,14 +149,44 @@ function layoutRules() {
   });
   list.appendTo('#inventory');
 
-  // Actions
+  // Actions - a new button is created for each
   const listGroup = $('<div class="list-group"></div>');
   App.rules.resources.forEach(resName => {
-    const button = $(`<button type="button" id="actn-get-${resName}">Get ${resName}</button>`);
-    button.addClass('list-group-item').addClass('list-group-item-action');
-    button.click(() => App.crafty.getResource(resName));
+    const buttonId = `actn-get-${resName}`;
+    const button = $(`<button type="button" id="${buttonId}" title="">Get ${resName}</button>`);
+    button.addClass('list-group-item').addClass('list-group-item-action d-flex justify-content-between align-items-center');
+
+    // A badge will track the number of pending transactions
+    button.append($(`<span class="badge badge-secondary badge-pill" id="${buttonId}-cnt"></span>`));
+    let pendingTxs = 0;
+
+    button.click(async () => {
+      button.blur(); // To prevent the button from remaining 'active'
+      const badge = $(`#${buttonId}-cnt`);
+
+      pendingTxs += 1;
+      badge.text(pendingTxs);
+      button.attr('title', 'Pending TXs');
+
+      try {
+        const result = await App.crafty.getResource(resName);
+        toastr['success'](`<a href=${netTXUrl(App.netId)(result.tx)} target="_blank">${result.tx}</a>`, 'Broadcasted TX!');
+
+      } catch (e) {
+        toastr['error']('Failed to broadcast TX');
+
+      } finally {
+        pendingTxs -= 1;
+        badge.text(pendingTxs > 0 ? pendingTxs : '');
+        if (pendingTxs === 0) {
+          button.attr('title', '');
+        }
+      }
+    });
+
     listGroup.append(button);
   });
+
   listGroup.appendTo('#actions');
 }
 
