@@ -4,5 +4,55 @@
     "stone",
     "bronze",
     "iron"
+  ],
+  "recipes": [
+    {
+      "result": "stone sword",
+      "ingredients": [
+        {
+          "resource": "wood",
+          "amount": 1
+        }, {
+          "resource": "stone",
+          "amount": 3
+        }
+      ]
+    }, {
+      "result": "bronze sword",
+      "ingredients": [
+        {
+          "resource": "wood",
+          "amount": 1
+        }, {
+          "resource": "bronze",
+          "amount": 3
+        }
+      ]
+    }, {
+      "result": "iron sword",
+      "ingredients": [
+        {
+          "resource": "wood",
+          "amount": 1
+        }, {
+          "resource": "iron",
+          "amount": 3
+        }
+      ]
+    }, {
+      "result": "tri-sword",
+      "ingredients": [
+        {
+          "resource": "stone sword",
+          "amount": 1
+        }, {
+          "resource": "bronze sword",
+          "amount": 1
+        }, {
+          "resource": "iron sword",
+          "amount": 1
+        }
+      ]
+    }
   ]
 }
