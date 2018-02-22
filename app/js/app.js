@@ -125,7 +125,7 @@ function getCraftyAddress(netId) {
     '3': '0x8bd6c3c90ad24c4d5417d8e6c96e9638ac17b597'
   };
 
-  return craftyAddresses[netId] || '0xb69cd8176616b5252dd97fc2f56aef9b1f6aaa60';
+  return craftyAddresses[netId] || '0xe8328aac701f763e37f72494d28a66912b5c3f95';
 }
 
 function accountChange(account) {
@@ -143,17 +143,17 @@ function accountChange(account) {
 function layoutRules() {
   // Inventory
   const list = $('<ul></ul>');
-  App.rules.resources.forEach(resName => {
-    const li = $(`<li>${resName}: </li>`).addClass('first-letter').append($('<span></span>').attr('id', `inv-res-${resName}-amount`));
+  App.rules.basic.forEach(item => {
+    const li = $(`<li>${item}: </li>`).addClass('first-letter').append($('<span></span>').attr('id', `inv-item-${item}-amount`));
     list.append(li);
   });
   list.appendTo('#inventory');
 
   // Actions - a new button is created for each
   const listGroup = $('<div class="list-group"></div>');
-  App.rules.resources.forEach(resName => {
-    const buttonId = `actn-get-${resName}`;
-    const button = $(`<button type="button" id="${buttonId}" title="">Get ${resName}</button>`);
+  App.rules.basic.forEach(item => {
+    const buttonId = `actn-get-${item}`;
+    const button = $(`<button type="button" id="${buttonId}" title="">Get ${item}</button>`);
     button.addClass('list-group-item').addClass('list-group-item-action d-flex justify-content-between align-items-center');
 
     // A badge will track the number of pending transactions
@@ -169,7 +169,7 @@ function layoutRules() {
       button.attr('title', 'Pending TXs');
 
       try {
-        const result = await App.crafty.getResource(resName);
+        const result = await App.crafty.getItem(item);
         toastr['success'](`<a href=${netTXUrl(App.netId)(result.tx)} target="_blank">${result.tx}</a>`, 'Broadcasted TX!');
 
       } catch (e) {
@@ -191,14 +191,14 @@ function layoutRules() {
 }
 
 async function updateInventory() {
-  const inventory = await Promise.all(App.rules.resources.map(
-    resName => App.crafty.resourcesOf(App.userAccount, resName).then(amount => {
-      return {name: resName, amount: amount};
+  const inventory = await Promise.all(App.rules.basic.map(
+    item => App.crafty.itemsOf(App.userAccount, item).then(amount => {
+      return {name: item, amount: amount};
     })
   ));
 
-  inventory.forEach(res => {
-    $(`#inv-res-${res.name}-amount`).text(res.amount);
+  inventory.forEach(item => {
+    $(`#inv-item-${item.name}-amount`).text(item.amount);
   });
 }
 

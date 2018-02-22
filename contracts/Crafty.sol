@@ -1,29 +1,29 @@
 pragma solidity ^0.4.17;
 
 contract Crafty {
-  // This could later be implemented with multiple 'Resource' contracts
-  mapping (string => mapping (address => uint256)) private resources;
-  mapping (string => bool) private resourceTypes;
+  // This could later be implemented with multiple 'Item' contracts
+  mapping (string => mapping (address => uint256)) private items;
+  mapping (string => bool) private basicItems;
 
   function Crafty() public {
-    resourceTypes["wood"] = true;
-    resourceTypes["stone"] = true;
-    resourceTypes["bronze"] = true;
-    resourceTypes["iron"] = true;
+    basicItems["wood"] = true;
+    basicItems["stone"] = true;
+    basicItems["bronze"] = true;
+    basicItems["iron"] = true;
   }
 
-  function resourcesOf(address player, string resourceType) public view returns (uint256) {
-    return resources[resourceType][player];
+  function itemsOf(address player, string itemName) public view returns (uint256) {
+    return items[itemName][player];
   }
 
-  function getResource(string resourceType) public {
-    require(isValidResource(resourceType));
+  function getItem(string itemName) public {
+    require(isBasicItem(itemName));
 
     address player = msg.sender;
-    resources[resourceType][player] += 1;
+    items[itemName][player] += 1;
   }
 
-  function isValidResource(string resourceType) public view returns (bool) {
-    return resourceTypes[resourceType];
+  function isBasicItem(string itemName) public view returns (bool) {
+    return basicItems[itemName];
   }
 }

@@ -3,20 +3,20 @@ const fs = require('fs');
 describe('Rules', () => {
   const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
 
-  describe('Resources', () => {
+  describe('Basic items', () => {
     it('exist', () => {
-      assert.isAtLeast(rules.resources.length, 1);
+      assert.isAtLeast(rules.basic.length, 1);
     });
 
     it('are strings', () => {
-      rules.resources.forEach(res => {
-        assert.typeOf(res, 'string');
+      rules.basic.forEach(item => {
+        assert.typeOf(item, 'string');
       });
     });
 
     it('are unique', () => {
-      rules.resources.forEach(res => {
-        assert.strictEqual(rules.resources.filter(res_ => res_ === res).length, 1);
+      rules.basic.forEach(item => {
+        assert.strictEqual(rules.basic.filter(item_ => item_ === item).length, 1);
       });
     });
   });
@@ -39,9 +39,9 @@ describe('Rules', () => {
       });
     });
 
-    it('results are not resources', () => {
+    it('results are not basic items', () => {
       rules.recipes.forEach(rec => {
-        assert.strictEqual(rules.resources.filter(res => res === rec.result).length, 0);
+        assert.strictEqual(rules.basic.filter(res => res === rec.result).length, 0);
       });
     });
 
@@ -53,14 +53,14 @@ describe('Rules', () => {
 
     it('results are not ingredients', () => {
       rules.recipes.forEach(rec => {
-        assert.strictEqual(rec.ingredients.filter(ing => ing.resource === rec.result).length, 0);
+        assert.strictEqual(rec.ingredients.filter(ing => ing.name === rec.result).length, 0);
       });
     });
 
     it('ingredients are unique', () => {
       rules.recipes.forEach(rec => {
         rec.ingredients.forEach(ing => {
-          assert.strictEqual(rec.ingredients.filter(_ing => _ing.resource === ing.resource).length , 1);
+          assert.strictEqual(rec.ingredients.filter(_ing => _ing.name === ing.name).length , 1);
         });
       });
     });
@@ -74,19 +74,19 @@ describe('Rules', () => {
     });
 
     it('results are attainable', () => {
-      function isAttainable(res_) {
-        // A resource is attainable if it is a basic resource, or the result of a recipe
+      function isAttainable(item) {
+        // An item is attainable if it is a basic item, or the result of a recipe
         // with attainable ingredients
 
-        if (rules.resources.indexOf(res_) === -1) {
+        if (rules.basic.indexOf(item) === -1) {
           return true;
 
         } else {
-          const resultRecipe = rules.recipes.filter(rec_ => rec_.result === res_);
+          const resultRecipe = rules.recipes.filter(rec => rec.result === item);
 
           if (resultRecipe.length > 0) {
             assert.strictEqual(resultRecipe.length, 1);
-            return resultRecipe[0].ingredients.map(_ing => _ing.resource).every(isAttainable);
+            return resultRecipe[0].ingredients.map(ing => ing.name).every(isAttainable);
 
           } else {
             return false;

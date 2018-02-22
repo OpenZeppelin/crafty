@@ -1,5 +1,5 @@
 {
-  "resources": [
+  "basic": [
     "wood",
     "stone",
     "bronze",
@@ -10,10 +10,10 @@
       "result": "stone sword",
       "ingredients": [
         {
-          "resource": "wood",
+          "name": "wood",
           "amount": 1
         }, {
-          "resource": "stone",
+          "name": "stone",
           "amount": 3
         }
       ]
@@ -21,10 +21,10 @@
       "result": "bronze sword",
       "ingredients": [
         {
-          "resource": "wood",
+          "name": "wood",
           "amount": 1
         }, {
-          "resource": "bronze",
+          "name": "bronze",
           "amount": 3
         }
       ]
@@ -32,10 +32,10 @@
       "result": "iron sword",
       "ingredients": [
         {
-          "resource": "wood",
+          "name": "wood",
           "amount": 1
         }, {
-          "resource": "iron",
+          "name": "iron",
           "amount": 3
         }
       ]
@@ -43,13 +43,13 @@
       "result": "tri-sword",
       "ingredients": [
         {
-          "resource": "stone sword",
+          "name": "stone sword",
           "amount": 1
         }, {
-          "resource": "bronze sword",
+          "name": "bronze sword",
           "amount": 1
         }, {
-          "resource": "iron sword",
+          "name": "iron sword",
           "amount": 1
         }
       ]
