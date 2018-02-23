@@ -1,48 +1,4 @@
-const netInfo = {
-  '1': {
-    'name': 'mainnet',
-    'txUrl': tx => `https://etherscan.io/tx/${tx}`
-  },
-  '2': {
-    'name': 'Morden (testnet - deprecated)',
-    'txUrl': () => ``
-  },
-  '3': {
-    'name': 'Ropsten (testnet)',
-    'txUrl': tx => `https://ropsten.etherscan.io/tx/${tx}`
-  },
-  '4': {
-    'name': 'Rinkeby (testnet)',
-    'txUrl': tx => `https://rinkeby.etherscan.io/tx/${tx}`
-  },
-  '42': {
-    'name': 'Kovan (testnet)',
-    'txUrl': tx => `https://kovan.etherscan.io/tx/${tx}`
-  }
-};
-
-function netName(netId) {
-  return netInfo[netId] ? netInfo[netId].name : 'unknown';
-}
-
-function netTXUrl(netId) {
-  return netInfo[netId] ? netInfo[netId].txUrl : () => '';
-}
-
 window.addEventListener('load', () => {
-  toastr.options = {
-    'positionClass': 'toast-bottom-center',
-    'preventDuplicates': false,
-    'showDuration': '300',
-    'hideDuration': '1000',
-    'timeOut': '5000',
-    'extendedTimeOut': '1000',
-    'showEasing': 'swing',
-    'hideEasing': 'linear',
-    'showMethod': 'fadeIn',
-    'hideMethod': 'fadeOut'
-  };
-
   if (typeof web3 !== 'undefined') {
     this.web3js = new Web3(web3.currentProvider);
     const provider = web3js.currentProvider;
@@ -52,13 +8,7 @@ window.addEventListener('load', () => {
 
     App.init();
   } else {
-    showError(`
-      <p>An Ethereum browser (such as <a href="https://metamask.io/">MetaMask</a> or <a href="https://github.com/ethereum/mist">Mist</a>) is required to use this dApp.</p>
-      <div style="display: flex; justify-content: center;">
-        <a href="https://metamask.io/" style="text-align: center">
-          <img src="assets/download-metamask-dark.png" style="max-width: 70%">
-        </a>
-      </div>`);
+    layout.showNoEthBrowserError();
   }
 });
 
@@ -74,13 +24,13 @@ const App = {
         const contract = TruffleContract(craftyArtifact);
         contract.setProvider(web3js.currentProvider);
 
-        const craftyAddress = getCraftyAddress(this.netId);
+        const craftyAddress = netCraftyAddress(this.netId);
         App.crafty = contract.at(craftyAddress);
         web3js.eth.getCode(craftyAddress, (err, code) => {
           if (code.length > '0x'.length) {
             App.loadRules();
           } else {
-            showError('<p>Could not find an up-to-date Crafty smart contract in this network. Deploy one before continuing.</p>');
+            layout.showNoDeployedCraftyError();
           }
         });
       });
@@ -120,93 +70,89 @@ const App = {
   }
 };
 
-function getCraftyAddress(netId) {
-  const craftyAddresses = {
-    '3': '0x8bd6c3c90ad24c4d5417d8e6c96e9638ac17b597'
-  };
-
-  return craftyAddresses[netId] || '0xb69cd8176616b5252dd97fc2f56aef9b1f6aaa60';
-}
-
 function accountChange(account) {
   App.userAccount = account;
   $('#user-account').text(App.userAccount);
 
   if (account) {
-    hideError(); // A bit hacky - this clears the (possible) previous no account error
+    layout.hideErrors(); // A bit hacky - this clears the (possible) previous no account error
     updateInventory();
   } else {
-    showError('<p>An Ethereum account needs to be selected in the Ethereum browser extension in order to use this dApp.</p>');
+    layout.showNoEthAccountError();
   }
 }
 
 function layoutRules() {
   // Inventory
-  const list = $('<ul></ul>');
-  App.rules.resources.forEach(resName => {
-    const li = $(`<li>${resName}: </li>`).addClass('first-letter').append($('<span></span>').attr('id', `inv-res-${resName}-amount`));
-    list.append(li);
-  });
-  list.appendTo('#inventory');
+  App.itemAmountUpdaters = {};
+  $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.basic, $('#basic-item-inv')));
+  $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
 
-  // Actions - a new button is created for each
-  const listGroup = $('<div class="list-group"></div>');
-  App.rules.resources.forEach(resName => {
-    const buttonId = `actn-get-${resName}`;
-    const button = $(`<button type="button" id="${buttonId}" title="">Get ${resName}</button>`);
-    button.addClass('list-group-item').addClass('list-group-item-action d-flex justify-content-between align-items-center');
-
-    // A badge will track the number of pending transactions
-    button.append($(`<span class="badge badge-secondary badge-pill" id="${buttonId}-cnt"></span>`));
-    let pendingTxs = 0;
-
-    button.click(async () => {
-      button.blur(); // To prevent the button from remaining 'active'
-      const badge = $(`#${buttonId}-cnt`);
-
-      pendingTxs += 1;
-      badge.text(pendingTxs);
-      button.attr('title', 'Pending TXs');
-
-      try {
-        const result = await App.crafty.getResource(resName);
-        toastr['success'](`<a href=${netTXUrl(App.netId)(result.tx)} target="_blank">${result.tx}</a>`, 'Broadcasted TX!');
-
-      } catch (e) {
-        toastr['error']('Failed to broadcast TX');
-
-      } finally {
-        pendingTxs -= 1;
-        badge.text(pendingTxs > 0 ? pendingTxs : '');
-        if (pendingTxs === 0) {
-          button.attr('title', '');
-        }
-      }
-    });
-
-    listGroup.append(button);
-  });
-
-  listGroup.appendTo('#actions');
+  // Actions
+  layout.addPendableTxButtons(App.rules.basic, getCraftyAcquire, netTxUrl(App.netId), $('#mine-actions'));
+  layout.addPendableTxButtons(App.rules.recipes.map(rec => rec.result), getCraftyAcquire, netTxUrl(App.netId), $('#craft-actions'));
 }
 
 async function updateInventory() {
-  const inventory = await Promise.all(App.rules.resources.map(
-    resName => App.crafty.resourcesOf(App.userAccount, resName).then(amount => {
-      return {name: resName, amount: amount};
-    })
-  ));
-
-  inventory.forEach(res => {
-    $(`#inv-res-${res.name}-amount`).text(res.amount);
+  Object.entries(App.itemAmountUpdaters).forEach(([item, updater]) => {
+    getCraftyAmount(item)().then(amount => {
+      updater(amount);
+    });
   });
 }
 
-function showError(content) {
-  $('#modal-body').append($(content));
-  $('#modal-dialog').modal('show');
+function getCraftyAcquire(item) {
+  return App.crafty[`acquire${pascalify(item)}`];
 }
 
-function hideError() {
-  $('#modal-dialog').modal('hide');
+function getCraftyAmount(item) {
+  return App.crafty[`amount${pascalify(item)}`];
+}
+
+function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+function pascalify(str) {
+  return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
+}
+
+
+const netInfo = {
+  '1': {
+    'name': 'mainnet',
+    'txUrl': tx => `https://etherscan.io/tx/${tx}`
+  },
+  '2': {
+    'name': 'Morden (testnet - deprecated)',
+    'txUrl': () => ``
+  },
+  '3': {
+    'name': 'Ropsten (testnet)',
+    'txUrl': tx => `https://ropsten.etherscan.io/tx/${tx}`
+  },
+  '4': {
+    'name': 'Rinkeby (testnet)',
+    'txUrl': tx => `https://rinkeby.etherscan.io/tx/${tx}`
+  },
+  '42': {
+    'name': 'Kovan (testnet)',
+    'txUrl': tx => `https://kovan.etherscan.io/tx/${tx}`
+  }
+};
+
+function netName(netId) {
+  return netInfo[netId] ? netInfo[netId].name : 'unknown';
+}
+
+function netTxUrl(netId) {
+  return netInfo[netId] ? netInfo[netId].txUrl : () => '';
+}
+
+function netCraftyAddress(netId) {
+  const craftyAddresses = {
+    '3': '0x15d3a47ed3ad89790e5c1f65c98aee1169fe28cd'
+  };
+
+  return craftyAddresses[netId] || '0xe8328aac701f763e37f72494d28a66912b5c3f95'; // Replace for local address during development
 }

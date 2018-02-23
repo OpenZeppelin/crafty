@@ -4,60 +4,79 @@ const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 
 const Crafty = artifacts.require('Crafty');
 
+function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+function pascalify(str) {
+  return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
+}
+
 contract('Crafty', accounts => {
   let crafty = null;
   const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
-  const player = accounts[0];
+  const owner = accounts[0];
+  const player = accounts[1];
 
-  describe('Rules', () => {
-    it('has resources', () => {
-      assert.isAtLeast(rules.resources.length, 1);
-    });
+  const basicItems = rules.basic.map(item => pascalify(item));
+  const advItems = rules.recipes.map(rec => rec.result).map(item => pascalify(item));
+  const items = basicItems.concat(advItems);
 
-    it('resources are strings', () => {
-      rules.resources.forEach(res => {
-        assert.typeOf(res, 'string');
-      });
+  beforeEach(async () => {
+    crafty = await Crafty.new({from: owner});
+  });
+
+  it('player starts with no items', async () => {
+    const amounts = await Promise.all(items.map(item => crafty[`amount${item}`]({from: player})));
+    assert(amounts.every(amount => amount.eq(0)));
+  });
+
+  it('basic items can be acquired', async () => {
+    await Promise.all(basicItems.map(item => crafty[`acquire${item}`]({from: player})));
+
+    const basicAmounts = await Promise.all(basicItems.map(item => crafty[`amount${item}`]({from: player})));
+    const advAmounts = await Promise.all(advItems.map(item => crafty[`amount${item}`]({from: player})));
+
+    assert(basicAmounts.every(amount => amount.eq(1)));
+    assert(advAmounts.every(amount => amount.eq(0)));
+  });
+
+  it('advanced items cannot be acquired with no materials', () => {
+    advItems.forEach(async item => {
+      await expectPromiseThrow(crafty[`acquire${item}`]({from: player}));
     });
   });
 
-  describe('Contract', () => {
-    beforeEach(async () => {
-      crafty = await Crafty.new();
-    });
+  it('advanced items can be crafted', async () => {
+    function isBasic(ingredient) {
+      return rules.basic.indexOf(ingredient.name) !== -1;
+    }
 
-    it('player starts with no resources', async () => {
-      const resources = await crafty.resourcesOf(player, rules.resources[0]);
-      assert(resources.eq(0));
-    });
-
-    it('resources increase by acquiring them', async () => {
-      await crafty.getResource(rules.resources[0]);
-
-      const balance = await crafty.resourcesOf(player, rules.resources[0]);
-      assert(balance.eq(1));
-    });
-
-    it('resources can be acquired multiple times', async () => {
-      Promise.all(_.range(5).map(() => {
-        crafty.getResource(rules.resources[0]);
+    async function craft(recipe) {
+      // Get all basic ingredients
+      await Promise.all(recipe.ingredients.filter(ing => isBasic(ing)).map(ing => {
+        // For each ingredient, get the required amount
+        return Promise.all(_.range(ing.amount).map(() => crafty[`acquire${pascalify(ing.name)}`]({from: player})));
       }));
 
-      const balance = await crafty.resourcesOf(player, rules.resources[0]);
-      assert(balance.eq(5));
-    });
+      // For each advanced ingredient, get its ingredients, and craft it
+      await Promise.all(recipe.ingredients.filter(ing => !isBasic(ing)).map(ing => craft(rules.recipes.filter(rec_ => rec_.result === ing.name)[0])));
 
-    it('multiple resource types can be acquired', async () => {
-      await Promise.all(rules.resources.map(res => crafty.getResource(res)));
+      await crafty[`acquire${pascalify(recipe.result)}`]({from: player});
+    }
 
-      const balances = await Promise.all(rules.resources.map(res => crafty.resourcesOf(player, res)));
-      balances.forEach(balance => {
-        assert(balance.eq(1));
-      });
-    });
+    for (const recipe of rules.recipes) {
+      // Each recipe will be tested with a new contract, to ensure an empty inventory
+      crafty = await Crafty.new({from: owner});
 
-    it('invalid resources cannot be aquired', async () => {
-      await expectPromiseThrow(crafty.getResource(''));
-    });
-  });
+      await craft(recipe);
+
+      const result = pascalify(recipe.result);
+      const resultAmount = await crafty[`amount${result}`]({from: player});
+      const othersAmount = await Promise.all(items.filter(item => item !== result).map(item => crafty[`amount${item}`]({from: player})));
+
+      assert(resultAmount.eq(1));
+      assert(othersAmount.every(amount => amount.eq(0)));
+    }
+  }).slow(1500).timeout(3000);
 });
