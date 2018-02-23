@@ -66,6 +66,10 @@ contract('Item', accounts => {
     assert(balance.eq(10));
   });
 
+  it('balance cannot be negative', async () => {
+    await expectPromiseThrow(item.subtract(players[0], 1, {from: owner}));
+  });
+
   it('non-owners cannot decrease balances', async () => {
     await item.add(players[0], 10, {from: owner});
     await item.add(players[1], 20, {from: owner});
