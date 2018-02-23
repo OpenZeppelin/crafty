@@ -87,6 +87,7 @@ const layout = {
   },
 
   hideErrors: () => {
+    $('#modal-body').empty();
     $('#modal-dialog').modal('hide');
   }
 };
