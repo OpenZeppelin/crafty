@@ -65,8 +65,8 @@ contract('Crafty', accounts => {
       await crafty[`acquire${pascalify(recipe.result)}`]({from: player});
     }
 
-    for (const recipe of rules.recipes) {
-      // Each recipe will be tested with a new contract, to ensure an empty inventory
+    // Each recipe will be tested with a new contract, to ensure an empty starting inventory
+    for (const recipe of rules.recipes) { // eslint-disable-line no-await-in-loop
       crafty = await Crafty.new({from: owner});
 
       await craft(recipe);
