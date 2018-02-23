@@ -89,17 +89,34 @@ function layoutRules() {
   $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
 
   // Actions
-  layout.addPendableTxButtons(App.rules.basic, App.crafty.getItem, netTxUrl(App.netId), $('#mine-actions'));
-  layout.addPendableTxButtons(App.rules.recipes.map(rec => rec.result), App.crafty.craftItem, netTxUrl(App.netId), $('#craft-actions'));
+  layout.addPendableTxButtons(App.rules.basic, getCraftyAcquire, netTxUrl(App.netId), $('#mine-actions'));
+  layout.addPendableTxButtons(App.rules.recipes.map(rec => rec.result), getCraftyAcquire, netTxUrl(App.netId), $('#craft-actions'));
 }
 
 async function updateInventory() {
   Object.entries(App.itemAmountUpdaters).forEach(([item, updater]) => {
-    App.crafty.itemsOf(App.userAccount, item).then(amount => {
+    getCraftyAmount(item)().then(amount => {
       updater(amount);
     });
   });
 }
+
+function getCraftyAcquire(item) {
+  return App.crafty[`acquire${pascalify(item)}`];
+}
+
+function getCraftyAmount(item) {
+  return App.crafty[`amount${pascalify(item)}`];
+}
+
+function capitalize(str) {
+  return str[0].toUpperCase() + str.slice(1);
+}
+
+function pascalify(str) {
+  return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
+}
+
 
 const netInfo = {
   '1': {
@@ -137,5 +154,5 @@ function netCraftyAddress(netId) {
     '3': '0x8bd6c3c90ad24c4d5417d8e6c96e9638ac17b597'
   };
 
-  return craftyAddresses[netId] || '0xe8328aac701f763e37f72494d28a66912b5c3f95';
+  return craftyAddresses[netId] || '0xe8328aac701f763e37f72494d28a66912b5c3f95'; // Replace for local address during development
 }

@@ -1,4 +1,5 @@
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
+
 const Item = artifacts.require('Item');
 
 contract('Item', accounts => {

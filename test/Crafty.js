@@ -1,8 +1,8 @@
 const _ = require('underscore');
 const fs = require('fs');
-//const expectPromiseThrow = require('./helpers/expectPromiseThrow');
+const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 
-const CraftyRecipes = artifacts.require('CraftyRecipes');
+const Crafty = artifacts.require('Crafty');
 
 function capitalize(str) {
   return str[0].toUpperCase() + str.slice(1);
@@ -12,7 +12,7 @@ function pascalify(str) {
   return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
 }
 
-contract('CraftyRecipes', accounts => {
+contract('Crafty', accounts => {
   let crafty = null;
   const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
   const owner = accounts[0];
@@ -23,7 +23,7 @@ contract('CraftyRecipes', accounts => {
   const items = basicItems.concat(advItems);
 
   beforeEach(async () => {
-    crafty = await CraftyRecipes.new({from: owner});
+    crafty = await Crafty.new({from: owner});
   });
 
   it('player starts with no items', async () => {
@@ -39,6 +39,12 @@ contract('CraftyRecipes', accounts => {
 
     assert(basicAmounts.every(amount => amount.eq(1)));
     assert(advAmounts.every(amount => amount.eq(0)));
+  });
+
+  it('advanced items cannot be acquired with no materials', () => {
+    advItems.forEach(async item => {
+      await expectPromiseThrow(crafty[`acquire${item}`]({from: player}));
+    });
   });
 
   it('advanced items can be crafted', async () => {
@@ -61,7 +67,7 @@ contract('CraftyRecipes', accounts => {
 
     for (const recipe of rules.recipes) {
       // Each recipe will be tested with a new contract, to ensure an empty inventory
-      crafty = await CraftyRecipes.new({from: owner});
+      crafty = await Crafty.new({from: owner});
 
       await craft(recipe);
 

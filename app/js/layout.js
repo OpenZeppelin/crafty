@@ -22,8 +22,8 @@ const layout = {
     return itemAmountUpdaters;
   },
 
-  addPendableTxButtons: (items, action, urlFromTx, parent) => {
-    const listGroup = $('<div class="list-group"></div>');
+  addPendableTxButtons: (items, parametrizeAction, urlFromTx, parent) => {
+    const listGroup = $('<div class="list-group align-items-center" ></div>');
     items.forEach(item => {
       // The title of the button will reflect if transactions are pending
       const button = $(`<button type="button" title="">Get ${item}</button>`);
@@ -42,7 +42,8 @@ const layout = {
         button.attr('title', 'Pending TXs');
 
         try {
-          const result = await action(item);
+          // The action to execute is the result of parametrizing it with the item
+          const result = await parametrizeAction(item)();
           toastSuccessfulTx(result.tx, urlFromTx(result.tx));
 
         } catch (e) {
