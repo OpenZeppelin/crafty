@@ -20,7 +20,7 @@
         color: rgb(70, 70, 70);
         font-weight: bold;
       }
-      li.first-letter {
+      .first-letter {
         text-transform: capitalize;
       }
       .modal {
@@ -28,7 +28,12 @@
       }
       .list-group-item-action {
         background-color: rgb(220, 220, 220);
-        max-width: 40%;
+        max-width: 60%;
+        padding: 3px 10px;
+      }
+      .list-group-item {
+        background-color: rgb(210, 210, 210);
+        width: 170px;
         padding: 3px 10px;
       }
     </style>
@@ -42,7 +47,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col">
+        <div class="col-4">
           <div class="row">
             <div class="col">
               <h4><b>Inventory</b></h4>
@@ -64,7 +69,7 @@
             </div>
           </div>
         </div>
-        <div class ="col">
+        <div class ="col-4">
           <div class="row">
             <div class="col" style="text-align: center">
               <h4><b>Actions</b></h4>
@@ -81,6 +86,17 @@
               <div class="row">
                 <div class="col" id="craft-actions">
                   <h6>Craft</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class ="col-4">
+          <div class="row">
+            <div class="col" style="text-align: right">
+              <h4><b>Recipes</b></h4>
+              <div class="row">
+                <div class="col" id="recipes">
                 </div>
               </div>
             </div>

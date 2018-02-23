@@ -91,6 +91,9 @@ function layoutRules() {
   // Actions
   layout.addPendableTxButtons(App.rules.basic, getCraftyAcquire, netTxUrl(App.netId), $('#mine-actions'));
   layout.addPendableTxButtons(App.rules.recipes.map(rec => rec.result), getCraftyAcquire, netTxUrl(App.netId), $('#craft-actions'));
+
+  // Recipes
+  layout.addIngredientsList(App.rules.recipes, $('#recipes'));
 }
 
 async function updateInventory() {
