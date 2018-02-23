@@ -151,7 +151,7 @@ function netTxUrl(netId) {
 
 function netCraftyAddress(netId) {
   const craftyAddresses = {
-    '3': '0x8bd6c3c90ad24c4d5417d8e6c96e9638ac17b597'
+    '3': '0x15d3a47ed3ad89790e5c1f65c98aee1169fe28cd'
   };
 
   return craftyAddresses[netId] || '0xe8328aac701f763e37f72494d28a66912b5c3f95'; // Replace for local address during development
