@@ -78,5 +78,5 @@ contract('Crafty', accounts => {
       assert(resultAmount.eq(1));
       assert(othersAmount.every(amount => amount.eq(0)));
     }
-  }).slow(1500).timeout(3000);
+  });
 });
