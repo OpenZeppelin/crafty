@@ -1,0 +1,24 @@
+html, body {
+  height: 100%;
+  background-color: rgb(190, 190, 190);
+}
+h1 {
+  color: rgb(70, 70, 70);
+  font-weight: bold;
+}
+.first-letter {
+  text-transform: capitalize;
+}
+.modal {
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.list-group-item-action {
+  background-color: rgb(220, 220, 220);
+  max-width: 60%;
+  padding: 3px 10px;
+}
+.list-group-item {
+  background-color: rgb(210, 210, 210);
+  width: 170px;
+  padding: 3px 10px;
+}
