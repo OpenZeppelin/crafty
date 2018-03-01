@@ -15,7 +15,7 @@ contract Item is Ownable {
     balances[player] = SafeMath.sub(balances[player], amount);
   }
 
-  function amount(address player) public view returns (uint256) {
+  function amount(address player) public view onlyOwner returns (uint256) {
     return balances[player];
   }
 }
