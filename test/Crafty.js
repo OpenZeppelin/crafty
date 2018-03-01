@@ -27,15 +27,15 @@ contract('Crafty', accounts => {
   });
 
   it('player starts with no items', async () => {
-    const amounts = await Promise.all(items.map(item => crafty[`amount${item}`]({from: player})));
+    const amounts = await Promise.all(items.map(item => crafty.getItemAmount(item, {from: player})));
     assert(amounts.every(amount => amount.eq(0)));
   });
 
   it('basic items can be acquired', async () => {
-    await Promise.all(basicItems.map(item => crafty[`acquire${item}`]({from: player})));
+    await Promise.all(basicItems.map(item => crafty.craftItem(item, {from: player})));
 
-    const basicAmounts = await Promise.all(basicItems.map(item => crafty[`amount${item}`]({from: player})));
-    const advAmounts = await Promise.all(advItems.map(item => crafty[`amount${item}`]({from: player})));
+    const basicAmounts = await Promise.all(basicItems.map(item => crafty.getItemAmount(item, {from: player})));
+    const advAmounts = await Promise.all(advItems.map(item => crafty.getItemAmount(item, {from: player})));
 
     assert(basicAmounts.every(amount => amount.eq(1)));
     assert(advAmounts.every(amount => amount.eq(0)));
@@ -43,7 +43,7 @@ contract('Crafty', accounts => {
 
   it('advanced items cannot be acquired with no materials', () => {
     advItems.forEach(async item => {
-      await expectPromiseThrow(crafty[`acquire${item}`]({from: player}));
+      await expectPromiseThrow(crafty.craftItem(item, {from: player}));
     });
   });
 
@@ -56,13 +56,13 @@ contract('Crafty', accounts => {
       // Get all basic ingredients
       await Promise.all(recipe.ingredients.filter(ing => isBasic(ing)).map(ing => {
         // For each ingredient, get the required amount
-        return Promise.all(_.range(ing.amount).map(() => crafty[`acquire${pascalify(ing.name)}`]({from: player})));
+        return Promise.all(_.range(ing.amount).map(() => crafty.craftItem(pascalify(ing.name), {from: player})));
       }));
 
       // For each advanced ingredient, get its ingredients, and craft it
       await Promise.all(recipe.ingredients.filter(ing => !isBasic(ing)).map(ing => craft(rules.recipes.filter(rec_ => rec_.result === ing.name)[0])));
 
-      await crafty[`acquire${pascalify(recipe.result)}`]({from: player});
+      await crafty.craftItem(pascalify(recipe.result), {from: player});
     }
 
     // Each recipe will be tested with a new contract, to ensure an empty starting inventory
@@ -72,8 +72,8 @@ contract('Crafty', accounts => {
       await craft(recipe);
 
       const result = pascalify(recipe.result);
-      const resultAmount = await crafty[`amount${result}`]({from: player});
-      const othersAmount = await Promise.all(items.filter(item => item !== result).map(item => crafty[`amount${item}`]({from: player})));
+      const resultAmount = await crafty.getItemAmount(result, {from: player});
+      const othersAmount = await Promise.all(items.filter(item => item !== result).map(item => crafty.getItemAmount(item, {from: player})));
 
       assert(resultAmount.eq(1));
       assert(othersAmount.every(amount => amount.eq(0)));

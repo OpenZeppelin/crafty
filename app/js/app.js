@@ -105,11 +105,11 @@ async function updateInventory() {
 }
 
 function getCraftyAcquire(item) {
-  return App.crafty[`acquire${pascalify(item)}`];
+  return () => App.crafty.craftItem(pascalify(item));
 }
 
 function getCraftyAmount(item) {
-  return App.crafty[`amount${pascalify(item)}`];
+  return () => App.crafty.getItemAmount(pascalify(item));
 }
 
 function capitalize(str) {
