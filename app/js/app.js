@@ -105,11 +105,11 @@ async function updateInventory() {
 }
 
 function getCraftyAcquire(item) {
-  return () => App.crafty.craftItem(item);
+  return () => App.crafty.craft(item);
 }
 
 function getCraftyAmount(item) {
-  return () => App.crafty.getItemAmount(item);
+  return () => App.crafty.getAmount(item);
 }
 
 const netInfo = {

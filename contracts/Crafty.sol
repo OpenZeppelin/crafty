@@ -4,42 +4,41 @@ import './CraftableToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 
+/**
+ * @title Crafting token game
+ * @dev The game holds multiple CraftableTokens (craftables), which can be
+ * crafted by players. Crafting advanced tokens (with ingredients) requires
+ * the player to hold the required amount of said ingredient, which will be
+ * used up in the crafting process. New craftables and ingredients can be
+ * added by the game owner at any point in time.
+ */
 contract Crafty is Ownable {
-  // Storage for each item. Each item is referenced using a unique string.
+  // Craftable storage. Each craftable is referenced using a unique string.
   // An enum could be used for this, but Solidity doesn't yet support having
   // mappings with enum keys, and enums are not exposed to JS, so strings are
   // far easier to work with.
   mapping (string => CraftableToken) private craftables;
 
-  // Adds a new item by deploying a new contract. This function should
-  // never be called twice with the same item name.
-  function addItem(string itemName) onlyOwner public {
-    require(craftables[itemName] == address(0));
+  // Player API
 
-    craftables[itemName] = new CraftableToken();
+  /**
+   * @dev Returns one of the game's craftables.
+   * @param name The craftable's name.
+   */
+  function getCraftable(string name) public view returns (CraftableToken) {
+    require(craftables[name] != address(0));
+
+    return craftables[name];
   }
 
-  // Retrieves the deployed item contract associated with a name.
-  function getItem(string itemName) public view returns (CraftableToken) {
-    require(craftables[itemName] != address(0));
-
-    return craftables[itemName];
-  }
-
-  // Adds an ingredient to an item's recipe.
-  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) onlyOwner public {
-    require(keccak256(resultName) != keccak256(ingredientName));
-
-    CraftableToken result = getItem(resultName);
-    CraftableToken ingredient = getItem(ingredientName);
-
-    result.addRecipeStep(ingredient, amountNeeded);
-  }
-
-  // Attempts to craft an item. For items with recipes, the player must have
-  // the required ingredients, which will be subtracted from his inventory.
-  function craftItem(string id) public {
-    CraftableToken result = getItem(id);
+  /**
+   * @dev Crafts a craftable. All of the craftable's ingredients must be
+   * present in the player's inventory in the required amounts, and they
+   * will be consumed (destroyed) by the crafting process.
+   * @param name The name of the craftable to craft.
+   */
+  function craft(string name) public {
+    CraftableToken result = getCraftable(name);
     address player = msg.sender;
 
     uint i;
@@ -61,8 +60,43 @@ contract Crafty is Ownable {
     result.mint(player, 1);
   }
 
-  // Returns the current amount of items in the player's inventory for a given item type.
-  function getItemAmount(string id) public view returns (uint256) {
-    return getItem(id).balanceOf(msg.sender);
+  /**
+   * @dev Returns the amount of craftables or a certain type owned by the
+   * player.
+   * @param name The name of the craftable to query.
+   */
+  function getAmount(string name) public view returns (uint256) {
+    return getCraftable(name).balanceOf(msg.sender);
+  }
+
+  // Owner API
+
+  /**
+   * @dev Adds a new craftable to the game by deploying a new CraftableToken.
+   * @param name The name of the new craftable, which will be later used to
+   * interact with it. Once a name has been taken, it cannot be reused.
+   */
+  function addCraftable(string name) onlyOwner public {
+    require(craftables[name] == address(0));
+
+    craftables[name] = new CraftableToken();
+  }
+
+  /**
+   * @dev Adds an ingredient requirement to a craftable. After calling this
+   * function, crafting the craftable will require consuming (destroying) the
+   * new ingredient.
+   * @param resultName The name of the craftable to add the ingredient to.
+   * @param ingredientName The name of the ingredient craftable.
+   * @param amountNeeded The number of ingredient craftables to consume during
+   * the result's craftable crafting.
+   */
+  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) onlyOwner public {
+    require(keccak256(resultName) != keccak256(ingredientName));
+
+    CraftableToken result = getCraftable(resultName);
+    CraftableToken ingredient = getCraftable(ingredientName);
+
+    result.addRecipeStep(ingredient, amountNeeded);
   }
 }
