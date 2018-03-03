@@ -23,8 +23,19 @@ contract('Crafty', accounts => {
   const items = basicItems.concat(advItems);
 
   beforeEach(async () => {
-    crafty = await Crafty.new({from: owner});
+    await deployCrafty();
   });
+
+  async function deployCrafty() {
+    crafty = await Crafty.new({from: owner});
+
+    await Promise.all(items.map(item => crafty.createItem(item)));
+    await Promise.all(rules.recipes.map(rec =>
+      Promise.all(rec.ingredients.map(ing =>
+        crafty.addIngredient(pascalify(rec.result), pascalify(ing.name), ing.amount)
+      ))
+    ));
+  }
 
   it('player starts with no items', async () => {
     const amounts = await Promise.all(items.map(item => crafty.getItemAmount(item, {from: player})));
@@ -67,7 +78,7 @@ contract('Crafty', accounts => {
 
     // Each recipe will be tested with a new contract, to ensure an empty starting inventory
     for (const recipe of rules.recipes) { // eslint-disable-line no-await-in-loop
-      crafty = await Crafty.new({from: owner});
+      await deployCrafty();
 
       await craft(recipe);
 

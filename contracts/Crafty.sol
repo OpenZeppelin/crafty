@@ -1,8 +1,10 @@
 pragma solidity ^0.4.17;
 
 import './Item.sol';
+import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
-contract Crafty {
+
+contract Crafty is Ownable {
   // Storage for each item. Each item is referenced using a unique string.
   // An enum could be used for this, but Solidity doesn't yet support having
   // mappings with enum keys, and enums are not exposed to JS, so strings are
@@ -23,37 +25,9 @@ contract Crafty {
     uint256 amountNeeded;
   }
 
-  function Crafty() public {
-    // Basic items - empty recipes
-
-    createItem("Wood");
-    createItem("Stone");
-    createItem("Bronze");
-    createItem("Iron");
-
-    // Advanced items
-
-    createItem("StoneSword");
-    addIngredient("StoneSword", "Wood", 1);
-    addIngredient("StoneSword", "Stone", 3);
-
-    createItem("BronzeSword");
-    addIngredient("BronzeSword", "Wood", 1);
-    addIngredient("BronzeSword", "Bronze", 3);
-
-    createItem("IronSword");
-    addIngredient("IronSword", "Wood", 1);
-    addIngredient("IronSword", "Iron", 3);
-
-    createItem("TriSword");
-    addIngredient("TriSword", "StoneSword", 1);
-    addIngredient("TriSword", "BronzeSword", 1);
-    addIngredient("TriSword", "IronSword", 1);
-  }
-
   // Creates a new item by deploying a new contract. This function should
   // never be called twice with the same id.
-  function createItem(string id) private {
+  function createItem(string id) onlyOwner public {
     craftables[id].item = new Item();
   }
 
@@ -63,7 +37,7 @@ contract Crafty {
   }
 
   // Adds an ingredient to an item's recipe.
-  function addIngredient(string result, string ingredient, uint256 amountNeeded) private {
+  function addIngredient(string result, string ingredient, uint256 amountNeeded) onlyOwner public {
     craftables[result].recipe.push(RecipeIngredient({
       ingredient: getItem(ingredient),
       amountNeeded: amountNeeded
@@ -81,22 +55,22 @@ contract Crafty {
     uint i;
     // Check all required items are present in the player's inventory.
     for (i = 0; i < ingredients.length; ++i) {
-      require(ingredients[i].ingredient.amount(player) >= ingredients[i].amountNeeded);
+      require(ingredients[i].ingredient.balanceOf(player) >= ingredients[i].amountNeeded);
     }
 
     // If the check passed, subtract those items. We loop twice to prevent
     // subtracting item until we know the subtract call won't fail (and cause
     // items to be permanently lost).
     for (i = 0; i < ingredients.length; ++i) {
-      ingredients[i].ingredient.subtract(player, ingredients[i].amountNeeded);
+      ingredients[i].ingredient.burn(player, ingredients[i].amountNeeded);
     }
 
     // Add the resulting item
-    getItem(id).add(player, 1);
+    getItem(id).mint(player, 1);
   }
 
   // Returns the current amount of items in the player's inventory for a given item type.
   function getItemAmount(string id) public view returns (uint256) {
-    return getItem(id).amount(msg.sender);
+    return getItem(id).balanceOf(msg.sender);
   }
 }
