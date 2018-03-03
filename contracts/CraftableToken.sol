@@ -35,14 +35,17 @@ contract CraftableToken is StandardToken, Ownable {
     return recipe.length;
   }
 
+  modifier validStep(uint256 step) {
+    require(step < recipe.length);
+    _;
+  }
+
   /**
    * @dev Returns the CraftableToken that must be burned to comply with a
    * recipe step.
    * @param recipeStep The queried recipe step.
    */
-  function getIngredient(uint256 recipeStep) public view returns (CraftableToken) {
-    require(recipeStep <= recipe.length);
-
+  function getIngredient(uint256 recipeStep) public view validStep(recipeStep) returns (CraftableToken) {
     return recipe[recipeStep].ingredient;
   }
 
@@ -51,9 +54,7 @@ contract CraftableToken is StandardToken, Ownable {
    * with a recipe step.
    * @param recipeStep The queried recipe step.
    */
-  function getAmountNeeded(uint256 recipeStep) public view returns (uint256) {
-    require(recipeStep <= recipe.length);
-
+  function getAmountNeeded(uint256 recipeStep) public view validStep(recipeStep) returns (uint256) {
     return recipe[recipeStep].amountNeeded;
   }
 
@@ -66,7 +67,7 @@ contract CraftableToken is StandardToken, Ownable {
    * @param amountNeeded The amount of ingredient tokens to burn as part of
    * the new recipe step.
    */
-  function addRecipeStep(CraftableToken ingredient, uint256 amountNeeded) onlyOwner public {
+  function addRecipeStep(CraftableToken ingredient, uint256 amountNeeded) public onlyOwner {
     require(ingredient != address(0));
     require(amountNeeded > 0);
 
@@ -81,7 +82,7 @@ contract CraftableToken is StandardToken, Ownable {
    * @param player The player that will receive the minted tokens.
    * @param amount The amount of tokens to mint.
    */
-  function mint(address player, uint256 amount) onlyOwner public {
+  function mint(address player, uint256 amount) public onlyOwner {
     totalSupply_ = totalSupply_.add(amount);
     balances[player] = balances[player].add(amount);
 
@@ -94,7 +95,7 @@ contract CraftableToken is StandardToken, Ownable {
    * @param player The player whose tokens will be burned.
    * @param amount The amount of tokens to burn.
    */
-  function burn(address player, uint256 amount) onlyOwner public {
+  function burn(address player, uint256 amount) public onlyOwner {
     require(amount <= balances[player]);
     // No need to require amount <= totalSupply, since that would imply the
     // player's balance is greater than the totalSupply, which *should* be an

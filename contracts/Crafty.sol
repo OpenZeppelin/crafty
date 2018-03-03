@@ -76,7 +76,7 @@ contract Crafty is Ownable {
    * @param name The name of the new craftable, which will be later used to
    * interact with it. Once a name has been taken, it cannot be reused.
    */
-  function addCraftable(string name) onlyOwner public {
+  function addCraftable(string name) public onlyOwner {
     require(craftables[name] == address(0));
 
     craftables[name] = new CraftableToken();
@@ -91,7 +91,7 @@ contract Crafty is Ownable {
    * @param amountNeeded The number of ingredient craftables to consume during
    * the result's craftable crafting.
    */
-  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) onlyOwner public {
+  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) public onlyOwner {
     require(keccak256(resultName) != keccak256(ingredientName));
 
     CraftableToken result = getCraftable(resultName);

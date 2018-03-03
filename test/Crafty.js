@@ -18,6 +18,10 @@ contract('Crafty', accounts => {
     });
 
     describe('Adding craftables', () => {
+      it('non-added craftables cannot be retrieved', async () => {
+        await expectPromiseThrow(crafty.getCraftable('table'));
+      });
+
       it('craftables can be added by the owner', async () => {
         await crafty.addCraftable('table', {from: owner});
 
@@ -86,7 +90,7 @@ contract('Crafty', accounts => {
         await expectPromiseThrow(crafty.addIngredient('table', 'plank', 1, {from: owner}));
       });
 
-      it('the ingredients result must exist', async () => {
+      it('the ingredient\'s result must exist', async () => {
         await crafty.addCraftable('plank', {from: owner});
 
         await expectPromiseThrow(crafty.addIngredient('table', 'plank', 1, {from: owner}));
