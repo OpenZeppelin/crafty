@@ -5,10 +5,10 @@ module.exports = async function (crafty, rules) {
   const owner = await crafty.owner();
 
   // Add all basic items
-  await Promise.all(rules.basic.map(item => crafty.createItem(pascalCase(item, {from: owner}))));
+  await Promise.all(rules.basic.map(item => crafty.addItem(pascalCase(item, {from: owner}))));
 
   // Add all recipe results
-  await Promise.all(rules.recipes.map(rec => crafty.createItem(pascalCase(rec.result, {from: owner}))));
+  await Promise.all(rules.recipes.map(rec => crafty.addItem(pascalCase(rec.result, {from: owner}))));
 
   // Add all ingredients of each recipe
   await Promise.all(rules.recipes.map(rec =>

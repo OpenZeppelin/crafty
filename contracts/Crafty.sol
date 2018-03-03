@@ -25,21 +25,27 @@ contract Crafty is Ownable {
     uint256 amountNeeded;
   }
 
-  // Creates a new item by deploying a new contract. This function should
-  // never be called twice with the same id.
-  function createItem(string id) onlyOwner public {
-    craftables[id].item = new Item();
+  // Adds a new item by deploying a new contract. This function should
+  // never be called twice with the same item name.
+  function addItem(string itemName) onlyOwner public {
+    require(craftables[itemName].item == address(0));
+    craftables[itemName].item = new Item();
   }
 
-  // Retrieves the deployed item contract associated with an id.
-  function getItem(string id) private view returns (Item) {
-    return craftables[id].item;
+  // Retrieves the deployed item contract associated with a name.
+  function getItem(string itemName) public view returns (Item) {
+    return craftables[itemName].item;
   }
 
   // Adds an ingredient to an item's recipe.
-  function addIngredient(string result, string ingredient, uint256 amountNeeded) onlyOwner public {
-    craftables[result].recipe.push(RecipeIngredient({
-      ingredient: getItem(ingredient),
+  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) onlyOwner public {
+    require(keccak256(resultName) != keccak256(ingredientName));
+    require(getItem(resultName) != address(0));
+    Item ingredient = getItem(ingredientName);
+    require(ingredient != address(0));
+
+    craftables[resultName].recipe.push(RecipeIngredient({
+      ingredient: ingredient,
       amountNeeded: amountNeeded
     }));
   }
