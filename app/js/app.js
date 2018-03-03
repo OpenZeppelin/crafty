@@ -105,21 +105,12 @@ async function updateInventory() {
 }
 
 function getCraftyAcquire(item) {
-  return () => App.crafty.craftItem(pascalify(item));
+  return () => App.crafty.craftItem(item);
 }
 
 function getCraftyAmount(item) {
-  return () => App.crafty.getItemAmount(pascalify(item));
+  return () => App.crafty.getItemAmount(item);
 }
-
-function capitalize(str) {
-  return str[0].toUpperCase() + str.slice(1);
-}
-
-function pascalify(str) {
-  return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
-}
-
 
 const netInfo = {
   '1': {
