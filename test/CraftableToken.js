@@ -1,15 +1,15 @@
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 
-const Item = artifacts.require('Item');
+const CraftableToken = artifacts.require('CraftableToken');
 
-contract('Item', accounts => {
+contract('CraftableToken', accounts => {
   let item = null;
   const owner = accounts[0]; // This is the account that creates the contract
   const players = accounts.slice(1, accounts.length);
   const zeroAddress = '0x0000000000000000000000000000000000000000';
 
   beforeEach(async () => {
-    item = await Item.new({from: owner});
+    item = await CraftableToken.new({from: owner});
   });
 
   it('players start with no items', async () => {
