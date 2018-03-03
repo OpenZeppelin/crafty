@@ -8,7 +8,7 @@ module.exports = {
   },
 
   mocha: {
-    timeout: 6000,
-    slow: 1000
+    timeout: 10000,
+    slow: 3000
   }
 };
