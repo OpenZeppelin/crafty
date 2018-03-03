@@ -3,7 +3,8 @@ const lint = require('mocha-eslint');
 const paths = [
   'app/js/app.js',
   'app/js/layout.js',
-  'test/**/*.js',
+  'migrations/*.js',
+  'test/**/*.js'
 ];
 
 const options = {
