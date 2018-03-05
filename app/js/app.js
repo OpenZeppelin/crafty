@@ -1,40 +1,12 @@
-window.addEventListener('load', () => {
-  if (typeof web3 !== 'undefined') {
-    this.web3js = new Web3(web3.currentProvider);
-    const provider = web3js.currentProvider;
-    if (provider.isMetaMask) {
-      $('#using-metamask').css('display', 'inline');
-    }
-
-    App.init();
-  } else {
-    error.noEthBrowser();
-  }
+window.addEventListener('load', async () => {
+  ethnet.loadWeb3();
+  App.crafty = await ethnet.getDeployedCrafty();
+  App.init();
 });
 
 const App = {
   init: function () {
-    web3js.version.getNetwork((err, netId) => {
-      this.netId = netId;
-
-      const netname = netName(this.netId);
-      $('#network').text(netname);
-
-      $.getJSON('contracts/Crafty.json').then(craftyArtifact => {
-        const contract = TruffleContract(craftyArtifact);
-        contract.setProvider(web3js.currentProvider);
-
-        const craftyAddress = netCraftyAddress(this.netId);
-        App.crafty = contract.at(craftyAddress);
-        web3js.eth.getCode(craftyAddress, (err, code) => {
-          if (code.length > '0x'.length) {
-            App.loadRules();
-          } else {
-            error.noDeployedCrafty();
-          }
-        });
-      });
-    });
+    App.loadRules();
   },
 
   loadRules: async function () {
@@ -118,44 +90,4 @@ function capitalize(str) {
 
 function pascalify(str) {
   return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
-}
-
-
-const netInfo = {
-  '1': {
-    'name': 'mainnet',
-    'txUrl': tx => `https://etherscan.io/tx/${tx}`
-  },
-  '2': {
-    'name': 'Morden (testnet - deprecated)',
-    'txUrl': () => ``
-  },
-  '3': {
-    'name': 'Ropsten (testnet)',
-    'txUrl': tx => `https://ropsten.etherscan.io/tx/${tx}`
-  },
-  '4': {
-    'name': 'Rinkeby (testnet)',
-    'txUrl': tx => `https://rinkeby.etherscan.io/tx/${tx}`
-  },
-  '42': {
-    'name': 'Kovan (testnet)',
-    'txUrl': tx => `https://kovan.etherscan.io/tx/${tx}`
-  }
-};
-
-function netName(netId) {
-  return netInfo[netId] ? netInfo[netId].name : 'unknown';
-}
-
-function netTxUrl(netId) {
-  return netInfo[netId] ? netInfo[netId].txUrl : () => '';
-}
-
-function netCraftyAddress(netId) {
-  const craftyAddresses = {
-    '3': '0x15d3a47ed3ad89790e5c1f65c98aee1169fe28cd'
-  };
-
-  return craftyAddresses[netId] || '0xca5e1ac53a2e1994a6bdf056c36c3bf0e9d065bf'; // Replace for local address during development
 }

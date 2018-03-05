@@ -85,6 +85,14 @@ const layout = { // eslint-disable-line no-unused-vars
     });
   },
 
+  showMetaMaskBadge: () => {
+    $('#using-metamask').css('display', 'inline');
+  },
+
+  setEthnetName: (netName) => {
+    $('#network').text(netName);
+  },
+
   showModalError: (content) => {
     $('#modal-body').empty();
     $('#modal-body').append($(content));

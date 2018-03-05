@@ -19,7 +19,8 @@
     "moment": false,
     "toastr": false,
     "layout": false,
-    "error": false
+    "error": false,
+    "ethnet": false
   },
   "extends": "eslint:recommended",
   "rules": {
