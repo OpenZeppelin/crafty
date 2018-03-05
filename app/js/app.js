@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
 
     App.init();
   } else {
-    layout.showNoEthBrowserError();
+    error.noEthBrowser();
   }
 });
 
@@ -30,7 +30,7 @@ const App = {
           if (code.length > '0x'.length) {
             App.loadRules();
           } else {
-            layout.showNoDeployedCraftyError();
+            error.noDeployedCrafty();
           }
         });
       });
@@ -75,10 +75,10 @@ function accountChange(account) {
   $('#user-account').text(App.userAccount);
 
   if (account) {
-    layout.hideErrors(); // A bit hacky - this clears the (possible) previous no account error
+    error.clear(); // A bit hacky - this clears the (possible) previous no account error
     updateInventory();
   } else {
-    layout.showNoEthAccountError();
+    error.noEthAccount();
   }
 }
 
@@ -96,7 +96,7 @@ function layoutRules() {
   layout.addIngredientsList(App.rules.recipes, $('#recipes'));
 }
 
-async function updateInventory() {
+function updateInventory() {
   Object.entries(App.itemAmountUpdaters).forEach(([item, updater]) => {
     getCraftyAmount(item)().then(amount => {
       updater(amount);
@@ -157,5 +157,5 @@ function netCraftyAddress(netId) {
     '3': '0x15d3a47ed3ad89790e5c1f65c98aee1169fe28cd'
   };
 
-  return craftyAddresses[netId] || '0xe8328aac701f763e37f72494d28a66912b5c3f95'; // Replace for local address during development
+  return craftyAddresses[netId] || '0xca5e1ac53a2e1994a6bdf056c36c3bf0e9d065bf'; // Replace for local address during development
 }

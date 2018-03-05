@@ -1,4 +1,4 @@
-const layout = {
+const layout = { // eslint-disable-line no-unused-vars
   // Creates an HTML list of items (name and value) and adds it to
   // a parent element. Returns an object mapping item names to a
   // function that receives a new item value and updates the DOM.
@@ -85,31 +85,13 @@ const layout = {
     });
   },
 
-  showNoEthBrowserError: () => {
-    layout.showError(`
-      <p>An Ethereum browser (such as <a href="https://metamask.io/">MetaMask</a> or <a href="https://github.com/ethereum/mist">Mist</a>) is required to use this dApp.</p>
-      <div style="display: flex; justify-content: center;">
-        <a href="https://metamask.io/" style="text-align: center">
-          <img src="images/download-metamask-dark.png" style="max-width: 70%">
-        </a>
-      </div>`);
-  },
-
-  showNoDeployedCraftyError: () => {
-    layout.showError('<p>Could not find an up-to-date Crafty smart contract in this network. Deploy one before continuing.</p>');
-  },
-
-  showNoEthAccountError: () => {
-    layout.showError('<p>An Ethereum account needs to be selected in the Ethereum browser extension in order to use this dApp.</p>');
-  },
-
-  showError: (content) => {
+  showModalError: (content) => {
+    $('#modal-body').empty();
     $('#modal-body').append($(content));
     $('#modal-dialog').modal('show');
   },
 
-  hideErrors: () => {
-    $('#modal-body').empty();
+  hideModalError: () => {
     $('#modal-dialog').modal('hide');
   }
 };

@@ -18,7 +18,8 @@
     "TruffleContract": false,
     "moment": false,
     "toastr": false,
-    "layout": false
+    "layout": false,
+    "error": false
   },
   "extends": "eslint:recommended",
   "rules": {
