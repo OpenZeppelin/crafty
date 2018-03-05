@@ -14,6 +14,7 @@ const error = { // eslint-disable-line no-unused-vars
   },
 
   noEthAccount: () => {
+    layout.setAccount('none');
     layout.showModalError('<p>An Ethereum account needs to be selected in the Ethereum browser extension in order to use this dApp.</p>');
   },
 

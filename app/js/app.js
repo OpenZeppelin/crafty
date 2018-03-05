@@ -1,80 +1,57 @@
 window.addEventListener('load', async () => {
-  ethnet.loadWeb3();
-  App.crafty = await ethnet.getDeployedCrafty();
+  ethnet.init();
   App.init();
 });
 
 const App = {
-  init: function () {
-    App.loadRules();
+  init: async () => {
+    // Get the deployed game contract
+    App.crafty = await ethnet.getDeployedCrafty();
+
+    // Load the game rules
+    App.rules = await $.getJSON('rules.json');
+    App.displayRules();
+
+    // Account changes trigger an inventory update
+    ethnet.onAccountChange(account => {
+      if (account) {
+        error.clear(); // Hacky - this clears the (possible) previous no account error
+
+        layout.setAccount(account);
+        App.updateInventory();
+      } else {
+        error.noEthAccount();
+      }
+    });
+
+    // New blocks also trigger an inventory update
+    ethnet.onNewBlock(block => {
+      layout.setBlock(block);
+      App.updateInventory();
+    });
   },
 
-  loadRules: async function () {
-    App.rules = await $.getJSON('rules.json');
-    layoutRules();
+  displayRules: () => {
+    // Inventory
+    App.itemAmountUpdaters = {};
+    $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.basic, $('#basic-item-inv')));
+    $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
 
-    accountChange(web3js.eth.accounts[0]);
-    setInterval(() => {
-      const selectedAcc = web3js.eth.accounts[0];
-      if (App.userAccount !== selectedAcc) {
-        accountChange(selectedAcc);
-      }
-    }, 100);
+    // Actions
+    layout.addPendableTxButtons(App.rules.basic, getCraftyAcquire, ethnet.txUrlGen(), $('#mine-actions'));
+    layout.addPendableTxButtons(App.rules.recipes.map(rec => rec.result), getCraftyAcquire, ethnet.txUrlGen(), $('#craft-actions'));
 
-    web3js.eth.getBlock('latest', false, (err, block) => {
-      App.lastBlock = block;
+    // Recipes
+    layout.addIngredientsList(App.rules.recipes, $('#recipes'));
+  },
 
-      moment.relativeTimeThreshold('ss', 5);
-      setInterval(() => {
-        $('#last-block').text(`#${App.lastBlock.number} (mined ${moment.unix(App.lastBlock.timestamp).fromNow()})`);
-      }, 100);
-
-      setInterval(() => {
-        web3js.eth.getBlock('latest', false, (err, block) => {
-          if (block.number !== App.lastBlock.number) {
-            App.lastBlock = block;
-            $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
-            updateInventory();
-          }
-        });
-      }, 1000);
+  updateInventory: () => {
+    Object.entries(App.itemAmountUpdaters).forEach(async ([item, updater]) => {
+      const amount = await getCraftyAmount(item)();
+      updater(amount);
     });
   }
 };
-
-function accountChange(account) {
-  App.userAccount = account;
-  $('#user-account').text(App.userAccount);
-
-  if (account) {
-    error.clear(); // A bit hacky - this clears the (possible) previous no account error
-    updateInventory();
-  } else {
-    error.noEthAccount();
-  }
-}
-
-function layoutRules() {
-  // Inventory
-  App.itemAmountUpdaters = {};
-  $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.basic, $('#basic-item-inv')));
-  $.extend(App.itemAmountUpdaters, layout.addItemList(App.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
-
-  // Actions
-  layout.addPendableTxButtons(App.rules.basic, getCraftyAcquire, netTxUrl(App.netId), $('#mine-actions'));
-  layout.addPendableTxButtons(App.rules.recipes.map(rec => rec.result), getCraftyAcquire, netTxUrl(App.netId), $('#craft-actions'));
-
-  // Recipes
-  layout.addIngredientsList(App.rules.recipes, $('#recipes'));
-}
-
-function updateInventory() {
-  Object.entries(App.itemAmountUpdaters).forEach(([item, updater]) => {
-    getCraftyAmount(item)().then(amount => {
-      updater(amount);
-    });
-  });
-}
 
 function getCraftyAcquire(item) {
   return App.crafty[`acquire${pascalify(item)}`];

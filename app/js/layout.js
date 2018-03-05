@@ -85,6 +85,24 @@ const layout = { // eslint-disable-line no-unused-vars
     });
   },
 
+  setAccount: (account) => {
+    $('#user-account').text(account);
+  },
+
+  setBlock: (block) => {
+    // On the first call, layout.block has not been set yet
+    if (typeof layout.block === 'undefined') {
+      // Periodically update the last block text (even if the block doesn't
+      // change, the time since mining needs to be updated)
+      setInterval(() => {
+        $('#last-block').text(`#${layout.block.number} (mined ${moment.unix(layout.block.timestamp).fromNow()})`);
+      }, 100);
+    }
+
+    layout.block = block;
+    $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
+  },
+
   showMetaMaskBadge: () => {
     $('#using-metamask').css('display', 'inline');
   },
@@ -105,6 +123,7 @@ const layout = { // eslint-disable-line no-unused-vars
 };
 
 function toastSuccessfulTx(tx, url) {
+  console.log(url);
   toastr['success'](url ? `<a href=${url} target="_blank">${tx}</a>` : tx, 'Broadcasted TX!');
 }
 
@@ -124,3 +143,5 @@ toastr.options = {
   'showMethod': 'fadeIn',
   'hideMethod': 'fadeOut'
 };
+
+moment.relativeTimeThreshold('ss', 5);
