@@ -26,8 +26,7 @@ contract('CraftableToken', accounts => {
     it('invalid recipe steps cannot be accessed', async () => {
       const recipeSteps = await craftable.getTotalRecipeSteps();
 
-      await expectPromiseThrow(craftable.getIngredient(recipeSteps + 1));
-      await expectPromiseThrow(craftable.getAmountNeeded(recipeSteps + 1));
+      await expectPromiseThrow(craftable.getRecipeStep(recipeSteps + 1));
     });
 
     it('the owner can add ingredients', async () => {
@@ -37,8 +36,8 @@ contract('CraftableToken', accounts => {
       const totalRecipeSteps = await craftable.getTotalRecipeSteps();
       assert(totalRecipeSteps.eq(1));
 
-      const storedIngredient = await craftable.getIngredient(0);
-      const storedAmountNeeded = await craftable.getAmountNeeded(0);
+      let storedIngredient, storedAmountNeeded;
+      [storedIngredient, storedAmountNeeded] = await craftable.getRecipeStep(0);
 
       assert.equal(storedIngredient, ingredient.contract.address);
       assert(storedAmountNeeded.eq(3));
@@ -59,8 +58,8 @@ contract('CraftableToken', accounts => {
       assert(totalRecipeSteps.eq(recipeSteps.length));
 
       for (let i = 0; i < recipeSteps.length; ++i) { // eslint-disable-line no-await-in-loop
-        const storedIngredient = await craftable.getIngredient(i);
-        const storedAmountNeeded = await craftable.getAmountNeeded(i);
+        let storedIngredient, storedAmountNeeded;
+        [storedIngredient, storedAmountNeeded] = await craftable.getRecipeStep(i);
 
         assert.equal(storedIngredient, recipeSteps[i].ingredient.contract.address);
         assert(storedAmountNeeded.eq(recipeSteps[i].amount));

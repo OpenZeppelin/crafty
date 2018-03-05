@@ -41,19 +41,17 @@ contract Crafty is Ownable {
     CraftableToken result = getCraftable(name);
     address player = msg.sender;
 
-    uint i;
+    // Check the required craftables are present in the player's inventory,
+    // and then consume those items. All burn calls will be reverted if the
+    // player is missing any ingredient.
     uint256 totalSteps = result.getTotalRecipeSteps();
+    for (uint i = 0; i < totalSteps; ++i) {
+      CraftableToken ingredient;
+      uint256 amountNeeded;
+      (ingredient, amountNeeded) = result.getRecipeStep(i);
 
-    // Check all required items are present in the player's inventory.
-    for (i = 0; i < totalSteps; ++i) {
-      require(result.getIngredient(i).balanceOf(player) >= result.getAmountNeeded(i));
-    }
-
-    // After the check passed, subtract those items. We loop twice to prevent
-    // subtracting item until we know the subtract call won't fail (and cause
-    // items to be permanently lost).
-    for (i = 0; i < totalSteps; ++i) {
-      result.getIngredient(i).burn(player, result.getAmountNeeded(i));
+      require(ingredient.balanceOf(player) >= amountNeeded);
+      ingredient.burn(player, amountNeeded);
     }
 
     // Add the resulting item

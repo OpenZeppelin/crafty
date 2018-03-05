@@ -41,21 +41,12 @@ contract CraftableToken is StandardToken, Ownable {
   }
 
   /**
-   * @dev Returns the CraftableToken that must be burned to comply with a
-   * recipe step.
-   * @param recipeStep The queried recipe step.
+   * @dev Returns the CraftableToken that must be burned, and the amount to
+   * burn, to comply with a recipe step.
+   * @return A tuple containing the token and the amount to burn.
    */
-  function getIngredient(uint256 recipeStep) public view validStep(recipeStep) returns (CraftableToken) {
-    return recipe[recipeStep].ingredient;
-  }
-
-  /**
-   * @dev Returns the amount of CraftableTokens that must be burned to comply
-   * with a recipe step.
-   * @param recipeStep The queried recipe step.
-   */
-  function getAmountNeeded(uint256 recipeStep) public view validStep(recipeStep) returns (uint256) {
-    return recipe[recipeStep].amountNeeded;
+  function getRecipeStep(uint256 recipeStep) public view validStep(recipeStep) returns (CraftableToken, uint256) {
+    return (recipe[recipeStep].ingredient, recipe[recipeStep].amountNeeded);
   }
 
   // Owner API
