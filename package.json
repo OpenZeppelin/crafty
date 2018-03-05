@@ -5,7 +5,7 @@
   "main": "truffle.js",
   "scripts": {
     "test": "npx truffle test",
-    "build": "rm -rf build && npx truffle compile && rm app/contracts/* && rsync build/contracts/* app/contracts/ --exclude=Migrations.json"
+    "build": "bash scripts/build.sh"
   },
   "repository": {
     "type": "git",
