@@ -17,10 +17,7 @@
     "web3js": false,
     "TruffleContract": false,
     "moment": false,
-    "toastr": false,
-    "layout": false,
-    "error": false,
-    "ethnet": false
+    "toastr": false
   },
   "extends": "eslint:recommended",
   "rules": {

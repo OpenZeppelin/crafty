@@ -1,8 +1,8 @@
 const lint = require('mocha-eslint');
 
 const paths = [
-  'app/js/**/*.js',
-  'app/js/**/*.js',
+  'app/js/src/**/*.js',
+  'app/js/src/**/*.js',
   'test/**/*.js',
 ];
 
