@@ -4,6 +4,24 @@
 
 A decentralized token crafting and trading game, running on the Ethereum network.
 
+## Game
+
+The game revolves around the [`Crafty`](https://github.com/nventuro/crafty/blob/master/contracts/Crafty.sol) and [`CraftableToken`](https://github.com/nventuro/crafty/blob/master/contracts/CraftableToken.sol) (craftable) contracts.
+
+`Crafty` is the 'game' contract, and is the one players interact directly with. It allows acquisition of new basic craftables, and mixing of them to create more advanced ones. The game owner has the capability to add new craftables and recipes, but as of now the game is static, and the available craftables and their recipes are described by the[the rules file](https://github.com/nventuro/crafty/tree/master/app/rules.json).
+
+The `CraftableToken`s themselves are ERC20 tokens (minus the `name`, `symbol` and `decimals` fields), and can therefore be freely traded among players. These tokens are acquired by interacting with the `Crafty` contract, which has the authority to create new tokens, and destroy them when they are used as recipe ingredients.
+
+## Ideas
+
+### Recipe voting
+The `Crafty` owner can not only add new tokens after deploying the contract, but also new recipes. Ownership of `Crafty` could be transferred to a second smart contract, in charge of carrying out a voting process, in which players can propose new craftables and their recipes. The craftable tokens themselves could be used to vote, in order to prevent spam and prove a stake in the game.
+
+### Time-throttled craftable generation + bundles
+As of now, all that's required to obtain a craftable token is to request one. This mechanism could be modified so that only a certain number of craftables can be requested for free per time period (say, every 6 hours). Then, the option to buy bundles of random craftable tokens (using Ether) could be added. All of this Ether acquired by `Crafty` would be stored in a pot, which is gifted to whomever crafts the item at the top of the recipe tree. The pot amount would be made public and shown on the dApp, and events would be sent every time there's a winner.
+
+This idea requires a known 'winning' item to exist, so either the recipe tree would have to be static, or the dynamic craftable and recipe addition mechanism would have to be more complex to always ensure this condition.
+
 ## Dependencies
 - [npm](https://www.npmjs.com/): v5.6.0.
 
@@ -75,21 +93,3 @@ $ python -m SimpleHTTPServer
 ```
 
 `SimpleHTTPServer` will then be reachable at `localhost:8000`.
-
-## Game
-
-The game revolves around the [`Crafty`](https://github.com/nventuro/crafty/blob/master/contracts/Crafty.sol) and [`CraftableToken`](https://github.com/nventuro/crafty/blob/master/contracts/CraftableToken.sol) (craftable) contracts.
-
-`Crafty` is the 'game' contract, and is the one players interact directly with. It allows acquisition of new basic craftables, and mixing of them to create more advanced ones. The game owner has the capability to add new craftables and recipes, but as of now the game is static, and the available craftables and their recipes are described by the[the rules file](https://github.com/nventuro/crafty/tree/master/app/rules.json).
-
-The `CraftableToken`s themselves are ERC20 tokens (minus the `name`, `symbol` and `decimals` fields), and can therefore be freely traded among players. These tokens are acquired by interacting with the `Crafty` contract, which has the authority to create new tokens, and destroy them when they are used as recipe ingredients.
-
-## Ideas
-
-### Recipe voting
-The `Crafty` owner can not only add new tokens after deploying the contract, but also new recipes. Ownership of `Crafty` could be transferred to a second smart contract, in charge of carrying out a voting process, in which players can propose new craftables and their recipes. The craftable tokens themselves could be used to vote, in order to prevent spam and prove a stake in the game.
-
-### Time-throttled craftable generation + bundles
-As of now, all that's required to obtain a craftable token is to request one. This mechanism could be modified so that only a certain number of craftables can be requested for free per time period (say, every 6 hours). Then, the option to buy bundles of random craftable tokens (using Ether) could be added. All of this Ether acquired by `Crafty` would be stored in a pot, which is gifted to whomever crafts the item at the top of the recipe tree. The pot amount would be made public and shown on the dApp, and events would be sent every time there's a winner.
-
-This idea requires a known 'winning' item to exist, so either the recipe tree would have to be static, or the dynamic craftable and recipe addition mechanism would have to be more complex to always ensure this condition.
