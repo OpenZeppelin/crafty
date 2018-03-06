@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
+    "dotenv": "^5.0.1",
     "ganache-cli": "^6.0.3",
     "truffle": "^4.0.6",
+    "truffle-hdwallet-provider": "0.0.3",
     "underscore": "^1.8.3",
     "zeppelin-solidity": "1.7.0"
   },

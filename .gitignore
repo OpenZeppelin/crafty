@@ -7,3 +7,6 @@ build
 # Built contracts
 app/contracts/*
 !app/contracts/.gitkeep
+
+# Deployment configuration
+.env
