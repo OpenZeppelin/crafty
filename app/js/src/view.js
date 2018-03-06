@@ -1,4 +1,4 @@
-const layout = {};
+const view = {};
 
 // Creates an HTML list of items (name and value) and adds it to
 // a parent element. Returns an object mapping item names to a
@@ -91,16 +91,16 @@ exports.setAccount = (account) => {
 };
 
 exports.setBlock = (block) => {
-  // On the first call, layout.block has not been set yet
-  if (typeof layout.block === 'undefined') {
+  // On the first call, view.block has not been set yet
+  if (typeof view.block === 'undefined') {
     // Periodically update the last block text (even if the block doesn't
     // change, the time since mining needs to be updated)
     setInterval(() => {
-      $('#last-block').text(`#${layout.block.number} (mined ${moment.unix(layout.block.timestamp).fromNow()})`);
+      $('#last-block').text(`#${view.block.number} (mined ${moment.unix(view.block.timestamp).fromNow()})`);
     }, 100);
   }
 
-  layout.block = block;
+  view.block = block;
   $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
 };
 

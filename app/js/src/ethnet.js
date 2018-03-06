@@ -1,4 +1,4 @@
-const layout = require('./layout');
+const view = require('./view');
 const error = require('./error');
 
 const ethnet = {};
@@ -16,7 +16,7 @@ exports.init = () => {
   Promise.promisifyAll(ethnet.web3.eth, {suffix: 'Async'});
 
   if (ethnet.web3.currentProvider.isMetaMask) {
-    layout.showMetaMaskBadge();
+    view.showMetaMaskBadge();
   }
 };
 
@@ -24,7 +24,7 @@ exports.getDeployedCrafty = async () => {
   // We need to figure out in which network we're in to fetch the appropiate
   // contract address
   ethnet.netId = await ethnet.web3.version.getNetworkAsync();
-  layout.setEthnetName(netInfo[ethnet.netId] ? netInfo[ethnet.netId].name : 'unknown');
+  view.setEthnetName(netInfo[ethnet.netId] ? netInfo[ethnet.netId].name : 'unknown');
 
   const craftyAddress = netCraftyAddress(ethnet.netId);
   const codeAtAddress = await ethnet.web3.eth.getCodeAsync(craftyAddress);

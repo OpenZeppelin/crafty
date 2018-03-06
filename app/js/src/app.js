@@ -1,5 +1,5 @@
 const ethnet = require('./ethnet');
-const layout = require('./layout');
+const view = require('./view');
 const error = require('./error');
 
 const app = {};
@@ -22,7 +22,7 @@ async function init() {
     if (account) {
       error.clear(); // Hacky - this clears the (possible) previous no account error
 
-      layout.setAccount(account);
+      view.setAccount(account);
       updateInventory();
     } else {
       error.noEthAccount();
@@ -31,7 +31,7 @@ async function init() {
 
   // New blocks also trigger an inventory update
   ethnet.onNewBlock(block => {
-    layout.setBlock(block);
+    view.setBlock(block);
     updateInventory();
   });
 }
@@ -39,15 +39,15 @@ async function init() {
 function displayRules() {
   // Inventory
   app.itemAmountUpdaters = {};
-  $.extend(app.itemAmountUpdaters, layout.addItemList(app.rules.basic, $('#basic-item-inv')));
-  $.extend(app.itemAmountUpdaters, layout.addItemList(app.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
+  $.extend(app.itemAmountUpdaters, view.addItemList(app.rules.basic, $('#basic-item-inv')));
+  $.extend(app.itemAmountUpdaters, view.addItemList(app.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
 
   // Actions
-  layout.addPendableTxButtons(app.rules.basic, getCraftyAcquire, ethnet.txUrlGen(), $('#mine-actions'));
-  layout.addPendableTxButtons(app.rules.recipes.map(rec => rec.result), getCraftyAcquire, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(app.rules.basic, getCraftyAcquire, ethnet.txUrlGen(), $('#mine-actions'));
+  view.addPendableTxButtons(app.rules.recipes.map(rec => rec.result), getCraftyAcquire, ethnet.txUrlGen(), $('#craft-actions'));
 
   // Recipes
-  layout.addIngredientsList(app.rules.recipes, $('#recipes'));
+  view.addIngredientsList(app.rules.recipes, $('#recipes'));
 }
 
 function updateInventory() {
