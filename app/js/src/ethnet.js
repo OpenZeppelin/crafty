@@ -8,7 +8,7 @@ const ethnet = {};
  * Initializes the ethnet module.
  * @returns true when initialization is successful.
  */
-exports.init = () => {
+function init() {
   if (typeof web3 === 'undefined') {
     error.noEthBrowser();
   }
@@ -24,13 +24,17 @@ exports.init = () => {
   }
 
   return true;
-};
+}
 
 /*
  * Creates a crafty contract object, used to interact with a deployed instance.
  * @returns the created contract, or undefined if one wasn't found.
  */
 exports.getDeployedCrafty = async () => {
+  if (!init()) {
+    return;
+  }
+
   // We need to figure out in which network we're in to fetch the appropiate
   // contract address
   ethnet.netId = await ethnet.web3.version.getNetworkAsync();

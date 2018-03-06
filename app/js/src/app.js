@@ -5,17 +5,14 @@ const error = require('./error');
 // Module storage
 const app = {};
 
-window.addEventListener('load', async () => {
-  if (ethnet.init()) {
-    // Nothing to do if the ethnet failed to initialize
-    init();
-  }
+window.addEventListener('load', () => {
+  init();
 });
 
 async function init() {
   // Get the deployed game contract
   app.crafty = await ethnet.getDeployedCrafty();
-  if (typeof app.crafty === 'undefined') {
+  if (!app.crafty) {
     // Nothing to do if no Crafty object was created
     return;
   }
