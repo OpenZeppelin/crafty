@@ -37,6 +37,11 @@ exports.getDeployedCrafty = async () => {
   view.setEthnetName(netInfo[ethnet.netId] ? netInfo[ethnet.netId].name : 'unknown');
 
   const craftyAddress = await netCraftyAddress(ethnet.netId);
+  if (!craftyAddress) {
+    error.noCraftyAddress();
+    return;
+  }
+
   const codeAtAddress = await ethnet.web3.eth.getCodeAsync(craftyAddress);
 
   // We're not checking the actual code, only that there is a contract there.
@@ -119,7 +124,7 @@ async function netCraftyAddress(netId) {
   if (addresses[netId]) {
     return addresses[netId];
   } else {
-    return addresses['default']; // Used during local development
+    return addresses['unknown']; // Used during local development
   }
 }
 

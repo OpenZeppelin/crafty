@@ -14,6 +14,14 @@ exports.noEthBrowser = () => {
 };
 
 /*
+ * Displays an error message indicating no adddresses for a deployed Crafty
+ * contract in this network are known.
+ */
+exports.noCraftyAddress = () => {
+  view.showModalError('<p>No address for a Crafty smart contract in this network. Update contract-addresses.json with a valid address, or switch to a different network.</p>');
+};
+
+/*
  * Displays an error message indicating a deployed Crafty contract could not
  * be found in the current network.
  */
