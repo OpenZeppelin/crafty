@@ -12,6 +12,8 @@ The game revolves around the [`Crafty`](https://github.com/nventuro/crafty/blob/
 
 The `CraftableToken`s themselves are ERC20 tokens (minus the `name`, `symbol` and `decimals` fields), and can therefore be freely traded among players. These tokens are acquired by interacting with the `Crafty` contract, which has the authority to create new tokens, and destroy them when they are used as recipe ingredients.
 
+A Ropsten deployed `Crafty` contract can be interacted with [from here](https://nventuro.github.io/crafty/).
+
 ## Ideas
 
 ### Recipe voting
@@ -76,8 +78,8 @@ After storing the configuration, the migration can be carried out, in the same m
 
 `$ npx truffle migrate --network rinkeby`
 
-### dApp
-The dApp has no backend: all it needs is to connect to a deployed `Crafty` contract. Because of this, deploying it is very simple.
+### Front-end
+The dApp has no back-end: all the front-end needs is to connect to a deployed `Crafty` contract. Because of this, deploying it is very simple.
 
 First, the contract artifacts need be moved to the `app` directory, and the JavaScript sources bundled, etc. A single command takes care of this:
 
