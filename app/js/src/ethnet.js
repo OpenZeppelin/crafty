@@ -36,7 +36,7 @@ exports.getDeployedCrafty = async () => {
   ethnet.netId = await ethnet.web3.version.getNetworkAsync();
   view.setEthnetName(netInfo[ethnet.netId] ? netInfo[ethnet.netId].name : 'unknown');
 
-  const craftyAddress = netCraftyAddress(ethnet.netId);
+  const craftyAddress = await netCraftyAddress(ethnet.netId);
   const codeAtAddress = await ethnet.web3.eth.getCodeAsync(craftyAddress);
 
   // We're not checking the actual code, only that there is a contract there.
@@ -114,12 +114,13 @@ exports.txUrlGen = () => {
  * Returns the address of a known deployed crafty contract for a given network
  * id.
  */
-function netCraftyAddress(netId) {
-  const craftyAddresses = {
-    '3': '0x15d3a47ed3ad89790e5c1f65c98aee1169fe28cd'
-  };
-
-  return craftyAddresses[netId] || '0x0adb52d48caad27516c81ce17849148d87f0a22b'; // Replace for local address during development
+async function netCraftyAddress(netId) {
+  const addresses = await $.getJSON('contract-addresses.json');
+  if (addresses[netId]) {
+    return addresses[netId];
+  } else {
+    return addresses['default']; // Used during local development
+  }
 }
 
 // Misc information about the different networks
