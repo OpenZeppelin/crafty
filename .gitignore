@@ -7,3 +7,9 @@ build
 # Built contracts
 app/contracts/*
 !app/contracts/.gitkeep
+
+# Browserify output
+app/js/bundle.js
+
+# Deployment configuration
+.env
