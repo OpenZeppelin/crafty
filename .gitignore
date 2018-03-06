@@ -10,3 +10,6 @@ app/contracts/*
 
 # Browserify output
 app/js/bundle.js
+
+# Deployment configuration
+.env
