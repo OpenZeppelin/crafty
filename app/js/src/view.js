@@ -1,8 +1,13 @@
+// Module storage
 const view = {};
 
-// Creates an HTML list of items (name and value) and adds it to
-// a parent element. Returns an object mapping item names to a
-// function that receives a new item value and updates the DOM.
+/*
+ * Creates an HTML list of items, displaying name and value.
+ * @param items An array with the name of each item.
+ * @param parent The HTML object the list is going to be appended to.
+ * @returns An object mapping item names to a function that receives
+ * a new item value and updates the DOM.
+ */
 exports.addItemList = (items, parent) => {
   const itemAmountUpdaters = {};
 
@@ -23,6 +28,15 @@ exports.addItemList = (items, parent) => {
   return itemAmountUpdaters;
 };
 
+/*
+ * Creates a set of buttons that trigger pendable transactions.
+ * @param items An array with the name of the item to be obtained in each transaction.
+ * @param parametrizeAction The action to execute when a button is clicked,
+ * parametrized with the item corresponding to said button.
+ * @param urlFromTX a function that returns a transaction URL when called
+ * with a transaction hash.
+ * @parent The HTML object the list of buttons is going to be appended to.
+ */
 exports.addPendableTxButtons = (items, parametrizeAction, urlFromTx, parent) => {
   const listGroup = $('<div>').addClass('list-group align-items-center');
   items.forEach(item => {
@@ -65,6 +79,12 @@ exports.addPendableTxButtons = (items, parametrizeAction, urlFromTx, parent) => 
   parent.append(listGroup);
 };
 
+/*
+ * Creates an HTML list showing recipe results and their ingredients.
+ * @param recipes An array of recipes, consisting of results, ingredients, and
+ * amounts.
+ * @parent The HTML object the list of recipes is going to be appended to.
+ */
 exports.addIngredientsList = (recipes, parent) => {
   recipes.forEach(recipe => {
     const title = $(`<h6>${recipe.result}</h6>`).addClass('first-letter');
@@ -86,10 +106,17 @@ exports.addIngredientsList = (recipes, parent) => {
   });
 };
 
+/*
+ * Sets the current Ethereum account number.
+ */
 exports.setAccount = (account) => {
   $('#user-account').text(account);
 };
 
+/*
+ * Sets the current block. This function should be called every time a new
+ * block is mined.
+ */
 exports.setBlock = (block) => {
   // On the first call, view.block has not been set yet
   if (typeof view.block === 'undefined') {
@@ -104,29 +131,49 @@ exports.setBlock = (block) => {
   $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
 };
 
+/*
+ * Shows a MetaMask badge.
+ */
 exports.showMetaMaskBadge = () => {
   $('#using-metamask').css('display', 'inline');
 };
 
+/*
+ * Sets the name of the current Ethereum network.
+ */
 exports.setEthnetName = (netName) => {
   $('#network').text(netName);
 };
 
+/*
+ * Shows an unclosable modal dialog, used to display error messages.
+ */
 exports.showModalError = (content) => {
   $('#modal-body').empty();
   $('#modal-body').append($(content));
   $('#modal-dialog').modal('show');
 };
 
+/*
+ * Hides the unclosable error modal dialog.
+ */
 exports.hideModalError = () => {
   $('#modal-dialog').modal('hide');
 };
 
+/*
+ * Generates a successful transaction toast.
+ * @param tx The transaction hash.
+ * @param url (optional) A link to where more information about the transaction
+ * can be found.
+ */
 function toastSuccessfulTx(tx, url) {
-  console.log(url);
   toastr['success'](url ? `<a href=${url} target="_blank">${tx}</a>` : tx, 'Broadcasted TX!');
 }
 
+/*
+ * Generates a failed transaction toast.
+ */
 function toastErrorTx() {
   toastr['error']('Failed to broadcast TX');
 }
@@ -144,4 +191,6 @@ toastr.options = {
   'hideMethod': 'fadeOut'
 };
 
+// This causes moment to only show 'a few seconds ago' for the first
+// 5 seconds after a timestamp.
 moment.relativeTimeThreshold('ss', 5);

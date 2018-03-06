@@ -2,20 +2,26 @@ const ethnet = require('./ethnet');
 const view = require('./view');
 const error = require('./error');
 
+// Module storage
 const app = {};
 
 window.addEventListener('load', async () => {
-  ethnet.init();
-  init();
+  if (ethnet.init()) {
+    // Nothing to do if the ethnet failed to initialize
+    init();
+  }
 });
 
 async function init() {
   // Get the deployed game contract
   app.crafty = await ethnet.getDeployedCrafty();
+  if (typeof app.crafty === 'undefined') {
+    // Nothing to do if no Crafty object was created
+    return;
+  }
 
-  // Load the game rules
-  app.rules = await $.getJSON('rules.json');
-  displayRules();
+  // Build the UI
+  await buildUI();
 
   // Account changes trigger an inventory update
   ethnet.onAccountChange(account => {
@@ -36,11 +42,15 @@ async function init() {
   });
 }
 
-function displayRules() {
+async function buildUI() {
+  // The UI is built based on the set of rules
+  app.rules = await $.getJSON('rules.json');
+
   // Inventory
-  app.itemAmountUpdaters = {};
-  $.extend(app.itemAmountUpdaters, view.addItemList(app.rules.basic, $('#basic-item-inv')));
-  $.extend(app.itemAmountUpdaters, view.addItemList(app.rules.recipes.map(rec => rec.result), $('#adv-item-inv')));
+  const basicItemAmountUpdaters = view.addItemList(app.rules.basic, $('#basic-item-inv'));
+  const advItemAmountUpdaters = view.addItemList(app.rules.recipes.map(rec => rec.result), $('#adv-item-inv'));
+
+  app.itemAmountUpdaters = Object.assign({}, basicItemAmountUpdaters, advItemAmountUpdaters);
 
   // Actions
   view.addPendableTxButtons(app.rules.basic, getCraftyAcquire, ethnet.txUrlGen(), $('#mine-actions'));
@@ -51,6 +61,8 @@ function displayRules() {
 }
 
 function updateInventory() {
+  // Each itemAmountUpdater holds the name of the item, and a function that
+  // updates the UI when called with the amount of said item
   Object.entries(app.itemAmountUpdaters).forEach(async ([item, updater]) => {
     const amount = await getCraftyAmount(item)();
     updater(amount);

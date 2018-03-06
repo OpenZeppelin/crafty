@@ -1,12 +1,16 @@
 const view = require('./view');
 const error = require('./error');
 
+// Module storage
 const ethnet = {};
 
+/*
+ * Initializes the ethnet module.
+ * @returns true when initialization is successful.
+ */
 exports.init = () => {
   if (typeof web3 === 'undefined') {
     error.noEthBrowser();
-    return;
   }
 
   // Create a new web3 object using the current provider
@@ -18,8 +22,14 @@ exports.init = () => {
   if (ethnet.web3.currentProvider.isMetaMask) {
     view.showMetaMaskBadge();
   }
+
+  return true;
 };
 
+/*
+ * Creates a crafty contract object, used to interact with a deployed instance.
+ * @returns the created contract, or undefined if one wasn't found.
+ */
 exports.getDeployedCrafty = async () => {
   // We need to figure out in which network we're in to fetch the appropiate
   // contract address
@@ -46,6 +56,11 @@ exports.getDeployedCrafty = async () => {
   return contract.at(craftyAddress);
 };
 
+/*
+ * Registers a callback to be called whenever the Ethereum account changes
+ * on the Ethereum browser. The callback is also called immediately.
+ * @param handler A function that receives an Ethereum account.
+ */
 exports.onAccountChange = (handler) => {
   ethnet.currentAccount = ethnet.web3.eth.accounts[0];
   // Call the handler callback once with the current account
@@ -64,6 +79,11 @@ exports.onAccountChange = (handler) => {
   }, 100);
 };
 
+/*
+ * Registers a callback to be called whenever a new block is mined. The
+ * callback is also called immediately.
+ * @param handler A function that receives a block.
+ */
 exports.onNewBlock = async (handler) => {
   ethnet.currentBlock = await ethnet.web3.eth.getBlockAsync('latest');
   // Call the handler callback once with the current block
@@ -82,18 +102,27 @@ exports.onNewBlock = async (handler) => {
   }, 1000);
 };
 
+/*
+ * Returns a function that generates an URL from a transaction hash, linking to
+ * information about that transaction.
+ */
 exports.txUrlGen = () => {
   return netInfo[ethnet.netId] ? netInfo[ethnet.netId].txUrlGen : () => '';
 };
 
+/*
+ * Returns the address of a known deployed crafty contract for a given network
+ * id.
+ */
 function netCraftyAddress(netId) {
   const craftyAddresses = {
     '3': '0x15d3a47ed3ad89790e5c1f65c98aee1169fe28cd'
   };
 
-  return craftyAddresses[netId] || '0xec0caff17f1588bb6559bb9b7614471adf15adee'; // Replace for local address during development
+  return craftyAddresses[netId] || '0x0adb52d48caad27516c81ce17849148d87f0a22b'; // Replace for local address during development
 }
 
+// Misc information about the different networks
 const netInfo = {
   '1': {
     'name': 'mainnet',
