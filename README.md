@@ -8,7 +8,7 @@ A decentralized token crafting and trading game, running on the Ethereum network
 
 The game revolves around the [`Crafty`](https://github.com/nventuro/crafty/blob/master/contracts/Crafty.sol) and [`CraftableToken`](https://github.com/nventuro/crafty/blob/master/contracts/CraftableToken.sol) (craftable) contracts.
 
-`Crafty` is the 'game' contract, and is the one players interact directly with. It allows acquisition of new basic craftables, and mixing of them to create more advanced ones. The game owner has the capability to add new craftables and recipes, but as of now the game is static, and the available craftables and their recipes are described by the[the rules file](https://github.com/nventuro/crafty/tree/master/app/rules.json).
+`Crafty` is the 'game' contract, and is the one players interact directly with. It allows acquisition of new basic craftables, and mixing of them to create more advanced ones. The game owner has the capability to add new craftables and recipes, but as of now the game is static, and the available craftables and their recipes are described by [the rules file](https://github.com/nventuro/crafty/tree/master/app/rules.json).
 
 The `CraftableToken`s themselves are ERC20 tokens (minus the `name`, `symbol` and `decimals` fields), and can therefore be freely traded among players. These tokens are acquired by interacting with the `Crafty` contract, which has the authority to create new tokens, and destroy them when they are used as recipe ingredients.
 
