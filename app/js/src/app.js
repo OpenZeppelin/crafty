@@ -12,6 +12,7 @@ window.addEventListener('load', () => {
 async function init() {
   // Get the deployed game contract
   app.crafty = await ethnet.getDeployedCrafty();
+
   if (!app.crafty) {
     // Nothing to do if no Crafty object was created
     return;
@@ -61,7 +62,7 @@ function updateInventory() {
   // Each itemAmountUpdater holds the name of the item, and a function that
   // updates the UI when called with the amount of said item
   Object.entries(app.itemAmountUpdaters).forEach(async ([item, updater]) => {
-    const amount = await app.crafty.getAmount(item)();
+    const amount = await app.crafty.getAmount(item);
     updater(amount);
   });
 }
