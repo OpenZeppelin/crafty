@@ -12,6 +12,7 @@ window.addEventListener('load', () => {
 async function init() {
   // Get the deployed game contract
   app.crafty = await ethnet.getDeployedCrafty();
+
   if (!app.crafty) {
     // Nothing to do if no Crafty object was created
     return;
@@ -50,8 +51,8 @@ async function buildUI() {
   app.itemAmountUpdaters = Object.assign({}, basicItemAmountUpdaters, advItemAmountUpdaters);
 
   // Actions
-  view.addPendableTxButtons(app.rules.basic, getCraftyAcquire, ethnet.txUrlGen(), $('#mine-actions'));
-  view.addPendableTxButtons(app.rules.recipes.map(rec => rec.result), getCraftyAcquire, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(app.rules.basic, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
+  view.addPendableTxButtons(app.rules.recipes.map(rec => rec.result), app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
 
   // Recipes
   view.addIngredientsList(app.rules.recipes, $('#recipes'));
@@ -61,23 +62,7 @@ function updateInventory() {
   // Each itemAmountUpdater holds the name of the item, and a function that
   // updates the UI when called with the amount of said item
   Object.entries(app.itemAmountUpdaters).forEach(async ([item, updater]) => {
-    const amount = await getCraftyAmount(item)();
+    const amount = await app.crafty.getAmount(item);
     updater(amount);
   });
-}
-
-function getCraftyAcquire(item) {
-  return app.crafty[`acquire${pascalify(item)}`];
-}
-
-function getCraftyAmount(item) {
-  return app.crafty[`amount${pascalify(item)}`];
-}
-
-function capitalize(str) {
-  return str[0].toUpperCase() + str.slice(1);
-}
-
-function pascalify(str) {
-  return str.replace('-', ' ').split(' ').reduce((accum, str) => accum.concat(capitalize(str)), '');
 }

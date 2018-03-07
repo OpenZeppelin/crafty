@@ -58,7 +58,7 @@ exports.addPendableTxButtons = (items, parametrizeAction, urlFromTx, parent) => 
 
       try {
         // The action to execute is the result of parametrizing it with the item
-        const result = await parametrizeAction(item)();
+        const result = await parametrizeAction(item);
         toastSuccessfulTx(result.tx, urlFromTx(result.tx));
 
       } catch (e) {

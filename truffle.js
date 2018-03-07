@@ -13,7 +13,8 @@ module.exports = {
       provider: function() {
         return new HDWalletProvider(process.env.WALLET_MNEMONIC, `https://ropsten.infura.io/${process.env.INFURA_API_KEY}`)
       },
-      network_id: 3
+      network_id: 3,
+      gas: 4600000
     },
 
     rinkeby: {
@@ -25,7 +26,7 @@ module.exports = {
   },
 
   mocha: {
-    timeout: 6000,
-    slow: 1000
+    timeout: 10000,
+    slow: 3000
   }
 };
