@@ -17,6 +17,9 @@ h1 {
   max-width: 60%;
   padding: 3px 10px;
 }
+.list-group-item:disabled {
+  background-color: rgb(150, 150, 150);
+}
 .list-group-item {
   background-color: rgb(210, 210, 210);
   width: 170px;

@@ -31,7 +31,12 @@ exports.addItemList = (craftables, parent) => {
  * parametrized with the item corresponding to said button.
  * @param urlFromTX a function that returns a transaction URL when called
  * with a transaction hash.
- * @parent The HTML object the list of buttons is going to be appended to.
+ * @param parent The HTML object the list of buttons is going to be appended to.
+ * An enableCraft function is added to the UI property of each craftable, which
+ * receives a boolean value indicating if it can be crafted or not, and updates
+ * the DOM.
+ * @returns An object mapping item names to a function that enables or disables
+ * the associated button.
  */
 exports.addPendableTxButtons = (craftables, parametrizeAction, urlFromTx, parent) => {
   const listGroup = $('<div>').addClass('list-group align-items-center');
@@ -39,6 +44,10 @@ exports.addPendableTxButtons = (craftables, parametrizeAction, urlFromTx, parent
     // The title of the button will reflect if transactions are pending
     const button = $(`<button type="button" title="">Get ${craftable.name}</button>`);
     button.addClass('list-group-item').addClass('list-group-item-action d-flex justify-content-between align-items-center');
+
+    craftable.ui.enableCraft = enabled => {
+      button.prop('disabled', !enabled);
+    };
 
     // A badge will track the number of pending transactions
     const badge = $('<span>').addClass('badge badge-secondary badge-pill');
