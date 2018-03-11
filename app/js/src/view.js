@@ -2,46 +2,42 @@
 const view = {};
 
 /*
- * Creates an HTML list of items, displaying name and value.
- * @param items An array with the name of each item.
+ * Creates an HTML list of item names, displaying name and value.
+ * @param craftables An array of craftables.
  * @param parent The HTML object the list is going to be appended to.
- * @returns An object mapping item names to a function that receives
- * a new item value and updates the DOM.
+ * An updateAmount function is added to the UI property of each craftable,
+ * which receives a new craftable amount and updates the DOM.
  */
-exports.addItemList = (items, parent) => {
-  const itemAmountUpdaters = {};
-
+exports.addItemList = (craftables, parent) => {
   const list = $('<ul>');
-  items.forEach(item => {
-    const li = $(`<li>${item}: </li>`).addClass('first-letter').append();
+  craftables.forEach(craftable => {
+    const li = $(`<li>${craftable.name}: </li>`).addClass('first-letter').append();
     const span = $('<span>');
 
     li.append(span);
     list.append(li);
 
-    itemAmountUpdaters[item] = newVal => {
+    craftable.ui.updateAmount = newVal => {
       span.text(newVal);
     };
   });
   parent.append(list);
-
-  return itemAmountUpdaters;
 };
 
 /*
  * Creates a set of buttons that trigger pendable transactions.
- * @param items An array with the name of the item to be obtained in each transaction.
+ * @param items An array of the craftables to be obtained in each transaction.
  * @param parametrizeAction The action to execute when a button is clicked,
  * parametrized with the item corresponding to said button.
  * @param urlFromTX a function that returns a transaction URL when called
  * with a transaction hash.
  * @parent The HTML object the list of buttons is going to be appended to.
  */
-exports.addPendableTxButtons = (items, parametrizeAction, urlFromTx, parent) => {
+exports.addPendableTxButtons = (craftables, parametrizeAction, urlFromTx, parent) => {
   const listGroup = $('<div>').addClass('list-group align-items-center');
-  items.forEach(item => {
+  craftables.forEach(craftable => {
     // The title of the button will reflect if transactions are pending
-    const button = $(`<button type="button" title="">Get ${item}</button>`);
+    const button = $(`<button type="button" title="">Get ${craftable.name}</button>`);
     button.addClass('list-group-item').addClass('list-group-item-action d-flex justify-content-between align-items-center');
 
     // A badge will track the number of pending transactions
@@ -57,8 +53,8 @@ exports.addPendableTxButtons = (items, parametrizeAction, urlFromTx, parent) => 
       button.attr('title', 'Pending TXs');
 
       try {
-        // The action to execute is the result of parametrizing it with the item
-        const result = await parametrizeAction(item);
+        // The action to execute is the result of parametrizing it with the craftable name
+        const result = await parametrizeAction(craftable.name);
         toastSuccessfulTx(result.tx, urlFromTx(result.tx));
 
       } catch (e) {

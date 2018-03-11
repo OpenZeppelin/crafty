@@ -53,16 +53,12 @@ async function loadCraftables() {
 }
 
 function buildUI() {
-  const basicItems = app.craftables.filter(craftable => craftable.ingredients.length === 0).map(craftable => craftable.name);
-  const advItems = app.craftables.filter(craftable => craftable.ingredients.length > 0).map(craftable => craftable.name);
+  const basicItems = app.craftables.filter(craftable => craftable.ingredients.length === 0);
+  const advItems = app.craftables.filter(craftable => craftable.ingredients.length > 0);
 
   // Inventory
-  const basicItemAmountUpdaters = view.addItemList(basicItems, $('#basic-item-inv'));
-  const advItemAmountUpdaters = view.addItemList(advItems, $('#adv-item-inv'));
-
-  Object.entries(Object.assign({}, basicItemAmountUpdaters, advItemAmountUpdaters)).forEach(([item, updater]) => {
-    app.craftables.find(craftable => craftable.name === item).ui.amountUpdater = updater;
-  });
+  view.addItemList(basicItems, $('#basic-item-inv'));
+  view.addItemList(advItems, $('#adv-item-inv'));
 
   // Actions
   view.addPendableTxButtons(basicItems, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
@@ -75,6 +71,6 @@ function buildUI() {
 function updateInventory() {
   app.craftables.forEach(async (craftable) => {
     const amount = await app.crafty.getAmount(craftable.name);
-    craftable.ui.amountUpdater(amount);
+    craftable.ui.updateAmount(amount);
   });
 }
