@@ -47,9 +47,10 @@ async function loadCraftables() {
   const rules = await $.getJSON('rules.json');
   app.craftables = rules.craftables;
 
-  app.craftables.forEach(craftable => {
+  await Promise.all(app.craftables.map(async (craftable) => {
+    craftable.address = await app.crafty.getCraftable(craftable.name);
     craftable.ui = {}; // The UI property will later store callbacks related to this craftable
-  });
+  }));
 }
 
 function buildUI() {
@@ -61,8 +62,8 @@ function buildUI() {
   view.addItemList(advItems, $('#adv-item-inv'));
 
   // Actions
-  view.addPendableTxButtons(basicItems, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
-  view.addPendableTxButtons(advItems, app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(basicItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
+  view.addPendableTxButtons(advItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
 
   // Recipes
   view.addIngredientsList(app.craftables.filter(craftable => craftable.ingredients.length > 0), $('#recipes'));
