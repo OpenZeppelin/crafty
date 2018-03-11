@@ -7,6 +7,8 @@ script:
   - npm test
 
 deploy:
+  edge:
+    branch: v1.8.47 # See https://github.com/travis-ci/travis-ci/issues/9312
   provider: pages
   skip_cleanup: true
   local_dir: app
