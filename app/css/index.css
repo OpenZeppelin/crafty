@@ -33,15 +33,3 @@ h1 {
   outline: none !important;
   box-shadow: none !important;
 }
-.tmp-clipboard {
-  position: 'fixed';
-  top: 0;
-  left: 0;
-  width: '2em';
-  height: '2em';
-  padding: 0;
-  border: 'none';
-  outline: 'none';
-  box-shadow: 'none';
-  background: 'transparent';
-}

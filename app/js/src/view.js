@@ -1,3 +1,5 @@
+const toClipboard = require('copy-to-clipboard');
+
 // Module storage
 const view = {};
 
@@ -16,23 +18,16 @@ exports.addItemList = (craftables, parent) => {
 
     const addressButton = $('<button>').addClass('btn btn-secondary btn-sm btn-mini').text('ERC20').css({'outline': 'none'});
     addressButton.click(() => {
-      const tmp = $('<textarea>').addClass('tmp-clipboard');
-
-      tmp.text(craftablea.address);
-
-      $(document.body).append(tmp);
-      tmp.select();
-      document.execCommand('copy');
-      tmp.remove();
-
-      toastTokenAddressCopied();
+      const copied = toClipboard(craftable.address);
+      toastTokenAddressCopied(copied);
     });
     li.append(addressButton);
 
-    const labelSpan = $('<span>')
+    const labelSpan = $('<span>');
     labelSpan.text(` ${craftable.name}: `).addClass('first-letter');
     li.append(labelSpan);
 
+    const amountSpan = $('<span>');
     craftable.ui.updateAmount = newVal => {
       amountSpan.text(newVal);
     };
@@ -178,9 +173,14 @@ exports.hideModalError = () => {
 
 /*
  * Generates an address copied to clipboard toast.
+ * @param copied The boolean result of the copy action.
  */
-function toastTokenAddressCopied() {
-  toastr["info"]("Token copied to clipboard");
+function toastTokenAddressCopied(copied) {
+  if (copied) {
+    toastr['info']('Token copied to clipboard');
+  } else {
+    toastr['warn']('Failed to copy token');
+  }
 }
 
 /*

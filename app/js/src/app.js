@@ -62,8 +62,8 @@ function buildUI() {
   view.addItemList(advItems, $('#adv-item-inv'));
 
   // Actions
-  view.addPendableTxButtons(basicItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
-  view.addPendableTxButtons(advItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(basicItems, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
+  view.addPendableTxButtons(advItems, app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
 
   // Recipes
   view.addIngredientsList(app.craftables.filter(craftable => craftable.ingredients.length > 0), $('#recipes'));
