@@ -3,99 +3,77 @@ const fs = require('fs');
 describe('Rules', () => {
   const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
 
-  describe('Basic items', () => {
+  describe('Craftables', () => {
     it('exist', () => {
-      assert.isAtLeast(rules.basic.length, 1);
+      assert.isAtLeast(rules.craftables.length, 1);
     });
 
-    it('are strings', () => {
-      rules.basic.forEach(item => {
-        assert.typeOf(item, 'string');
+    it('have string names', () => {
+      rules.craftables.forEach(craftable => {
+        assert.property(craftable, 'name');
+        assert.typeOf(craftable.name, 'string');
       });
     });
 
-    it('are unique', () => {
-      rules.basic.forEach(item => {
-        assert.strictEqual(rules.basic.filter(item_ => item_ === item).length, 1);
-      });
-    });
-  });
-
-  describe('Recipes', () => {
-    it('exist', () => {
-      assert.isAtLeast(rules.recipes.length, 1);
-    });
-
-    it('results are strings', () => {
-      rules.recipes.forEach(rec => {
-        assert.typeOf(rec.result, 'string');
+    it('names are unique', () => {
+      rules.craftables.forEach(craftable => {
+        assert.lengthOf(rules.craftables.filter(_craftable => _craftable.name === craftable.name), 1);
       });
     });
 
-    // Multiple recipes for the same result (different ingredients) could be later added
-    it('results are unique', () => {
-      rules.recipes.forEach(rec => {
-        assert.strictEqual(rules.recipes.filter(rec_ => rec_.result === rec.result).length, 1);
+    it('have a list of ingredients', () => {
+      rules.craftables.forEach(craftable => {
+        assert.property(craftable, 'ingredients');
+        assert.instanceOf(craftable.ingredients, Array);
       });
     });
 
-    it('results are not basic items', () => {
-      rules.recipes.forEach(rec => {
-        assert.strictEqual(rules.basic.filter(res => res === rec.result).length, 0);
-      });
-    });
+    it('ingredients have a string name and natural number amount', () => {
+      rules.craftables.forEach(craftable => {
+        craftable.ingredients.forEach(ingredient => {
+          assert.property(ingredient, 'name');
+          assert.typeOf(ingredient.name, 'string');
 
-    it('have ingredients', () => {
-      rules.recipes.forEach(rec => {
-        assert.isAtLeast(rec.ingredients.length, 1);
-      });
-    });
-
-    it('results are not ingredients', () => {
-      rules.recipes.forEach(rec => {
-        assert.strictEqual(rec.ingredients.filter(ing => ing.name === rec.result).length, 0);
-      });
-    });
-
-    it('ingredients are unique', () => {
-      rules.recipes.forEach(rec => {
-        rec.ingredients.forEach(ing => {
-          assert.strictEqual(rec.ingredients.filter(_ing => _ing.name === ing.name).length , 1);
+          assert.property(ingredient, 'amount');
+          assert.typeOf(ingredient.amount, 'number');
+          assert.isAtLeast(ingredient.amount, 1);
         });
       });
     });
 
-    it('ingredient amounts are natural numbers', () => {
-      rules.recipes.forEach(rec => {
-        rec.ingredients.forEach(ing => {
-          assert.isTrue(Number.isInteger(ing.amount) && ing.amount > 0);
+    it('ingredient names are unique', () => {
+      rules.craftables.forEach(craftable => {
+        craftable.ingredients.forEach(ingredient => {
+          assert.lengthOf(craftable.ingredients.filter(_ingredient => _ingredient.name === ingredient.name), 1);
         });
+      });
+    });
+
+    it('are not their own ingredient', () => {
+      rules.craftables.forEach(craftable => {
+        assert.lengthOf(craftable.ingredients.filter(ingredient => ingredient.name === craftable.name), 0);
       });
     });
 
     it('results are attainable', () => {
-      function isAttainable(item) {
-        // An item is attainable if it is a basic item, or the result of a recipe
-        // with attainable ingredients
+      function assertAttainable(craftable) {
+        // A craftable is attainable if it has no ingredients, or if all if its
+        // ingredients are attainable
 
-        if (rules.basic.indexOf(item) === -1) {
-          return true;
+        if (craftable.ingredients.length === 0) {
+          return;
 
         } else {
-          const resultRecipe = rules.recipes.filter(rec => rec.result === item);
-
-          if (resultRecipe.length > 0) {
-            assert.strictEqual(resultRecipe.length, 1);
-            return resultRecipe[0].ingredients.map(ing => ing.name).every(isAttainable);
-
-          } else {
-            return false;
-          }
+          const ingredientCraftables = craftable.ingredients.map(ingredient => rules.craftables.filter(_craftable => _craftable.name === ingredient.name));
+          ingredientCraftables.forEach(ingredientCraftable => {
+            assert.lengthOf(ingredientCraftable, 1);
+            assertAttainable(ingredientCraftable[0]);
+          });
         }
       }
 
-      rules.recipes.forEach(rec => {
-        assert.isTrue(isAttainable(rec.result));
+      rules.craftables.forEach(craftable => {
+        assertAttainable(craftable);
       });
     });
   });

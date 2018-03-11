@@ -1,13 +1,23 @@
 {
-  "basic": [
-    "wood",
-    "stone",
-    "bronze",
-    "iron"
-  ],
-  "recipes": [
+  "craftables": [
     {
-      "result": "stone sword",
+      "name": "wood",
+      "ingredients": [
+      ]
+    }, {
+      "name": "stone",
+      "ingredients": [
+      ]
+    }, {
+      "name": "bronze",
+      "ingredients": [
+      ]
+    }, {
+      "name": "iron",
+      "ingredients": [
+      ]
+    }, {
+      "name": "stone sword",
       "ingredients": [
         {
           "name": "wood",
@@ -18,7 +28,7 @@
         }
       ]
     }, {
-      "result": "bronze sword",
+      "name": "bronze sword",
       "ingredients": [
         {
           "name": "wood",
@@ -29,7 +39,7 @@
         }
       ]
     }, {
-      "result": "iron sword",
+      "name": "iron sword",
       "ingredients": [
         {
           "name": "wood",
@@ -40,7 +50,7 @@
         }
       ]
     }, {
-      "result": "tri-sword",
+      "name": "tri-sword",
       "ingredients": [
         {
           "name": "stone sword",

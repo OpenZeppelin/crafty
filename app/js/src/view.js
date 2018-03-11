@@ -87,7 +87,7 @@ exports.addPendableTxButtons = (items, parametrizeAction, urlFromTx, parent) => 
  */
 exports.addIngredientsList = (recipes, parent) => {
   recipes.forEach(recipe => {
-    const title = $(`<h6>${recipe.result}</h6>`).addClass('first-letter');
+    const title = $(`<h6>${recipe.name}</h6>`).addClass('first-letter');
     const list = $('<ul class="list-group list-group-flush float-right" style="margin-bottom: 1rem"></ul>');
     recipe.ingredients.forEach(ingredient => {
       const li = $(`<li class="list-group-item list-group-item-secondary">${ingredient.amount}x ${ingredient.name}</li>`);

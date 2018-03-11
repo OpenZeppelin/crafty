@@ -152,10 +152,6 @@ contract('Crafty', accounts => {
   describe('Official game', () => {
     const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
 
-    const basicCraftables = rules.basic;
-    const advCraftables = rules.recipes.map(rec => rec.result);
-    const craftables = basicCraftables.concat(advCraftables);
-
     beforeEach(async () => {
       await deployCraftyWithCraftables();
     });
@@ -166,53 +162,33 @@ contract('Crafty', accounts => {
     }
 
     it('player starts with no craftables', async () => {
-      const amounts = await Promise.all(craftables.map(item => crafty.getAmount(item, {from: player})));
+      const amounts = await Promise.all(rules.craftables.map(craftable => crafty.getAmount(craftable.name, {from: player})));
       assert(amounts.every(amount => amount.eq(0)));
     });
 
-    it('basic craftables can be acquired', async () => {
-      await Promise.all(basicCraftables.map(item => crafty.craft(item, {from: player})));
+    it('all craftables can be crafted', async () => {
+      async function craft(craftable) {
+        // Craft the required amount of each ingredient
+        await Promise.all(craftable.ingredients.map(ingredient => {
+          // Assume the ingredient exists and is unique
+          const ingredientCraftable = rules.craftables.filter(_craftable => _craftable.name === ingredient.name)[0];
 
-      const basicAmounts = await Promise.all(basicCraftables.map(item => crafty.getAmount(item, {from: player})));
-      const advAmounts = await Promise.all(advCraftables.map(item => crafty.getAmount(item, {from: player})));
-
-      assert(basicAmounts.every(amount => amount.eq(1)));
-      assert(advAmounts.every(amount => amount.eq(0)));
-    });
-
-    it('advanced craftables cannot be acquired with no materials', () => {
-      advCraftables.forEach(async item => {
-        await expectPromiseThrow(crafty.craft(item, {from: player}));
-      });
-    });
-
-    it('advanced craftables can be crafted', async () => {
-      function isBasic(ingredient) {
-        return rules.basic.indexOf(ingredient.name) !== -1;
-      }
-
-      async function craft(recipe) {
-        // Get all basic ingredients
-        await Promise.all(recipe.ingredients.filter(ing => isBasic(ing)).map(ing => {
-          // For each ingredient, get the required amount
-          return Promise.all(_.range(ing.amount).map(() => crafty.craft(ing.name, {from: player})));
+          return Promise.all(_.range(ingredient.amount).map(() => craft(ingredientCraftable)));
         }));
 
-        // For each advanced ingredient, get its ingredients, and craft it
-        await Promise.all(recipe.ingredients.filter(ing => !isBasic(ing)).map(ing => craft(rules.recipes.filter(rec_ => rec_.result === ing.name)[0])));
-
-        await crafty.craft(recipe.result, {from: player});
+        await crafty.craft(craftable.name, {from: player});
       }
 
-      // Each recipe will be tested with a new contract, to ensure an empty starting inventory
-      for (const recipe of rules.recipes) { // eslint-disable-line no-await-in-loop
+      // Each craftable will be tested with a new contract, to ensure an empty starting inventory
+      for (const craftable of rules.craftables) { // eslint-disable-line no-await-in-loop
         await deployCraftyWithCraftables();
 
-        await craft(recipe);
+        await craft(craftable);
 
-        const result = recipe.result;
-        const resultAmount = await crafty.getAmount(result, {from: player});
-        const othersAmount = await Promise.all(craftables.filter(item => item !== result).map(item => crafty.getAmount(item, {from: player})));
+        const resultAmount = await crafty.getAmount(craftable.name, {from: player});
+        const othersAmount = await Promise.all(rules.craftables
+          .filter(_craftable => _craftable.name !== craftable.name)
+          .map(_craftable => crafty.getAmount(_craftable.name, {from: player})));
 
         assert(resultAmount.eq(1));
         assert(othersAmount.every(amount => amount.eq(0)));

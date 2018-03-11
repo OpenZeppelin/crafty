@@ -44,18 +44,21 @@ async function buildUI() {
   // The UI is built based on the set of rules
   app.rules = await $.getJSON('rules.json');
 
+  const basicItems = app.rules.craftables.filter(craftable => craftable.ingredients.length === 0);
+  const advItems = app.rules.craftables.filter(craftable => craftable.ingredients.length > 0);
+
   // Inventory
-  const basicItemAmountUpdaters = view.addItemList(app.rules.basic, $('#basic-item-inv'));
-  const advItemAmountUpdaters = view.addItemList(app.rules.recipes.map(rec => rec.result), $('#adv-item-inv'));
+  const basicItemAmountUpdaters = view.addItemList(basicItems.map(craftable => craftable.name), $('#basic-item-inv'));
+  const advItemAmountUpdaters = view.addItemList(advItems.map(craftable => craftable.name), $('#adv-item-inv'));
 
   app.itemAmountUpdaters = Object.assign({}, basicItemAmountUpdaters, advItemAmountUpdaters);
 
   // Actions
-  view.addPendableTxButtons(app.rules.basic, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
-  view.addPendableTxButtons(app.rules.recipes.map(rec => rec.result), app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(basicItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
+  view.addPendableTxButtons(advItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
 
   // Recipes
-  view.addIngredientsList(app.rules.recipes, $('#recipes'));
+  view.addIngredientsList(advItems, $('#recipes'));
 }
 
 function updateInventory() {
