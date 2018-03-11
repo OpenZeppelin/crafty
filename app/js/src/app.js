@@ -18,8 +18,11 @@ async function init() {
     return;
   }
 
+  // The UI is built based on the available craftables
+  await loadCraftables();
+
   // Build the UI
-  await buildUI();
+  buildUI();
 
   // Account changes trigger an inventory update
   ethnet.onAccountChange(account => {
@@ -40,32 +43,38 @@ async function init() {
   });
 }
 
-async function buildUI() {
-  // The UI is built based on the set of rules
-  app.rules = await $.getJSON('rules.json');
+async function loadCraftables() {
+  const rules = await $.getJSON('rules.json');
+  app.craftables = rules.craftables;
 
-  const basicItems = app.rules.craftables.filter(craftable => craftable.ingredients.length === 0);
-  const advItems = app.rules.craftables.filter(craftable => craftable.ingredients.length > 0);
+  app.craftables.forEach(craftable => {
+    craftable.ui = {}; // The UI property will later store callbacks related to this craftable
+  });
+}
+
+function buildUI() {
+  const basicItems = app.craftables.filter(craftable => craftable.ingredients.length === 0).map(craftable => craftable.name);
+  const advItems = app.craftables.filter(craftable => craftable.ingredients.length > 0).map(craftable => craftable.name);
 
   // Inventory
-  const basicItemAmountUpdaters = view.addItemList(basicItems.map(craftable => craftable.name), $('#basic-item-inv'));
-  const advItemAmountUpdaters = view.addItemList(advItems.map(craftable => craftable.name), $('#adv-item-inv'));
+  const basicItemAmountUpdaters = view.addItemList(basicItems, $('#basic-item-inv'));
+  const advItemAmountUpdaters = view.addItemList(advItems, $('#adv-item-inv'));
 
-  app.itemAmountUpdaters = Object.assign({}, basicItemAmountUpdaters, advItemAmountUpdaters);
+  Object.entries(Object.assign({}, basicItemAmountUpdaters, advItemAmountUpdaters)).forEach(([item, updater]) => {
+    app.craftables.find(craftable => craftable.name === item).ui.amountUpdater = updater;
+  });
 
   // Actions
-  view.addPendableTxButtons(basicItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
-  view.addPendableTxButtons(advItems.map(craftable => craftable.name), app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(basicItems, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
+  view.addPendableTxButtons(advItems, app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
 
   // Recipes
-  view.addIngredientsList(advItems, $('#recipes'));
+  view.addIngredientsList(app.craftables.filter(craftable => craftable.ingredients.length > 0), $('#recipes'));
 }
 
 function updateInventory() {
-  // Each itemAmountUpdater holds the name of the item, and a function that
-  // updates the UI when called with the amount of said item
-  Object.entries(app.itemAmountUpdaters).forEach(async ([item, updater]) => {
-    const amount = await app.crafty.getAmount(item);
-    updater(amount);
+  app.craftables.forEach(async (craftable) => {
+    const amount = await app.crafty.getAmount(craftable.name);
+    craftable.ui.amountUpdater(amount);
   });
 }
