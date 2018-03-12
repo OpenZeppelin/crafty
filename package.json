@@ -19,6 +19,7 @@
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
     "browserify": "^16.1.0",
+    "copy-to-clipboard": "^3.0.8",
     "dotenv": "^5.0.1",
     "ganache-cli": "^6.0.3",
     "truffle": "^4.0.6",

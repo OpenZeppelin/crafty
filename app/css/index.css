@@ -22,6 +22,17 @@ h1 {
 }
 .list-group-item {
   background-color: rgb(210, 210, 210);
-  width: 170px;
   padding: 3px 10px;
+}
+.btn-mini {
+  padding: 0.0rem 0.2rem;
+  font-size: 0.6rem;
+}
+.btn-secondary {
+  background-color: transparent;
+  color: #6c757d;
+}
+.btn:focus, .btn:active {
+  outline: none !important;
+  box-shadow: none !important;
 }

@@ -47,9 +47,10 @@ async function loadCraftables() {
   const rules = await $.getJSON('rules.json');
   app.craftables = rules.craftables;
 
-  app.craftables.forEach(craftable => {
+  await Promise.all(app.craftables.map(async (craftable) => {
+    craftable.address = await app.crafty.getCraftable(craftable.name);
     craftable.ui = {}; // The UI property will later store callbacks related to this craftable
-  });
+  }));
 }
 
 function buildUI() {

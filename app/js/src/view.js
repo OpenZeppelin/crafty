@@ -1,25 +1,39 @@
+const toClipboard = require('copy-to-clipboard');
+
 // Module storage
 const view = {};
 
 /*
- * Creates an HTML list of item names, displaying name and value.
+ * Creates an HTML list of craftables, displaying name and value.
  * @param craftables An array of craftables.
  * @param parent The HTML object the list is going to be appended to.
  * An updateAmount function is added to the UI property of each craftable,
  * which receives a new craftable amount and updates the DOM.
  */
+
 exports.addItemList = (craftables, parent) => {
-  const list = $('<ul>');
+  const list = $('<ul>').addClass('list-group').css({'background-color': 'transparent'});
   craftables.forEach(craftable => {
-    const li = $(`<li>${craftable.name}: </li>`).addClass('first-letter').append();
-    const span = $('<span>');
+    const li = $('<li>').addClass('list-group-item').css({'background-color': 'transparent'}).addClass('border-0');
 
-    li.append(span);
-    list.append(li);
+    const addressButton = $('<button>').addClass('btn btn-secondary btn-sm btn-mini').text('ERC20').css({'outline': 'none'});
+    addressButton.click(() => {
+      const copied = toClipboard(craftable.address);
+      toastTokenAddressCopied(copied);
+    });
+    li.append(addressButton);
 
+    const labelSpan = $('<span>');
+    labelSpan.text(` ${craftable.name}: `).addClass('first-letter');
+    li.append(labelSpan);
+
+    const amountSpan = $('<span>');
     craftable.ui.updateAmount = newVal => {
-      span.text(newVal);
+      amountSpan.text(newVal);
     };
+    li.append(amountSpan);
+
+    list.append(li);
   });
   parent.append(list);
 };
@@ -95,7 +109,7 @@ exports.addIngredientsList = (recipes, parent) => {
     const title = $(`<h6>${recipe.name}</h6>`).addClass('first-letter');
     const list = $('<ul class="list-group list-group-flush float-right" style="margin-bottom: 1rem"></ul>');
     recipe.ingredients.forEach(ingredient => {
-      const li = $(`<li class="list-group-item list-group-item-secondary">${ingredient.amount}x ${ingredient.name}</li>`);
+      const li = $(`<li class="list-group-item list-group-item-secondary" style="width: 170px;">${ingredient.amount}x ${ingredient.name}</li>`);
       li.addClass('first-letter');
       list.append(li);
     });
@@ -165,6 +179,18 @@ exports.showModalError = (content) => {
 exports.hideModalError = () => {
   $('#modal-dialog').modal('hide');
 };
+
+/*
+ * Generates an address copied to clipboard toast.
+ * @param copied The boolean result of the copy action.
+ */
+function toastTokenAddressCopied(copied) {
+  if (copied) {
+    toastr['info']('Token copied to clipboard');
+  } else {
+    toastr['warn']('Failed to copy token');
+  }
+}
 
 /*
  * Generates a successful transaction toast.
