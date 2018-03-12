@@ -15,7 +15,7 @@
     <!-- jQuery (must be loaded before Bootstrap's JavaScript plugins) -->
     <script src="vendor/js/jquery-3.3.1.min.js" defer></script>
     <!-- Bootstrap -->
-    <script src="vendor/js/bootstrap.min.js" defer></script>
+    <script src="vendor/js/bootstrap.bundle.min.js" defer></script>
     <!-- web3 -->
     <script src="vendor/js/web3.min.js" defer></script>
     <!-- truffle contract -->
@@ -40,7 +40,7 @@
       <div class="row">
         <div class="col-4">
           <div class="row">
-            <div class="col">
+            <div class="col" data-toggle="tooltip" data-placement="left" title="The inventory is updated when new blocks are mined">
               <h4><b>Inventory</b></h4>
               <div class="row">
                 <div class="col" id="basic-item-inv">
@@ -56,6 +56,11 @@
           </div>
           <div class="row">
             <div class="col">
+              <hr width=90% size=5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" data-toggle="tooltip" data-placement="left" title="New blocks are mined every 15 seconds (on average)">
               <h6>Last block: <span id="last-block"></span></h6>
             </div>
           </div>
@@ -104,12 +109,10 @@
           <h6>Ethereum account: <b><span id="user-account"></span></b></h6>
           <h6>Network: <b><span id="network"></span></b></h6>
         </div>
-      </div>
-      <div class="row">
         <div class="col">
           <a href="https://github.com/nventuro/crafty" class="ssk ssk-icon ssk-lg ssk-github float-right"></a>
           <a id="using-metamask" href="https://metamask.io/" class="float-right" style="display: none;">
-            <img src="images/metamask-dark.png" style="height: 32px">
+            <img src="images/metamask-dark.png" style="height: 30px">
           </a>
         </div>
       </div>

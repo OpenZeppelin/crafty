@@ -4,13 +4,23 @@ const toClipboard = require('copy-to-clipboard');
 const view = {};
 
 /*
+ * Initializes the view.
+ */
+exports.init = () => {
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'hover'
+    });
+  });
+};
+
+/*
  * Creates an HTML list of craftables, displaying name and value.
  * @param craftables An array of craftables.
  * @param parent The HTML object the list is going to be appended to.
  * An updateAmount function is added to the UI property of each craftable,
  * which receives a new craftable amount and updates the DOM.
  */
-
 exports.addItemList = (craftables, parent) => {
   const list = $('<ul>').addClass('list-group').css({'background-color': 'transparent'});
   craftables.forEach(craftable => {
@@ -30,6 +40,7 @@ exports.addItemList = (craftables, parent) => {
     const amountSpan = $('<span>');
     craftable.ui.updateAmount = newVal => {
       amountSpan.text(newVal);
+      amountSpan.fadeOut(500, () =>amountSpan.fadeIn(500));
     };
     li.append(amountSpan);
 
@@ -199,7 +210,11 @@ function toastTokenAddressCopied(copied) {
  * can be found.
  */
 function toastSuccessfulTx(tx, url) {
-  toastr['success'](url ? `<a href=${url} target="_blank">${tx}</a>` : tx, 'Broadcasted TX!');
+  toastr['success'](tx, 'Broadcasted TX!', {onclick: () => {
+    if (url) {
+      window.open(url, '_blank');
+    }
+  }});
 }
 
 /*

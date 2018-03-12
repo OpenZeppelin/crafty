@@ -6,6 +6,8 @@ const error = require('./error');
 const app = {};
 
 window.addEventListener('load', () => {
+  view.init();
+
   init();
 });
 
