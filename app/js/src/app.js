@@ -68,9 +68,29 @@ function buildUI() {
   view.addIngredientsList(app.craftables.filter(craftable => craftable.ingredients.length > 0), $('#recipes'));
 }
 
-function updateInventory() {
+async function updateInventory() {
+  // We need to have the full updated inventory to be able to evaluate if an
+  // item can be crafted, so we update it all at once
+
+  const inventory = {};
+  await Promise.all(app.craftables.map(craftable => {
+    return app.crafty.getAmount(craftable.name).then(amount => {
+      inventory[craftable.name] = amount;
+    });
+  }));
+
+  // Then, update the displayed amount of each item, and its craftable status
+  // (if it applies)
+
   app.craftables.forEach(async (craftable) => {
-    const amount = await app.crafty.getAmount(craftable.name);
-    craftable.ui.updateAmount(amount);
+    craftable.ui.updateAmount(inventory[craftable.name]);
+    craftable.ui.enableCraft(isCraftable(craftable, inventory));
   });
+}
+
+function isCraftable(craftable, inventory) {
+  // Check all ingredients are present for the craftable
+  return craftable.ingredients.every(ingredient =>
+    inventory[ingredient.name] >= ingredient.amount
+  );
 }
