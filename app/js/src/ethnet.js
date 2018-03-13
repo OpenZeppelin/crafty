@@ -112,11 +112,11 @@ exports.onNewBlock = async (handler) => {
 };
 
 /*
- * Returns a function that generates an URL from a transaction hash, linking to
- * information about that transaction.
+ * Returns an URL from a transaction hash, linking to information about that
+ * transaction.
  */
-exports.txUrlGen = () => {
-  return netInfo[ethnet.netId] ? netInfo[ethnet.netId].txUrlGen : () => '';
+exports.txUrl = (tx) => {
+  return netInfo[ethnet.netId] ? netInfo[ethnet.netId].txUrlGen(tx) : '';
 };
 
 /*

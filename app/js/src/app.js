@@ -52,6 +52,7 @@ async function loadCraftables() {
   await Promise.all(app.craftables.map(async (craftable) => {
     craftable.address = await app.crafty.getCraftable(craftable.name);
     craftable.ui = {}; // The UI property will later store callbacks related to this craftable
+    craftable.ui.pendingTxs = 0;
   }));
 }
 
@@ -64,11 +65,30 @@ function buildUI() {
   view.addItemList(advItems, $('#adv-item-inv'));
 
   // Actions
-  view.addPendableTxButtons(basicItems, app.crafty.craft, ethnet.txUrlGen(), $('#mine-actions'));
-  view.addPendableTxButtons(advItems, app.crafty.craft, ethnet.txUrlGen(), $('#craft-actions'));
+  view.addPendableTxButtons(basicItems, onCraft, $('#mine-actions'));
+  view.addPendableTxButtons(advItems, onCraft, $('#craft-actions'));
 
   // Recipes
   view.addIngredientsList(app.craftables.filter(craftable => craftable.ingredients.length > 0), $('#recipes'));
+}
+
+async function onCraft(craftable) {
+  craftable.ui.pendingTxs += 1;
+
+  // This is an async call, so it won't block the click action
+  updateInventory();
+
+  try {
+    const result = await app.crafty.craft(craftable.name);
+    view.toastSuccessfulTx(result.tx, ethnet.txUrl(result.tx));
+
+  } catch (e) {
+    console.log(e);
+    view.toastErrorTx();
+
+  } finally {
+    craftable.ui.pendingTxs -= 1;
+  }
 }
 
 async function updateInventory() {
@@ -78,9 +98,16 @@ async function updateInventory() {
   const inventory = {};
   await Promise.all(app.craftables.map(craftable => {
     return app.crafty.getAmount(craftable.name).then(amount => {
-      inventory[craftable.name] = amount;
+      inventory[craftable.name] = Number(amount);
     });
   }));
+
+  app.craftables.forEach(craftable => {
+    inventory[craftable.name] += craftable.ui.pendingTxs;
+    craftable.ingredients.forEach(ingredient => {
+      inventory[ingredient.name] -= craftable.ui.pendingTxs * ingredient.amount;
+    });
+  });
 
   // Then, update the displayed amount of each item, and its craftable status
   // (if it applies)

@@ -40,7 +40,7 @@ exports.addItemList = (craftables, parent) => {
     const amountSpan = $('<span>');
     craftable.ui.updateAmount = newVal => {
       amountSpan.text(newVal);
-      amountSpan.fadeOut(500, () =>amountSpan.fadeIn(500));
+      amountSpan.fadeOut(300, () =>amountSpan.fadeIn(300));
     };
     li.append(amountSpan);
 
@@ -52,10 +52,6 @@ exports.addItemList = (craftables, parent) => {
 /*
  * Creates a set of buttons that trigger pendable transactions.
  * @param items An array of the craftables to be obtained in each transaction.
- * @param parametrizeAction The action to execute when a button is clicked,
- * parametrized with the item corresponding to said button.
- * @param urlFromTX a function that returns a transaction URL when called
- * with a transaction hash.
  * @param parent The HTML object the list of buttons is going to be appended to.
  * An enableCraft function is added to the UI property of each craftable, which
  * receives a boolean value indicating if it can be crafted or not, and updates
@@ -63,44 +59,21 @@ exports.addItemList = (craftables, parent) => {
  * @returns An object mapping item names to a function that enables or disables
  * the associated button.
  */
-exports.addPendableTxButtons = (craftables, parametrizeAction, urlFromTx, parent) => {
+exports.addPendableTxButtons = (craftables, onclick, parent) => {
   const listGroup = $('<div>').addClass('list-group align-items-center');
   craftables.forEach(craftable => {
     // The title of the button will reflect if transactions are pending
-    const button = $(`<button type="button" title="">Get ${craftable.name}</button>`);
+    const button = $(`<button type="button">Get ${craftable.name}</button>`);
     button.addClass('list-group-item').addClass('list-group-item-action d-flex justify-content-between align-items-center');
 
     craftable.ui.enableCraft = enabled => {
       button.prop('disabled', !enabled);
     };
 
-    // A badge will track the number of pending transactions
-    const badge = $('<span>').addClass('badge badge-secondary badge-pill');
-    button.append(badge);
-
-    let pendingTxs = 0;
-    button.click(async () => {
+    button.click(() => {
       button.blur(); // To prevent the button from remaining 'active'
 
-      pendingTxs += 1;
-      badge.text(pendingTxs);
-      button.attr('title', 'Pending TXs');
-
-      try {
-        // The action to execute is the result of parametrizing it with the craftable name
-        const result = await parametrizeAction(craftable.name);
-        toastSuccessfulTx(result.tx, urlFromTx(result.tx));
-
-      } catch (e) {
-        toastErrorTx();
-
-      } finally {
-        pendingTxs -= 1;
-        badge.text(pendingTxs > 0 ? pendingTxs : '');
-        if (pendingTxs === 0) {
-          button.attr('title', '');
-        }
-      }
+      onclick(craftable);
     });
 
     listGroup.append(button);
@@ -158,7 +131,6 @@ exports.setBlock = (block) => {
   }
 
   view.block = block;
-  $('#last-block').fadeOut(500, () => $('#last-block').fadeIn(500));
 };
 
 /*
@@ -209,20 +181,20 @@ function toastTokenAddressCopied(copied) {
  * @param url (optional) A link to where more information about the transaction
  * can be found.
  */
-function toastSuccessfulTx(tx, url) {
-  toastr['success'](tx, 'Broadcasted TX!', {onclick: () => {
+exports.toastSuccessfulTx = (tx, url) => {
+  toastr['success'](tx, 'Successful transaction!', {onclick: () => {
     if (url) {
       window.open(url, '_blank');
     }
   }});
-}
+};
 
 /*
  * Generates a failed transaction toast.
  */
-function toastErrorTx() {
-  toastr['error']('Failed to broadcast TX');
-}
+exports.toastErrorTx = () => {
+  toastr['error']('Transaction failed');
+};
 
 toastr.options = {
   'positionClass': 'toast-bottom-center',
