@@ -179,9 +179,9 @@ exports.hideModalError = () => {
  */
 function toastTokenAddressCopied(copied) {
   if (copied) {
-    toastr['info']('Token copied to clipboard');
+    toastr['info']('Token copied to clipboard', '' , {'positionClass': 'toast-bottom-center'});
   } else {
-    toastr['warning']('Failed to copy token');
+    toastr['warning']('Failed to copy token', '' , {'positionClass': 'toast-bottom-center'});
   }
 }
 
@@ -214,7 +214,7 @@ exports.toastErrorTx = () => {
 };
 
 toastr.options = {
-  'positionClass': 'toast-bottom-center',
+  'positionClass': 'toast-bottom-right',
   'preventDuplicates': false,
   'showDuration': '300',
   'hideDuration': '1000',
