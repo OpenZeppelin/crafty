@@ -95,8 +95,8 @@ async function onCraft(craftable) {
     const txHash = await app.crafty.craft.sendTransaction(craftable.name);
 
     craftable.ui.pendingTxs.push({hash: txHash});
-    // Trigger an inventory update to reflect the new pending transaction
-    updateInventory();
+    // Trigger a UI update to reflect the new pending transaction
+    updateUI();
 
   } catch (e) {
     // The transaction did not fail, it was simply never sent
@@ -110,40 +110,22 @@ async function onCraft(craftable) {
  * the pending lists.
  */
 async function updateInventory() {
-  // We need to have the full updated inventory to be able to evaluate if an
-  // item can be crafted, so we update it all at once
-  const inventory = {};
+  // Retrieve the new balances and store them in a temporary inventory
+  const newInventory = {};
   await Promise.all(app.craftables.map(craftable => {
     return app.crafty.getAmount(craftable.name).then(amount => {
-      inventory[craftable.name] = {
-        current: Number(amount) // The current balance in the blockchain
-      };
+      newInventory[craftable.name] = Number(amount);
     });
   }));
 
   await clearConfirmedTXs();
 
-  // Optimistically update the amounts (assuming the pending transactions will
-  // succeed)
-  app.craftables.forEach(craftable => {
-    // The current inventory is not updated, only the pending one, to prevent
-    // not-yet crafted craftables from being used as ingredients (which will
-    // likely fail)
-    inventory[craftable.name].pending = craftable.ui.pendingTxs.length;
+  // Only update the real inventory once all balances were retrieved and
+  // confirmed transactions removed, to prevent access during the update
+  app.inventory = newInventory;
 
-    // Ingredients of pending transactions, however, are subtracted from the
-    // current amount, to prevent them from being used again (this rolls back
-    // if the transaction fails)
-    craftable.ingredients.forEach(ingredient => {
-      inventory[ingredient.name].current -= craftable.ui.pendingTxs.length * ingredient.amount;
-    });
-  });
-
-  // Then, update the displayed amount of each item, and its craftable status
-  app.craftables.forEach(async (craftable) => {
-    craftable.ui.updateAmount(inventory[craftable.name].current, inventory[craftable.name].pending);
-    craftable.ui.enableCraft(isCraftable(craftable, inventory));
-  });
+  // Update the UI using the updated data
+  updateUI();
 }
 
 /*
@@ -174,12 +156,48 @@ async function clearConfirmedTXs() {
 }
 
 /*
+ * Updates the UI from the current inventory, without updating it.
+ */
+function updateUI() {
+  // Optimistically update the amounts (assuming the pending transactions will
+  // succeed). We work on temporary inventories, to prevent modifying the real
+  // one (which is only updated by reading from the blockchain).
+
+  const pendingInventory = {}; // Used to track pending craftables
+  const uiInventory = JSON.parse(JSON.stringify(app.inventory)); // Deep copy
+
+  // We need to calculate the whole optimistic inventory before the UI can be
+  // updated
+  app.craftables.forEach(craftable => {
+    const pendingAmount = craftable.ui.pendingTxs.length;
+
+    // Pending craftables are not added to the UI inventory to prevent not-yet
+    // crafted craftables from being used as ingredients (which will likely
+    // fail)
+    pendingInventory[craftable.name] = pendingAmount;
+
+    // Ingredients of pending transactions, however, are subtracted from the
+    // current amount, to prevent them from being used again (this will roll
+    // back if the transaction fails)
+    craftable.ingredients.forEach(ingredient => {
+      uiInventory[ingredient.name] -= pendingAmount * ingredient.amount;
+    });
+  });
+
+  app.craftables.forEach(craftable => {
+    // Then, update the displayed amount, and the craftability
+    craftable.ui.updateAmount(uiInventory[craftable.name], pendingInventory[craftable.name]);
+    craftable.ui.enableCraft(isCraftable(craftable, uiInventory));
+  });
+}
+
+/*
  * Calculates if a craftable can be crafted given the current balance in an
  * inventory.
  */
 function isCraftable(craftable, inventory) {
   // Check all ingredients are present for the craftable
   return craftable.ingredients.every(ingredient =>
-    inventory[ingredient.name].current >= ingredient.amount
+    inventory[ingredient.name] >= ingredient.amount
   );
 }
