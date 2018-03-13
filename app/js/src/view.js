@@ -50,8 +50,10 @@ exports.addItemList = (craftables, parent) => {
 };
 
 /*
- * Creates a set of buttons that trigger pendable transactions.
- * @param items An array of the craftables to be obtained in each transaction.
+ * Creates a set of buttons.
+ * @param items An array of the craftables to be crafted with each button.
+ * @param onclick A callback function to call with a craftable when its button
+ * is clicked.
  * @param parent The HTML object the list of buttons is going to be appended to.
  * An enableCraft function is added to the UI property of each craftable, which
  * receives a boolean value indicating if it can be crafted or not, and updates
@@ -59,7 +61,7 @@ exports.addItemList = (craftables, parent) => {
  * @returns An object mapping item names to a function that enables or disables
  * the associated button.
  */
-exports.addPendableTxButtons = (craftables, onclick, parent) => {
+exports.addCraftButtons = (craftables, onclick, parent) => {
   const listGroup = $('<div>').addClass('list-group align-items-center');
   craftables.forEach(craftable => {
     // The title of the button will reflect if transactions are pending
@@ -72,7 +74,6 @@ exports.addPendableTxButtons = (craftables, onclick, parent) => {
 
     button.click(() => {
       button.blur(); // To prevent the button from remaining 'active'
-
       onclick(craftable);
     });
 
@@ -171,7 +172,7 @@ function toastTokenAddressCopied(copied) {
   if (copied) {
     toastr['info']('Token copied to clipboard');
   } else {
-    toastr['warn']('Failed to copy token');
+    toastr['warning']('Failed to copy token');
   }
 }
 
@@ -187,6 +188,13 @@ exports.toastSuccessfulTx = (tx, url) => {
       window.open(url, '_blank');
     }
   }});
+};
+
+/*
+ * Generates a failed to send transaction toast.
+ */
+exports.toastFailedToSendTx = () => {
+  toastr['warning']('Failed to send a transaction');
 };
 
 /*

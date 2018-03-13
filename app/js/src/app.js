@@ -45,17 +45,29 @@ async function init() {
   });
 }
 
+/*
+ * Loads the game rules and creates the craftables data structure using that
+ * information.
+ */
 async function loadCraftables() {
   const rules = await $.getJSON('rules.json');
   app.craftables = rules.craftables;
 
   await Promise.all(app.craftables.map(async (craftable) => {
     craftable.address = await app.crafty.getCraftable(craftable.name);
-    craftable.ui = {}; // The UI property will later store callbacks related to this craftable
-    craftable.ui.pendingTxs = 0;
+
+    // The UI property is used to store view callbacks and other UI-related
+    // data
+    craftable.ui = {
+      pendingTxs: []
+    };
   }));
 }
 
+/*
+ * Builds the UI (inventory, actions, recipes) from the craftables data
+ * structure, adding UI callbacks to it.
+ */
 function buildUI() {
   const basicItems = app.craftables.filter(craftable => craftable.ingredients.length === 0);
   const advItems = app.craftables.filter(craftable => craftable.ingredients.length > 0);
@@ -65,36 +77,41 @@ function buildUI() {
   view.addItemList(advItems, $('#adv-item-inv'));
 
   // Actions
-  view.addPendableTxButtons(basicItems, onCraft, $('#mine-actions'));
-  view.addPendableTxButtons(advItems, onCraft, $('#craft-actions'));
+  view.addCraftButtons(basicItems, onCraft, $('#mine-actions'));
+  view.addCraftButtons(advItems, onCraft, $('#craft-actions'));
 
   // Recipes
   view.addIngredientsList(app.craftables.filter(craftable => craftable.ingredients.length > 0), $('#recipes'));
 }
 
+/*
+ * Calls the craft function on the contract, storing the transaction's hash to
+ * enable optimistic updates.
+ */
 async function onCraft(craftable) {
-  craftable.ui.pendingTxs += 1;
-
-  // This is an async call, so it won't block the click action
-  updateInventory();
-
   try {
-    const result = await app.crafty.craft(craftable.name);
-    view.toastSuccessfulTx(result.tx, ethnet.txUrl(result.tx));
+    // sendTransaction returns immediately after the transaction is broadcasted
+    // (i.e. after it is signed by the Ethereum Browser)
+    const txHash = await app.crafty.craft.sendTransaction(craftable.name);
+
+    craftable.ui.pendingTxs.push({hash: txHash});
+    // Trigger an inventory update to reflect the new pending transaction
+    updateInventory();
 
   } catch (e) {
-    console.log(e);
-    view.toastErrorTx();
-
-  } finally {
-    craftable.ui.pendingTxs -= 1;
+    // The transaction did not fail, it was simply never sent
+    view.toastFailedToSendTx();
   }
 }
 
+/*
+ * Fetches the current balance of each craftable (taking into account pending
+ * transactions) and updates the UI. Confirmed transactions are removed from
+ * the pending lists.
+ */
 async function updateInventory() {
   // We need to have the full updated inventory to be able to evaluate if an
   // item can be crafted, so we update it all at once
-
   const inventory = {};
   await Promise.all(app.craftables.map(craftable => {
     return app.crafty.getAmount(craftable.name).then(amount => {
@@ -102,22 +119,55 @@ async function updateInventory() {
     });
   }));
 
+  await clearConfirmedTXs();
+
+  // Optimistically update the amounts (assuming the pending transactions will
+  // succeed)
   app.craftables.forEach(craftable => {
-    inventory[craftable.name] += craftable.ui.pendingTxs;
+    inventory[craftable.name] += craftable.ui.pendingTxs.length;
     craftable.ingredients.forEach(ingredient => {
-      inventory[ingredient.name] -= craftable.ui.pendingTxs * ingredient.amount;
+      inventory[ingredient.name] -= craftable.ui.pendingTxs.length * ingredient.amount;
     });
   });
 
   // Then, update the displayed amount of each item, and its craftable status
   // (if it applies)
-
   app.craftables.forEach(async (craftable) => {
     craftable.ui.updateAmount(inventory[craftable.name]);
     craftable.ui.enableCraft(isCraftable(craftable, inventory));
   });
 }
 
+/*
+ * Removes all confirmed transactions from the pending transactions lists.
+ */
+async function clearConfirmedTXs() {
+  // We can't simply call filter because ethnet.isTxConfirmed is async, so we
+  // store that data along the hash, and then filter synchronously.
+  await Promise.all(app.craftables.map(async (craftable) => {
+    await Promise.all(craftable.ui.pendingTxs.map(async tx => {
+      tx.confirmed = await ethnet.isTxConfirmed(tx.hash);
+
+      if (tx.confirmed) {
+        // Confirmed transactions may have failed (asserts, etc.)
+        const successful = await ethnet.isTxSuccessful(tx.hash);
+        if (successful) {
+          view.toastSuccessfulTx(tx.hash, ethnet.txUrl(tx.hash));
+        } else {
+          view.toastErrorTx();
+        }
+      }
+    }));
+  }));
+
+  app.craftables.forEach(craftable => {
+    craftable.ui.pendingTxs = craftable.ui.pendingTxs.filter(tx => !tx.confirmed);
+  });
+}
+
+/*
+ * Calculates if a craftable can be crafted given an inventory.
+ */
 function isCraftable(craftable, inventory) {
   // Check all ingredients are present for the craftable
   return craftable.ingredients.every(ingredient =>
