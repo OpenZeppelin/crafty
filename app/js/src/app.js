@@ -115,7 +115,9 @@ async function updateInventory() {
   const inventory = {};
   await Promise.all(app.craftables.map(craftable => {
     return app.crafty.getAmount(craftable.name).then(amount => {
-      inventory[craftable.name] = Number(amount);
+      inventory[craftable.name] = {
+        current: Number(amount) // The current balance in the blockchain
+      };
     });
   }));
 
@@ -124,16 +126,22 @@ async function updateInventory() {
   // Optimistically update the amounts (assuming the pending transactions will
   // succeed)
   app.craftables.forEach(craftable => {
-    inventory[craftable.name] += craftable.ui.pendingTxs.length;
+    // The current inventory is not updated, only the pending one, to prevent
+    // not-yet crafted craftables from being used as ingredients (which will
+    // likely fail)
+    inventory[craftable.name].pending = craftable.ui.pendingTxs.length;
+
+    // Ingredients of pending transactions, however, are subtracted from the
+    // current amount, to prevent them from being used again (this rolls back
+    // if the transaction fails)
     craftable.ingredients.forEach(ingredient => {
-      inventory[ingredient.name] -= craftable.ui.pendingTxs.length * ingredient.amount;
+      inventory[ingredient.name].current -= craftable.ui.pendingTxs.length * ingredient.amount;
     });
   });
 
   // Then, update the displayed amount of each item, and its craftable status
-  // (if it applies)
   app.craftables.forEach(async (craftable) => {
-    craftable.ui.updateAmount(inventory[craftable.name]);
+    craftable.ui.updateAmount(inventory[craftable.name].current, inventory[craftable.name].pending);
     craftable.ui.enableCraft(isCraftable(craftable, inventory));
   });
 }
@@ -166,11 +174,12 @@ async function clearConfirmedTXs() {
 }
 
 /*
- * Calculates if a craftable can be crafted given an inventory.
+ * Calculates if a craftable can be crafted given the current balance in an
+ * inventory.
  */
 function isCraftable(craftable, inventory) {
   // Check all ingredients are present for the craftable
   return craftable.ingredients.every(ingredient =>
-    inventory[ingredient.name] >= ingredient.amount
+    inventory[ingredient.name].current >= ingredient.amount
   );
 }

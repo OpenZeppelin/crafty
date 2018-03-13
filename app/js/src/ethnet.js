@@ -125,7 +125,6 @@ exports.onNewBlock = async (handler) => {
 
     if (ethnet.currentBlock.number !== newBlock.number) {
       ethnet.currentBlock = newBlock;
-
       handler(ethnet.currentBlock);
     }
   }, 1000);

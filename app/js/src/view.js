@@ -19,7 +19,7 @@ exports.init = () => {
  * @param craftables An array of craftables.
  * @param parent The HTML object the list is going to be appended to.
  * An updateAmount function is added to the UI property of each craftable,
- * which receives a new craftable amount and updates the DOM.
+ * which receives a craftable's current and pending amounts and updates the DOM.
  */
 exports.addItemList = (craftables, parent) => {
   const list = $('<ul>').addClass('list-group').css({'background-color': 'transparent'});
@@ -37,12 +37,21 @@ exports.addItemList = (craftables, parent) => {
     labelSpan.text(` ${craftable.name}: `).addClass('first-letter');
     li.append(labelSpan);
 
-    const amountSpan = $('<span>');
-    craftable.ui.updateAmount = newVal => {
-      amountSpan.text(newVal);
-      amountSpan.fadeOut(300, () =>amountSpan.fadeIn(300));
+    const currentAmountSpan = $('<span>');
+    const pendingAmountBadge = $('<span>').addClass('badge badge-secondary badge-pill');
+
+    craftable.ui.updateAmount = (currentVal, pendingVal) => {
+      currentAmountSpan.text(`${currentVal} `); // Spacing for the badge
+
+      if (pendingVal > 0) {
+        pendingAmountBadge.fadeIn(600).text(`(+ ${pendingVal} being crafted)`);
+      } else {
+        pendingAmountBadge.fadeOut(600);
+      }
     };
-    li.append(amountSpan);
+
+    li.append(currentAmountSpan);
+    li.append(pendingAmountBadge);
 
     list.append(li);
   });
