@@ -27,6 +27,26 @@ function init() {
 }
 
 /*
+ * Returns true when the transaction has been confirmed.
+ */
+exports.isTxConfirmed = async (txHash) => {
+  const tx = await ethnet.web3.eth.getTransactionAsync(txHash);
+
+  // A transaction is considered confirmed once it's in a block that we have
+  // seen (blockNumber is null when the transaction is pending)
+  return ((tx.blockNumber !== null) && (tx.blockNumber <= ethnet.currentBlock.number));
+};
+
+/*
+ * Returns true when a transaction was successful. The transaction is assumed
+ * to be confirmed.
+ */
+exports.isTxSuccessful = async (txHash) => {
+  const receipt = await ethnet.web3.eth.getTransactionReceiptAsync(txHash);
+  return Number(receipt.status) !== 0;
+};
+
+/*
  * Creates a crafty contract object, used to interact with a deployed instance.
  * @returns the created contract, or undefined if one wasn't found.
  */
@@ -105,18 +125,17 @@ exports.onNewBlock = async (handler) => {
 
     if (ethnet.currentBlock.number !== newBlock.number) {
       ethnet.currentBlock = newBlock;
-
       handler(ethnet.currentBlock);
     }
   }, 1000);
 };
 
 /*
- * Returns a function that generates an URL from a transaction hash, linking to
- * information about that transaction.
+ * Returns an URL from a transaction hash, linking to information about that
+ * transaction.
  */
-exports.txUrlGen = () => {
-  return netInfo[ethnet.netId] ? netInfo[ethnet.netId].txUrlGen : () => '';
+exports.txUrl = (tx) => {
+  return netInfo[ethnet.netId] ? netInfo[ethnet.netId].txUrlGen(tx) : '';
 };
 
 /*
