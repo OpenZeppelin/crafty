@@ -7,121 +7,58 @@
     <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
     <!-- SSK -->
     <link href="vendor/css/social-share-kit.css" rel="stylesheet">
-    <!-- toastr -->
-    <link href="vendor/css/toastr.min.css" rel="stylesheet"/>
-    <!-- Custom CCS -->
-    <link href="css/index.css" rel="stylesheet"/>
+
+    <style>
+    html, body {
+      height: 100%;
+      background-color: rgb(190, 190, 190);
+    }
+    </style>
 
     <!-- jQuery (must be loaded before Bootstrap's JavaScript plugins) -->
     <script src="vendor/js/jquery-3.3.1.min.js" defer></script>
     <!-- Bootstrap -->
     <script src="vendor/js/bootstrap.bundle.min.js" defer></script>
-    <!-- web3 -->
-    <script src="vendor/js/web3.min.js" defer></script>
-    <!-- truffle contract -->
-    <script src="vendor/js/truffle-contract.min.js" defer></script>
-    <!-- Moment -->
-    <script src="vendor/js/moment.min.js" defer></script>
-    <!-- toastr -->
-    <script src="vendor/js/toastr.min.js" defer></script>
-    <!-- bluebird -->
-    <script src="vendor/js/bluebird.min.js" defer></script>
-    <!-- Custom JS -->
-    <script src="js/bundle.js" defer></script>
   </head>
   <body>
     <!-- Content -->
     <div class="container">
       <div class="row">
-        <div class="col" style="text-align: center">
-          <h1>Crafty<small style="font-size: large"> (alpha)</small></h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <div class="row">
-            <div class="col" data-toggle="tooltip" data-placement="left" title="Pending transactions are updated when new blocks are mined">
-              <h4><b>Inventory</b></h4>
-              <div class="row">
-                <div class="col" id="basic-item-inv">
-                  <h6>Basics</h6>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col" id="adv-item-inv">
-                  <h6>Advanced</h6>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <hr width=90% size=5>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col" data-toggle="tooltip" data-placement="left" title="New blocks are mined every 15 seconds (on average)">
-              <h6>Last block: <span id="last-block"></span></h6>
-            </div>
-          </div>
-        </div>
-        <div class ="col-4">
-          <div class="row">
-            <div class="col" style="text-align: center">
-              <h4><b>Actions</b></h4>
-              <div class="row">
-                <div class="col" id="mine-actions">
-                  <h6>Mine</h6>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
-                  <hr width=30% size=5>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col" id="craft-actions">
-                  <h6>Craft</h6>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class ="col-4">
-          <div class="row">
-            <div class="col" style="text-align: right">
-              <h4><b>Recipes</b></h4>
-              <div class="row">
-                <div class="col" id="recipes">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
         <div class="col">
-          <hr width=90% size=5>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <h6>Ethereum account: <b><span id="user-account"></span></b></h6>
-          <h6>Network: <b><span id="network"></span></b></h6>
-        </div>
-        <div class="col">
-          <a href="https://github.com/nventuro/crafty" class="ssk ssk-icon ssk-lg ssk-github float-right"></a>
-          <a id="using-metamask" href="https://metamask.io/" class="float-right" style="display: none;">
-            <img src="images/metamask-dark.png" style="height: 30px">
-          </a>
-        </div>
-      </div>
-    </div>
-    <!-- Error modal dialog -->
-    <div class="modal fade" id="modal-dialog" data-backdrop="static">
-      <div class="modal-dialog">
-        <div class="modal-content">
-           <div class="modal-body" id="modal-body">
+          <div class="jumbotron">
+            <h1 class="display-3">Crafty</h1>
+            <h1 class="display-6">A crafting game on the Ethereum network</h1>
+            <p class="lead">Mine base materials, mix them together to craft advanced items, and trade with the community!</p>
+            <hr class="my-4">
+            <p class="text-justify">
+              In <i>Crafty</i>, players acquire different types of materials (think wood, stone, fire), and then combine them (using a 'recipe') into new items: wood plus fire may become a torch, or fire plus water may form steam. New items and recipes can be added to the game, so the posibilities are endless. And since all items are ERC20 standard tokens, they can be traded in any token exchange!<br><br>
+
+              Inspiration for the game came from the ideas described in <a href="https://medium.com/@mattcondon/9434cd4de855">this blog post</a>. Currently, Crafty is in its alpha version and is far from being feature-complete, but the groundwork has been laid for future development. Contributions are always welcome!<br><br>
+
+              An early version of the game contracts has been deployed on both the Rinkeby and Ropsten testnets, and can be accessed using the official front-end client. In this early release, there are no limitations regarding item acquisition, nor any kind of cost (other than gas): everyone is free to play around and experiment as they wish, for free. A set of basic items plus some recipes was added to display the contract's capabilities, and while the alpha version is capable of extending this starter set, that functionality is not yet exposed to the players.<br><br>
+
+              So grab your toolbox and Ethereum browser and get crafting! In the near future, users will be able to vote for new recipes, and even alter the game's objective, creating a truly decentralized experience. Items may go out of production and be forever a limited edition, markets will be created, and even <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-721.md">non-fungible tokens</a> are on their way to make an appearance! What are you waiting for?
+            </p>
+            <p class="lead text-center">
+              <a class="btn btn-secondary btn-lg" href="game.html" role="button" style="width: 30%">Get started!</a>
+            </p>
+            <hr class="my-4">
+            <p class="lead">Some ideas for future work</p>
+            <p class="text-justify">
+              <i>Voting</i><br>
+              New items and recipes can only be added by a single entity, the game contract owner. However, this need not be a human being: said ownership could be irrevocably transferred to a new smart contract in charge or carrying out the voting process, therefore removing any possibilities of tampering in the election. Special 'vote' items could be craftable tokens themselves, allowing players to prove a stake in the game, preventing spam.<br><br>
+
+              <i>ERC20 interaction</i><br>
+              Why limit the crafting process to in-game tokens? Why not throw already existing ERC20 tokens into the mix? While some technical work needs to be done before this can be a reality, it is certainly feasible. What will the community decide comes out of mixing Aragon and Filecoin tokens?<br><br>
+
+              <i>Time-throttled mining + bundles</i><br>
+              The topic that's under discussion the most is basic materials acquisition: as of now, new items are created as soon as they're requested by the players, with no restrictions nor cost.<br>
+              An interesting proposal involves two simple changes: a limited amount of items can be crafted daily for free, and bundles of random items can be purchased with Ether. There's a twist: this Ether is not held by the game owner, but <i>by the game contract itself</i>, and is gifted to the first user that crafts a certain item (either voted by the community, or the one at the top of the recipe tree).<br>
+            </p>
+            <hr class="my-4">
+            <p class="text-right">
+              Ideas? Suggestions? Reach out at the <a href="https://github.com/nventuro/crafty">GitHub repo!</a><a href="https://github.com/nventuro/crafty" class="ssk ssk-icon ssk-lg ssk-github float-right"></a>
+            </p>
           </div>
         </div>
       </div>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Crafty</title>
+    <!-- Bootstrap -->
+    <link href="vendor/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SSK -->
+    <link href="vendor/css/social-share-kit.css" rel="stylesheet">
+    <!-- toastr -->
+    <link href="vendor/css/toastr.min.css" rel="stylesheet"/>
+    <!-- Custom CCS -->
+    <link href="css/game.css" rel="stylesheet"/>
+
+    <!-- jQuery (must be loaded before Bootstrap's JavaScript plugins) -->
+    <script src="vendor/js/jquery-3.3.1.min.js" defer></script>
+    <!-- Bootstrap -->
+    <script src="vendor/js/bootstrap.bundle.min.js" defer></script>
+    <!-- web3 -->
+    <script src="vendor/js/web3.min.js" defer></script>
+    <!-- truffle contract -->
+    <script src="vendor/js/truffle-contract.min.js" defer></script>
+    <!-- Moment -->
+    <script src="vendor/js/moment.min.js" defer></script>
+    <!-- toastr -->
+    <script src="vendor/js/toastr.min.js" defer></script>
+    <!-- bluebird -->
+    <script src="vendor/js/bluebird.min.js" defer></script>
+    <!-- Custom JS -->
+    <script src="js/bundle.js" defer></script>
+  </head>
+  <body>
+    <!-- Content -->
+    <div class="container">
+      <div class="row">
+        <div class="col" style="text-align: center">
+          <h1>Crafty<small style="font-size: large"> (alpha)</small></h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <div class="row">
+            <div class="col" data-toggle="tooltip" data-placement="left" title="Pending transactions are updated when new blocks are mined">
+              <h4><b>Inventory</b></h4>
+              <div class="row">
+                <div class="col" id="basic-item-inv">
+                  <h6>Basics</h6>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col" id="adv-item-inv">
+                  <h6>Advanced</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <hr width=90% size=5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col" data-toggle="tooltip" data-placement="left" title="New blocks are mined every 15 seconds (on average)">
+              <h6>Last block: <span id="last-block"></span></h6>
+            </div>
+          </div>
+        </div>
+        <div class ="col-4">
+          <div class="row">
+            <div class="col" style="text-align: center">
+              <h4><b>Actions</b></h4>
+              <div class="row">
+                <div class="col" id="mine-actions">
+                  <h6>Mine</h6>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <hr width=30% size=5>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col" id="craft-actions">
+                  <h6>Craft</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class ="col-4">
+          <div class="row">
+            <div class="col" style="text-align: right">
+              <h4><b>Recipes</b></h4>
+              <div class="row">
+                <div class="col" id="recipes">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <hr width=90% size=5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <h6>Ethereum account: <b><span id="user-account"></span></b></h6>
+          <h6>Network: <b><span id="network"></span></b></h6>
+        </div>
+        <div class="col">
+          <a href="https://github.com/nventuro/crafty" class="ssk ssk-icon ssk-lg ssk-github float-right"></a>
+          <a id="using-metamask" href="https://metamask.io/" class="float-right" style="display: none;">
+            <img src="images/metamask-dark.png" style="height: 30px">
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Error modal dialog -->
+    <div class="modal fade" id="modal-dialog" data-backdrop="static">
+      <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-body" id="modal-body">
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

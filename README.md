@@ -12,7 +12,7 @@ The game revolves around the [`Crafty`](https://github.com/nventuro/crafty/blob/
 
 The `CraftableToken`s themselves are ERC20 tokens (minus the `name`, `symbol` and `decimals` fields), and can therefore be freely traded among players. These tokens are acquired by interacting with the `Crafty` contract, which has the authority to create new tokens, and destroy them when they are used as recipe ingredients.
 
-A Ropsten deployed `Crafty` contract can be interacted with [from here](https://nventuro.github.io/crafty/).
+Rinkeby and Ropsten deployed `Crafty` contracts can be interacted with [from here](https://nventuro.github.io/crafty/).
 
 ## Ideas
 
