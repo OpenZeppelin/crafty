@@ -6,7 +6,7 @@ const addCraftablesFromRules = require('../migrations/addCraftablesFromRules');
 
 const Crafty = artifacts.require('Crafty');
 
-contract('Crafty', accounts => {
+contract.skip('Crafty', accounts => {
   let crafty = null;
   const owner = accounts[0];
   const player = accounts[1];

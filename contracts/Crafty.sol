@@ -1,100 +1,123 @@
 pragma solidity ^0.4.17;
 
 import './CraftableToken.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+import 'zeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 
 
 /**
  * @title Crafting token game
  * @dev The game holds multiple CraftableTokens (craftables), which can be
- * crafted by players. Crafting advanced tokens (with ingredients) requires
- * the player to hold the required amount of said ingredient, which will be
- * used up in the crafting process. New craftables and ingredients can be
- * added by the game owner at any point in time.
+ * crafted by players. Crafting advanced tokens (those with ingredients)
+ * requires the player to hold the required amount of said ingredient, which will be
+ * consumed up in the crafting process. New craftables (with their ingredients) can be
+ * added by all players.
  */
-contract Crafty is Ownable {
-  // Craftable storage. Each craftable is referenced using a unique string.
-  // An enum could be used for this, but Solidity doesn't yet support having
-  // mappings with enum keys, and enums are not exposed to JS, so strings are
-  // far easier to work with.
-  mapping (string => CraftableToken) private craftables;
+contract Crafty is RBAC {
+  // Storage for craftables. Some of them may have been zeroed-out (by a deleteCraftable
+  // call), so validation of each CraftableToken should be performed by readers.
+  CraftableToken[] public craftables;
+
+  // Role Based Access Control (RBAC)
+
+  string public constant ROLE_ADMIN = "admin";
+  string public constant ROLE_CURATOR = "curator";
+
+  modifier onlyAdmin() {
+    checkRole(msg.sender, ROLE_ADMIN);
+    _;
+  }
+
+  modifier onlyCurator() {
+    checkRole(msg.sender, ROLE_CURATOR);
+    _;
+  }
+
+  // Admins can add new admins, and add and remove curators.
+
+  function addAdminRole(address _user) onlyAdmin public {
+    addRole(_user, ROLE_ADMIN);
+  }
+
+  function addCuratorRole(address _user) onlyAdmin public {
+    addRole(_user, ROLE_CURATOR);
+  }
+
+  function removeCuratorRole(address _user) onlyAdmin public {
+    removeRole(_user, ROLE_CURATOR);
+  }
+
+  function Crafty() public {
+    // Make the deployer the initial admin.
+    addRole(msg.sender, ROLE_ADMIN);
+  }
 
   // Player API
 
   /**
-   * @dev Returns one of the game's craftables.
-   * @param name The craftable's name.
+   * @dev Returns one of the game's craftables. Reverts if the craftable doesn't exist.
+   * @param _id The craftable's id.
    */
-  function getCraftable(string name) public view returns (CraftableToken) {
-    require(craftables[name] != address(0));
-
-    return craftables[name];
+  function getCraftable(uint256 _id) public view returns (CraftableToken) {
+    return craftables[getCraftableIndex(_id)];
   }
 
   /**
-   * @dev Crafts a craftable. All of the craftable's ingredients must be
-   * present in the player's inventory in the required amounts, and they
-   * will be consumed (destroyed) by the crafting process.
-   * @param name The name of the craftable to craft.
+   * @dev Crafts a craftable. The player must have allowed Crafty to use his
+   * tokens, which will be transferred to the null address (destoyed) during
+   * crafting.
+   * @param _craftable The craftable to craft.
    */
-  function craft(string name) public {
-    CraftableToken result = getCraftable(name);
+  function craft(CraftableToken _craftable) public {
     address player = msg.sender;
 
-    // Check the required craftables are present in the player's inventory,
-    // and then consume those items. All burn calls will be reverted if the
-    // player is missing any ingredient.
-    uint256 totalSteps = result.getTotalRecipeSteps();
+    uint256 totalSteps = _craftable.getTotalRecipeSteps();
     for (uint i = 0; i < totalSteps; ++i) {
-      CraftableToken ingredient;
+      ERC20 ingredient;
       uint256 amountNeeded;
-      (ingredient, amountNeeded) = result.getRecipeStep(i);
+      (ingredient, amountNeeded) = _craftable.getRecipeStep(i);
 
-      require(ingredient.balanceOf(player) >= amountNeeded);
-      ingredient.burn(player, amountNeeded);
+      ingredient.transferFrom(player, 0, amountNeeded);
     }
 
-    // Add the resulting item
-    result.mint(player, 1);
+    // Issue the crafted token
+    _craftable.transfer(player, 1);
   }
 
   /**
-   * @dev Returns the amount of craftables or a certain type owned by the
-   * player.
-   * @param name The name of the craftable to query.
+   * @dev Adds a new craftable to the game.
+   * @param _ingredients An array with the different ERC20s required to craft the new token.
+   * @param _ingredient_amounts The amount of required tokens for each ERC20.
+   * @return The id of the newly created token, which is used to interact with it.
    */
-  function getAmount(string name) public view returns (uint256) {
-    return getCraftable(name).balanceOf(msg.sender);
+  function addCraftable(ERC20[] _ingredients, uint256[] _ingredient_amounts) public returns (uint256) {
+    uint256 id = uint256(keccak256(craftables.length)); // No need for these to be random, uniqueness is enough
+    craftables.push(new CraftableToken(id, _ingredients, _ingredient_amounts));
+
+    return id;
   }
 
-  // Owner API
+  // Admin API
 
   /**
-   * @dev Adds a new craftable to the game by deploying a new CraftableToken.
-   * @param name The name of the new craftable, which will be later used to
-   * interact with it. Once a name has been taken, it cannot be reused.
+   * @dev Deletes a craftable from the game.
+   * @param _id The id of the craftable to delete.
    */
-  function addCraftable(string name) public onlyOwner {
-    require(craftables[name] == address(0));
-
-    craftables[name] = new CraftableToken();
+  function deleteCraftable(uint256 _id) public onlyAdmin {
+    delete craftables[getCraftableIndex(_id)];
   }
 
-  /**
-   * @dev Adds an ingredient requirement to a craftable. After calling this
-   * function, crafting the craftable will require consuming (destroying) the
-   * new ingredient.
-   * @param resultName The name of the craftable to add the ingredient to.
-   * @param ingredientName The name of the ingredient craftable.
-   * @param amountNeeded The number of ingredient craftables to consume during
-   * the result's craftable crafting.
-   */
-  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) public onlyOwner {
-    require(keccak256(resultName) != keccak256(ingredientName));
+  // Curator API
 
-    CraftableToken result = getCraftable(resultName);
-    CraftableToken ingredient = getCraftable(ingredientName);
+  // Internals
 
-    result.addRecipeStep(ingredient, amountNeeded);
+  function getCraftableIndex(uint256 _id) internal view returns (uint256) {
+    for (uint i = 0; i < craftables.length; ++i) {
+      if (craftables[i].id() == _id) {
+        return i;
+      }
+    }
+
+    revert();
   }
 }
