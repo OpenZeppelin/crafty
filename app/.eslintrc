@@ -49,6 +49,7 @@
 
     "max-len": [2, 120, 2],
     "generator-star-spacing": ["error", "before"],
-    "react/jsx-no-bind": 0
+    "react/jsx-no-bind": 0,
+    "react/prop-types": 0
   }
 }
