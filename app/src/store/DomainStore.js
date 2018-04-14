@@ -28,6 +28,7 @@ export default class DomainStore {
 
   @computed get featuredCraftableTokens () {
     const tokens = this.crafty.craftableTokens.get()
+    console.log(featured)
     return tokens.filter((t) => featured.includes(t.address))
   }
 }

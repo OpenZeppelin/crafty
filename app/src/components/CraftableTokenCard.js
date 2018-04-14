@@ -1,13 +1,28 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
+import { Redirect } from 'react-router-dom'
 import './CraftableTokenCard.css'
 
 @observer
 class CraftableTokenCard extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      clicked: false,
+    }
+  }
+
   render () {
     return (
-      <div className={`${this.props.className} grid-y craftable-card with-border`}>
+      <div
+        className={`${this.props.className} grid-y craftable-card with-border`}
+        onClick={() => this.setState({ clicked: true })}
+      >
+        {this.state.clicked &&
+          <Redirect to={`/craft/${this.props.token.address}`} />
+        }
         <div className='cell small-8 grid-y align-center-middle'>
           <img
             className='cell shrink craftable-image'

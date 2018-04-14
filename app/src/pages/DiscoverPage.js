@@ -9,22 +9,21 @@ import SectionHeader from '../components/SectionHeader'
 
 @inject('store')
 @observer
-class IndexPage extends React.Component {
+class DiscoverPage extends React.Component {
   render () {
     const { domain } = this.props.store
     return (
       <div>
-        <Header>Welcome to the Crafting Game</Header>
+        <Header>Discover Craftable Tokens</Header>
         <Subtitle>
-          <b>Build recipes</b> that turn ordinary ERC20 tokens
-          into <b>craftable tokens</b> that can be <b>literally anything else.</b>
+          {'Here\'s literally all of the craftable tokens we can find, have fun.'}
         </Subtitle>
         <SectionHeader>
-          Featured Craftable Tokens
+          All Craftable Tokens
         </SectionHeader>
         {domain.crafty &&
           <CraftableTokenFeed
-            tokens={domain.featuredCraftableTokens}
+            tokens={domain.crafty.craftableTokens.get()}
           />
         }
         <Footer />
@@ -33,4 +32,4 @@ class IndexPage extends React.Component {
   }
 }
 
-export default IndexPage
+export default DiscoverPage

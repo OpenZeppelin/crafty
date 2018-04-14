@@ -36,7 +36,7 @@ const Header = ({ children }) => (
     <div className='cell auto header-content'>
       <h1>{children}</h1>
     </div>
-    <Navbar />
+    <Navbar className='cell shrink' />
   </header>
 )
 
