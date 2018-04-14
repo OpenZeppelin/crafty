@@ -1,6 +1,7 @@
 import React from 'react'
 import { observer, inject } from 'mobx-react'
 
+import Navbar from './Navbar'
 import Emoji from './Emoji'
 
 import './Header.css'
@@ -35,6 +36,7 @@ const Header = ({ children }) => (
     <div className='cell auto header-content'>
       <h1>{children}</h1>
     </div>
+    <Navbar />
   </header>
 )
 

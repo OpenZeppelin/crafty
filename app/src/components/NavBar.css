@@ -1,0 +1,28 @@
+.nav-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+
+    padding-right: 0.6875rem;
+}
+
+.nav-item {
+    padding: 0.75rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+
+    color: #000000;
+}
+
+.nav-item.active,
+.nav-item:hover,
+.nav-item:focus
+{
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
