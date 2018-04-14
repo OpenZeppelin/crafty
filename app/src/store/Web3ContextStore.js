@@ -1,4 +1,4 @@
-import { observable, flow, action, transaction, autorun } from 'mobx'
+import { observable, flow, action, transaction } from 'mobx'
 import Web3 from 'web3'
 
 const networkDescById = {
@@ -25,14 +25,6 @@ export default class Web3ContextStore {
       transaction(() => {
         this._getAndSetWeb3()
       })
-    })
-
-    autorun(() => {
-      console.log(
-        this.currentAddress,
-        this.network.id,
-        this.network.description
-      )
     })
   }
 

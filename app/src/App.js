@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { configure } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import logo from './logo.svg'
-import './App.css'
 import CraftableTokenCard from './components/CraftableTokenCard'
+import IndexPage from './pages/IndexPage'
 
 configure({ enforceActions: true })
 
@@ -13,12 +12,9 @@ class App extends Component {
   render () {
     const { web3Context } = this.props.store
     return (
-      <div className='App'>
-        <header className='App-header'>
-          <img src={logo} className='App-logo' alt='logo' />
-          <h1 className='App-title'>Welcome to React</h1>
-        </header>
-        <p className='App-intro'>
+      <div>
+        <IndexPage />
+        <p>
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
         {!web3Context.web3 &&
