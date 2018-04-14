@@ -21,12 +21,10 @@ const InfoBar = inject('store')(observer(({ store, className }) => (
       <span className='info-item' key='address'>
         {store.web3Context.currentAddress.substr(0, 8)}… <Emoji e='👤' />
       </span>,
-      <span className='info-item' key='crafty'>
-        {store.domain.crafty
-          ? <span>{store.domain.crafty.address.substring(0, 8)}… <Emoji e='🚧' /></span>
-          : <span>Crafty contract not detected <Emoji e='⚠' /></span>
-        }
-      </span>,
+      !store.domain.crafty &&
+        <span className='info-item' key='crafty'>
+          Crafty contract not detected <Emoji e='⚠' />
+        </span>,
     ]}
   </div>
 )))

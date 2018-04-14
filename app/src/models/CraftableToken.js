@@ -16,15 +16,27 @@ export default class CraftableToken {
     return this.contract._address
   }
 
-  name = asyncComputed('Name', 1000, async () => {
-    return 'Name'
+  name = asyncComputed('...', 1000, async () => {
+    return 'A Nice Sandwich'
     // return this.contract.name()
   })
 
-  description = asyncComputed('Description', 1000, async () => {
-    return 'Description'
+  description = asyncComputed('...', 1000, async () => {
+    return 'It\'s a delicious sandwich, what more could you ask for?'
     // return this.contract.description()
   })
+
+  @computed get shortName () {
+    return this.name.get().length > 40
+      ? `${this.name.get().substring(0, 40)}…`
+      : this.name.get()
+  }
+
+  @computed get shortDescription () {
+    return this.description.get().length > 140
+      ? `${this.description.get().substring(0, 140)}…`
+      : this.description.get()
+  }
 
   imageUri = asyncComputed('https://placem.at/things?w=200&h=200', 1000, async () => {
     return 'https://placem.at/things?w=200&h=200'

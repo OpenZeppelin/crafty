@@ -5,3 +5,13 @@ body {
     overflow-x: hidden;
     font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
 }
+
+h1, h2, h3, h4, h5, h6, a, p, span {
+    font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
+    /* replace this with a settings when using scss for foundation */
+}
+
+
+.with-border {
+    border: 1px solid #000000;
+}

@@ -23,7 +23,9 @@ export default class Crafty {
   }
 
   craftableTokenAddresses = asyncComputed([], 1000, async () => {
-    return ['0xEC6d36A487d85CF562B7b8464CE8dc60637362AC']
+    return [
+      '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC',
+    ]
     // return this.contract.craftables()
   })
 

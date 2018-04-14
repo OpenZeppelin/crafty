@@ -4,7 +4,7 @@ header {
     border: 1px solid #000;
     z-index: 10;
 
-    height: 20vh;
+    min-height: 20vh;
 }
 
 .header-content {
@@ -14,6 +14,7 @@ header {
     align-items: center;
     text-align: center;
 
+    margin-top: 2rem;
     margin-bottom: 2rem;
 }
 
@@ -23,6 +24,8 @@ header {
     justify-content: flex-end;
     align-items: center;
     flex-wrap: wrap;
+
+    padding-right: 0.6875rem;
 }
 
 .info-item {
