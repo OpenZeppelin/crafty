@@ -7,9 +7,11 @@
     "mobx": "^4.1.1",
     "mobx-react": "^5.0.0",
     "mobx-utils": "^4.0.0",
+    "p-map": "^1.2.0",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "react-scripts": "1.1.4",
+    "validatorjs": "^3.14.2",
     "web3": "^1.0.0-beta.34"
   },
   "scripts": {

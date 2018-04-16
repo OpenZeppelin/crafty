@@ -12,6 +12,56 @@ h1, h2, h3, h4, h5, h6, a, p, span {
 }
 
 
+.button {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.button.active,
+.button:hover,
+.button:focus
+{
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.button.inverted {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.button.inverted.active,
+.button.inverted:hover,
+.button.inverted:focus
+{
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.button.disabled,
+.button.disabled:focus,
+.button.disabled:hover,
+.button[disabled],
+.button[disabled]:focus,
+.button[disabled]:hover {
+    background-color: #000000;
+}
+
+
 .with-border {
     border: 1px solid #000000;
+}
+
+label[attr-type="checkbox"] {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }

@@ -1,6 +1,8 @@
 import { computed } from 'mobx'
+import { asyncComputed } from 'computed-async-mobx'
 import Crafty from '../models/Crafty'
 import featured from '../featured.json'
+import pMap from 'p-map'
 
 export default class DomainStore {
   constructor (root) {
@@ -28,7 +30,22 @@ export default class DomainStore {
 
   @computed get featuredCraftableTokens () {
     const tokens = this.crafty.craftableTokens.get()
-    console.log(featured)
     return tokens.filter((t) => featured.includes(t.address))
   }
+
+  myCraftedTokens = asyncComputed([], 500, async () => {
+    const me = this.root.web3Context.currentAddress
+    const allCraftabletokens = this.craftableTokens
+    const allTokens = await pMap(allCraftabletokens, async (token) => {
+      const balance = await token.balanceOf(me)
+      return {
+        token,
+        balance,
+      }
+    }, { concurrency: 5 })
+    // const myTokens = allTokens.filter(tc => tc.balance.gt(0))
+
+    return allTokens.map(tc => tc.token)
+    // return myTokens.map(tc => tc.token)
+  })
 }

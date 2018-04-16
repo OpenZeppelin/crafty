@@ -3,7 +3,7 @@ import { observer } from 'mobx-react'
 
 import CraftableTokenCard from './CraftableTokenCard'
 
-const CraftableTokenFeed = observer(({ tokens }) => (
+const CraftableTokenFeed = observer(({ tokens, withBalanceOfAddress = null }) => (
   <div className='grid-container'>
     <div className='grid-x grid-margin-x'>
       {tokens && tokens.map(t =>
@@ -11,6 +11,7 @@ const CraftableTokenFeed = observer(({ tokens }) => (
           key={t.address}
           className='cell medium-6 large-4'
           token={t}
+          withBalanceOfAddress={withBalanceOfAddress}
         />
       )}
     </div>

@@ -5,6 +5,7 @@ import { observer, inject } from 'mobx-react'
 import IndexPage from './pages/IndexPage'
 import DiscoverPage from './pages/DiscoverPage'
 import CraftPage from './pages/CraftPage'
+import ShowcasePage from './pages/ShowcasePage'
 
 configure({ enforceActions: true })
 
@@ -24,6 +25,7 @@ class App extends Component {
           <Route exact path='/' component={IndexPage} />
           <Route exact path='/discover' component={DiscoverPage} />
           <Route exact path='/craft' component={CraftPage} />
+          <Route path='/tokens/:address' component={ShowcasePage} />
           {/* <CraftableTokenPage /> */}
         </Switch>
       </div>
