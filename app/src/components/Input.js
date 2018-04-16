@@ -1,15 +1,15 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
-const Input = observer(({ field, opts = {}, isSelect = false }) => (
+const Input = observer(({ field, label, isSelect = false }) => (
   <div>
     {(() => {
       if (isSelect) {
         return [
           <label key='label' htmlFor={field.id}>
-            {field.label}
+            {label || field.label}
           </label>,
-          <select key='select' {...field.bind(opts)}>
+          <select key='select' {...field.bind()}>
             {(field.extra || []).map(o =>
               <option key={o.k} value={o.k}>{o.v}</option>)
             }
@@ -20,22 +20,22 @@ const Input = observer(({ field, opts = {}, isSelect = false }) => (
       case 'textarea':
         return (
           <label htmlFor={field.id}>
-            {field.label}
-            <textarea {...field.bind(opts)}></textarea>
+            {label || field.label}
+            <textarea {...field.bind()}></textarea>
           </label>
         )
       case 'checkbox':
         return (
           <label htmlFor={field.id}>
-            <input {...field.bind(opts)} />
-            {field.label}
+            <input {...field.bind()} />
+            {label || field.label}
           </label>
         )
       default:
         return (
           <label htmlFor={field.id}>
-            {field.label}
-            <input {...field.bind(opts)} />
+            {label || field.label}
+            <input {...field.bind()} />
           </label>
         )
       }

@@ -16,76 +16,89 @@ const canonicalTokens = [{
   name: 'Zeppelin OS',
   symbol: 'ZEP',
   address: '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC',
+}, {
+  name: 'Aragon Network Token',
+  symbol: 'ANT',
+  address: '0xEC6d36A487d85CF562B7b8464CE8dc60637362AB',
 }]
 
-const fields = {
-  name: {
-    name: 'name',
-    label: 'Your Craftable Token\'s Name',
-    placeholder: 'A nice token.',
-    value: '',
-    rules: 'required|string|alpha_num|between:4,42',
-  },
-  symbol: {
-    name: 'symbol',
-    label: 'Your Craftable Token\'s Symbol',
-    placeholder: 'TKN',
-    value: '',
-    rules: 'required|string|between:2,10',
-  },
-  description: {
-    name: 'description',
-    type: 'textarea',
-    label: 'Describe Your Craftable Token',
-    placeholder: 'This is a nice token.',
-    rules: 'required|string|between:10,140',
-  },
-  rate: {
-    name: 'rate',
-    type: 'number',
-    label: 'How many Craftable Tokens are created with this recipe?',
-    placeholder: '1',
-    value: '1',
-    rules: 'required|integer|min:1',
-  },
-  image: {
-    name: 'image',
-    type: 'file',
-    label: 'Your Craftable Token\'s Image',
-  },
-  inputs: {
-    name: 'inputs',
-    type: 'array',
-    label: 'Sacrificial Tokens',
-    value: [],
-  },
-  'inputs[].canonical': {
-    name: 'canonical',
-    type: 'checkbox',
-    label: 'Canonical Token?',
-    value: true,
-    rules: 'required|boolean',
-  },
-  'inputs[].address': {
-    name: 'address',
-    type: 'text',
-    label: 'Token Address',
-    placeholder: '0x0',
-    value: '',
-    rules: 'required|string|alpha_num|size:42',
-    extra: canonicalTokens.map(ct => ({
-      k: ct.address,
-      v: `${ct.name} (${ct.symbol})`,
-    })),
-  },
-  'inputs[].amount': {
-    name: 'amount',
-    type: 'number',
-    label: 'How many are required?',
-    placeholder: '1',
-    value: '1',
-    rules: 'required|integer|min:1',
-  },
+const fields = [
+  'name',
+  'symbol',
+  'description',
+  'rate',
+  'image',
+  'inputs',
+  'inputs[].canonical',
+  'inputs[].address',
+  'inputs[].amount',
+]
+
+const types = {
+  'name': 'text',
+  'symbol': 'text',
+  'description': 'text',
+  'rate': 'number',
+  'image': 'file',
+  'inputs': 'array',
+  'inputs[].canonical': 'checkbox',
+  'inputs[].address': 'text',
+  'inputs[].amount': 'number',
+}
+
+const values = {
+  name: '',
+  symbol: '',
+  description: '',
+  rate: 1,
+  image: '',
+  inputs: [],
+}
+
+const labels = {
+  name: 'Your Craftable Token\'s Name',
+  symbol: 'Your Craftable Token\'s Symbol',
+  description: 'Describe Your Craftable Token',
+  rate: 'How many Craftable Tokens are created with this recipe?',
+  image: 'Your Craftable Token\'s Image',
+  inputs: 'Sacrificial Tokens',
+  'inputs[].canonical': 'Canonical Token?',
+  'inputs[].address': 'Token',
+  'inputs[].amount': 'How many are required?',
+}
+
+const placeholders = {
+  name: 'A nice token.',
+  symbol: 'TKN',
+  description: 'This is a nice token.',
+  'inputs[].address': '0x0',
+}
+
+const rules = {
+  name: 'required|string|alpha_num|between:4,42',
+  symbol: 'required|string|between:2,10',
+  description: 'required|string|between:10,140',
+  rate: 'required|integer|min:1',
+  'inputs[].canonical': 'required|boolean',
+  'inputs[].address': 'required|string|alpha_num|size:42',
+  'inputs[].amount': 'required|integer|min:1',
+}
+
+const extra = {
+  'inputs[].address': canonicalTokens.map(ct => ({
+    k: ct.address,
+    v: `${ct.name} (${ct.symbol})`,
+  })),
+}
+
+const defaults = {
+  'inputs[].canonical': true,
+  'inputs[].amount': 1,
+  'inputs[].address': extra['inputs[].address'][0].k,
+}
+
+const initials = {
+  ...defaults,
 }
 
 @inject('store')
@@ -95,7 +108,7 @@ class CraftPage extends React.Component {
     super(props)
 
     this.form = new MobxReactForm({
-      fields,
+      fields, types, values, labels, placeholders, rules, extra, defaults, initials,
     }, {
       plugins: { dvr: validatorjs },
     })
@@ -107,16 +120,8 @@ class CraftPage extends React.Component {
           newValue: change.newValue.toUpperCase(),
         }
       })
-    // this._addToken()
-  }
 
-  @action
-  _addToken = (e) => {
-    this.form.$('inputs').onAdd(e, {
-      canonical: true,
-      address: '',
-      amount: '',
-    })
+    this.form.$('inputs').onAdd({ preventDefault: () => {} })
   }
 
   @action
@@ -155,6 +160,11 @@ class CraftPage extends React.Component {
   }
 
   render () {
+    console.log(
+      this.form.$('inputs')
+        .map(t => t)
+        .map(f => f.$('address').values())
+    )
     return (
       <div>
         <Header>Build a Craftable Token</Header>
@@ -178,7 +188,7 @@ class CraftPage extends React.Component {
               )}
               <button
                 className='button'
-                onClick={this._addToken}
+                onClick={this.form.$('inputs').onAdd}
               >
                 + Add Token
               </button>

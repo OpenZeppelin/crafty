@@ -45,7 +45,7 @@ class InputTokenField extends React.Component {
         <div className='cell auto'>
           <Input
             field={this.props.field.$('address')}
-            opts={{ label }}
+            label={label}
           />
         </div>
       </div>
