@@ -1,5 +1,5 @@
 import React from 'react'
-import { observable, action, computed, toJS } from 'mobx'
+import { action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import Header from '../components/Header'
@@ -8,69 +8,114 @@ import Subtitle from '../components/Subtitle'
 import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 
-import Validator from 'validatorjs'
+import MobxReactForm from 'mobx-react-form'
+import validatorjs from 'validatorjs'
 import InputTokenField from '../components/InputTokenField'
 
-const rules = {
-  name: 'required|string|alpha_num|between:4,42',
-  symbol: 'required|string|between:2,10',
-  description: 'required|string|between:10,140',
-  rate: 'required|integer|min:1',
-  inputs: 'array',
-  'inputs.*.address': 'required|string|alpha_num|size:42',
-  'inputs.*.amount': 'required|integer|min:1',
+const canonicalTokens = [{
+  name: 'Zeppelin OS',
+  symbol: 'ZEP',
+  address: '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC',
+}]
+
+const fields = {
+  name: {
+    name: 'name',
+    label: 'Your Craftable Token\'s Name',
+    placeholder: 'A nice token.',
+    value: '',
+    rules: 'required|string|alpha_num|between:4,42',
+  },
+  symbol: {
+    name: 'symbol',
+    label: 'Your Craftable Token\'s Symbol',
+    placeholder: 'TKN',
+    value: '',
+    rules: 'required|string|between:2,10',
+  },
+  description: {
+    name: 'description',
+    type: 'textarea',
+    label: 'Describe Your Craftable Token',
+    placeholder: 'This is a nice token.',
+    rules: 'required|string|between:10,140',
+  },
+  rate: {
+    name: 'rate',
+    type: 'number',
+    label: 'How many Craftable Tokens are created with this recipe?',
+    placeholder: '1',
+    value: '1',
+    rules: 'required|integer|min:1',
+  },
+  image: {
+    name: 'image',
+    type: 'file',
+    label: 'Your Craftable Token\'s Image',
+  },
+  inputs: {
+    name: 'inputs',
+    type: 'array',
+    label: 'Sacrificial Tokens',
+    value: [],
+  },
+  'inputs[].canonical': {
+    name: 'canonical',
+    type: 'checkbox',
+    label: 'Canonical Token?',
+    value: true,
+    rules: 'required|boolean',
+  },
+  'inputs[].address': {
+    name: 'address',
+    type: 'text',
+    label: 'Token Address',
+    placeholder: '0x0',
+    value: '',
+    rules: 'required|string|alpha_num|size:42',
+    extra: canonicalTokens.map(ct => ({
+      k: ct.address,
+      v: `${ct.name} (${ct.symbol})`,
+    })),
+  },
+  'inputs[].amount': {
+    name: 'amount',
+    type: 'number',
+    label: 'How many are required?',
+    placeholder: '1',
+    value: '1',
+    rules: 'required|integer|min:1',
+  },
 }
 
 @inject('store')
 @observer
 class CraftPage extends React.Component {
-  @observable data = {
-    name: '',
-    symbol: '',
-    description: '',
-    rate: '1',
-    inputs: [],
-  }
-
   constructor (props) {
     super(props)
 
-    this._addToken()
-  }
+    this.form = new MobxReactForm({
+      fields,
+    }, {
+      plugins: { dvr: validatorjs },
+    })
 
-  @computed get validation () {
-    const v = new Validator(toJS(this.data), rules)
-    v.check() // force check -_-
-    return v
-  }
-
-  @computed get passes () {
-    return this.validation.passes()
-  }
-
-  @computed get fails () {
-    return this.validation.fails()
-  }
-
-  @computed get errors () {
-    return this.validation.errors
+    this.form.$('symbol')
+      .intercept(({ form, field, change }) => {
+        return {
+          ...change,
+          newValue: change.newValue.toUpperCase(),
+        }
+      })
+    // this._addToken()
   }
 
   @action
-  _update = (k, v) => {
-    this.data[k] = v
-  }
-
-  _updateUpperCase = (k, v) => {
-    this._update(k, v.toUpperCase())
-  }
-
-  @action
-  _addToken = () => {
-    this.data.inputs.push({
+  _addToken = (e) => {
+    this.form.$('inputs').onAdd(e, {
       canonical: true,
       address: '',
-      amount: '1',
+      amount: '',
     })
   }
 
@@ -124,14 +169,11 @@ class CraftPage extends React.Component {
         <div className='grid-container'>
           <div className='grid-x grid-margin-x'>
             <div className='cell auto'>
-              {this.data.inputs.map((input, i) =>
+              {this.form.$('inputs').map((input, i) =>
                 <InputTokenField
                   key={i}
-                  value={input}
-                  tokenId={i}
-                  onRemove={this._removeToken}
+                  field={input}
                   editing
-                  errors={this.errors}
                 />
               )}
               <button
@@ -153,47 +195,14 @@ class CraftPage extends React.Component {
             <div className='cell auto'>
               <div className='grid-x grid-margin-x'>
                 <div className='cell small-12 medium-6'>
-                  <Input
-                    id='name'
-                    name='name'
-                    label="Your Craftable Token's Name"
-                    placeholder='A nice token.'
-                    value={this.data.name}
-                    onChange={this._update}
-                    error={this.errors.first('name')}
-                  />
+                  <Input field={this.form.$('name')} />
                 </div>
                 <div className='cell small-12 medium-6'>
-                  <Input
-                    id='symbol'
-                    name='symbol'
-                    label="Your Craftable Token's Symbol"
-                    placeholder='TKN'
-                    value={this.data.symbol}
-                    onChange={this._updateUpperCase}
-                    error={this.errors.first('symbol')}
-                  />
+                  <Input field={this.form.$('symbol')} />
                 </div>
               </div>
-              <Input
-                id='description'
-                name='description'
-                type='textarea'
-                label='Describe Your Craftable Token'
-                placeholder='A nice token.'
-                value={this.data.description}
-                onChange={this._update}
-                error={this.errors.first('description')}
-              />
-              <Input
-                id='rate'
-                name='rate'
-                label='How many Craftable Tokens are created with this recipe?'
-                type='number'
-                value={this.data.rate}
-                onChange={this._update}
-                error={this.errors.first('rate')}
-              />
+              <Input field={this.form.$('description')} />
+              <Input field={this.form.$('rate')} />
             </div>
           </div>
         </div>
@@ -207,7 +216,7 @@ class CraftPage extends React.Component {
             <div className='cell shrink'>
               <button
                 className='button'
-                onClick={this.deploy}
+                onClick={this.form.onSubmit}
                 disabled={this.fails || !this._canDeploy()}
               >
                 Deploy em&#39;

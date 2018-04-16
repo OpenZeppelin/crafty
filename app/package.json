@@ -6,6 +6,7 @@
     "computed-async-mobx": "^4.1.0",
     "mobx": "^4.1.1",
     "mobx-react": "^5.0.0",
+    "mobx-react-form": "^1.32.3",
     "mobx-utils": "^4.0.0",
     "p-map": "^1.2.0",
     "react": "^16.3.1",
@@ -18,7 +19,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "link": "npm link mobx-react-form && ln -sF `pwd`/node_modules/mobx node_modules/mobx-react-form/node_modules/mobx"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

@@ -1,18 +1,11 @@
 import React from 'react'
-
-import { asyncComputed } from 'computed-async-mobx'
 import { observer, inject } from 'mobx-react'
-import { action } from 'mobx'
+import { asyncComputed } from 'computed-async-mobx'
 
-import './InputTokenField.css'
 import Input from './Input'
 import ERC20 from '../models/ERC20'
 
-const canonicalTokens = [{
-  name: 'ZEP',
-  symbol: 'ZEP',
-  address: '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC',
-}]
+import './InputTokenField.css'
 
 @inject('store')
 @observer
@@ -21,42 +14,25 @@ class InputTokenField extends React.Component {
     editing: false,
   }
 
-  @action
-  _update = (k, v) => {
-    this.props.value[k] = v
-  }
-
-  _onSelect = (e) => {
-    this._update(e.target.name, e.target.value)
-  }
-
   inferredToken = asyncComputed(null, 500, async () => {
     const web3 = this.props.store.web3Context.web3
-    const tokenAddress = this.props.value.address
+    const tokenAddress = this.props.field.$('address').values()
     if (!web3.utils.isAddress(tokenAddress)) { return null }
     return new ERC20(web3, tokenAddress)
   })
 
   _renderTokenSelector = () => {
-    if (this.props.value.canonical) {
+    if (this.props.field.$('canonical').values()) {
       return (
-        <label htmlFor='canonicalSelect'>
-          Canonical Token
-          <select
-            name='address'
-            onChange={this._onSelect}
-          >
-            <option value=''>Select a Token</option>
-            {canonicalTokens.map(t =>
-              <option
-                key={t.address}
-                value={t.address}
-              >
-                {t.symbol} ({t.name})
-              </option>
-            )}
-          </select>
-        </label>
+        <div className='grid-x grid-margin-x'>
+          <div className='cell auto'>
+            <Input
+              field={this.props.field.$('address')}
+              isSelect
+            />
+          </div>
+        </div>
+
       )
     }
 
@@ -68,12 +44,8 @@ class InputTokenField extends React.Component {
       <div className='grid-x grid-margin-x'>
         <div className='cell auto'>
           <Input
-            name='address'
-            label={label}
-            placeholder='0x0'
-            value={this.props.value.address}
-            onChange={this._update}
-            error={this.props.errors.first(`inputs.${this.props.tokenId}.address`)}
+            field={this.props.field.$('address')}
+            opts={{ label }}
           />
         </div>
       </div>
@@ -89,7 +61,7 @@ class InputTokenField extends React.Component {
           <div className='cell shrink'>
             <button
               className='button inverted'
-              onClick={() => this.props.onRemove(this.props.tokenId)}
+              onClick={this.props.field.onDel}
             >
               remove
             </button>
@@ -97,29 +69,14 @@ class InputTokenField extends React.Component {
         }
         {this.props.editing &&
           <div className='cell small-2'>
-            <Input
-              id={this.props.tokenId}
-              name='canonical'
-              type='checkbox'
-              label='Canonical Token?'
-              value={this.props.value.canonical}
-              onChange={this._update}
-            />
+            <Input field={this.props.field.$('canonical')} />
           </div>
         }
         <div className='cell small-5'>
           {this._renderTokenSelector()}
         </div>
         <div className='cell auto'>
-          <Input
-            id={this.props.tokenId}
-            name='amount'
-            type='number'
-            label='How many tokens are required?'
-            value={this.props.value.amount}
-            onChange={this._update}
-            error={this.props.errors.first(`inputs.${this.props.tokenId}.amount`)}
-          />
+          <Input field={this.props.field.$('amount')} />
         </div>
         {!this.props.editing &&
           <div className='cell small-3'>
