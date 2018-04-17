@@ -1,6 +1,8 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
+import FileInput from './FileInput'
+
 const Input = observer(({ field, label, isSelect = false }) => (
   <div>
     {(() => {
@@ -30,6 +32,12 @@ const Input = observer(({ field, label, isSelect = false }) => (
             <input {...field.bind()} />
             {label || field.label}
           </label>
+        )
+      case 'file':
+        return (
+          <FileInput
+            field={field}
+          />
         )
       default:
         return (

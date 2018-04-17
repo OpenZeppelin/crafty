@@ -53,7 +53,6 @@ const values = {
   symbol: '',
   description: '',
   rate: 1,
-  image: '',
   inputs: [],
 }
 
@@ -81,7 +80,9 @@ const rules = {
   symbol: 'required|string|between:2,10',
   description: 'required|string|between:10,140',
   rate: 'required|integer|min:1',
-  'inputs[].id': 'required',
+  // image: 'required',
+  'inputs': 'required|array|min:1',
+  'inputs[].id': 'required|string',
   'inputs[].canonical': 'required|boolean',
   'inputs[].address': 'required|string|alpha_num|size:42',
   'inputs[].amount': 'required|integer|min:1',
@@ -95,6 +96,7 @@ const extra = {
 }
 
 const defaults = {
+  inputs: [],
   'inputs[].canonical': true,
   'inputs[].amount': 1,
   'inputs[].address': extra['inputs[].address'][0].k,
@@ -124,6 +126,13 @@ const observers = {
         form.$(addressPath).set('')
         form.$(addressPath).resetValidation()
       }
+      return change
+    },
+  }],
+  'image': [{
+    key: 'value',
+    call: ({ change }) => {
+      console.log(change)
       return change
     },
   }],
@@ -204,6 +213,7 @@ class CraftPage extends React.Component {
   }
 
   render () {
+    console.log(this.form.values())
     return (
       <div>
         <Header>Build a Craftable Token</Header>
@@ -242,6 +252,7 @@ class CraftPage extends React.Component {
         <div className='grid-container'>
           <div className='grid-x grid-margin-x'>
             <div className='cell auto'>
+              <Input field={this.form.$('image')} />
               <div className='grid-x grid-margin-x'>
                 <div className='cell small-12 medium-6'>
                   <Input field={this.form.$('name')} />
@@ -262,11 +273,16 @@ class CraftPage extends React.Component {
 
         <div className='grid-container'>
           <div className='grid-x grid-margin-x align-center'>
+            <div className='cell text-center'>
+              {this.form.error}
+            </div>
+          </div>
+          <div className='grid-x grid-margin-x align-center'>
             <div className='cell shrink'>
               <button
                 className='button'
                 onClick={this.form.onSubmit}
-                disabled={this.fails || !this._canDeploy()}
+                disabled={!this.form.isValid || !this._canDeploy()}
               >
                 Deploy em&#39;
               </button>
