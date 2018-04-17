@@ -1,5 +1,4 @@
 import React from 'react'
-import { action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import Header from '../components/Header'
@@ -11,6 +10,8 @@ import Input from '../components/Input'
 import MobxReactForm from 'mobx-react-form'
 import validatorjs from 'validatorjs'
 import InputTokenField from '../components/InputTokenField'
+
+import { uid } from '../util'
 
 const canonicalTokens = [{
   name: 'Zeppelin OS',
@@ -29,6 +30,7 @@ const fields = [
   'rate',
   'image',
   'inputs',
+  'inputs[].id',
   'inputs[].canonical',
   'inputs[].address',
   'inputs[].amount',
@@ -79,6 +81,7 @@ const rules = {
   symbol: 'required|string|between:2,10',
   description: 'required|string|between:10,140',
   rate: 'required|integer|min:1',
+  'inputs[].id': 'required',
   'inputs[].canonical': 'required|boolean',
   'inputs[].address': 'required|string|alpha_num|size:42',
   'inputs[].amount': 'required|integer|min:1',
@@ -101,6 +104,43 @@ const initials = {
   ...defaults,
 }
 
+const observers = {
+  // 'inputs': [{
+  //   key: 'value',
+  //   call: ({ form, field, change }) => {
+  //     // form.$('inputs[].id')
+  //     console.log(change)
+  //     return change
+  //   },
+  // }],
+  'inputs[].canonical': [{
+    key: 'value',
+    call: ({ form, field, change }) => {
+      const willBeCanonical = change.newValue
+      const addressPath = field.path.replace('canonical', 'address')
+      if (willBeCanonical) {
+        form.$(addressPath).reset()
+      } else {
+        form.$(addressPath).set('')
+        form.$(addressPath).resetValidation()
+      }
+      return change
+    },
+  }],
+}
+
+const interceptors = {
+  'symbol': [{
+    key: 'value',
+    call: ({ change }) => {
+      return {
+        ...change,
+        newValue: change.newValue.toUpperCase(),
+      }
+    },
+  }],
+}
+
 @inject('store')
 @observer
 class CraftPage extends React.Component {
@@ -108,25 +148,25 @@ class CraftPage extends React.Component {
     super(props)
 
     this.form = new MobxReactForm({
-      fields, types, values, labels, placeholders, rules, extra, defaults, initials,
+      fields,
+      types,
+      values,
+      labels,
+      placeholders,
+      rules,
+      extra,
+      defaults,
+      initials,
+      observers,
+      interceptors,
     }, {
       plugins: { dvr: validatorjs },
     })
 
-    this.form.$('symbol')
-      .intercept(({ form, field, change }) => {
-        return {
-          ...change,
-          newValue: change.newValue.toUpperCase(),
-        }
-      })
-
-    this.form.$('inputs').onAdd({ preventDefault: () => {} })
-  }
-
-  @action
-  _removeToken = (tokenId) => {
-    this.data.inputs.splice(tokenId, 1)
+    // add the first input with defaults
+    this.form.$('inputs').add({
+      id: uid(),
+    })
   }
 
   _canDeploy = () => {
@@ -134,6 +174,10 @@ class CraftPage extends React.Component {
     if (!crafty) { return false }
 
     return true
+  }
+
+  _addInput = () => {
+    this.form.$('inputs').add({ id: uid() })
   }
 
   deploy = async () => {
@@ -160,11 +204,6 @@ class CraftPage extends React.Component {
   }
 
   render () {
-    console.log(
-      this.form.$('inputs')
-        .map(t => t)
-        .map(f => f.$('address').values())
-    )
     return (
       <div>
         <Header>Build a Craftable Token</Header>
@@ -179,16 +218,16 @@ class CraftPage extends React.Component {
         <div className='grid-container'>
           <div className='grid-x grid-margin-x'>
             <div className='cell auto'>
-              {this.form.$('inputs').map((input, i) =>
+              {this.form.$('inputs').map(input =>
                 <InputTokenField
-                  key={i}
+                  key={input.id}
                   field={input}
                   editing
                 />
               )}
               <button
                 className='button'
-                onClick={this.form.$('inputs').onAdd}
+                onClick={this._addInput}
               >
                 + Add Token
               </button>

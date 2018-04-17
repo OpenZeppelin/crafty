@@ -1,4 +1,5 @@
 import React from 'react'
+import { observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { asyncComputed } from 'computed-async-mobx'
 
@@ -10,6 +11,8 @@ import './InputTokenField.css'
 @inject('store')
 @observer
 class InputTokenField extends React.Component {
+  @observable deleting = false
+
   static defaultProps = {
     editing: false,
   }
@@ -20,6 +23,14 @@ class InputTokenField extends React.Component {
     if (!web3.utils.isAddress(tokenAddress)) { return null }
     return new ERC20(web3, tokenAddress)
   })
+
+  @action
+  _remove = () => {
+    this.deleting = true
+    setTimeout(() => {
+      this.props.field.del()
+    }, 251)
+  }
 
   _renderTokenSelector = () => {
     if (this.props.field.$('canonical').values()) {
@@ -56,12 +67,12 @@ class InputTokenField extends React.Component {
     const { token } = this.props
 
     return (
-      <div className='grid-x grid-margin-x align-middle input-token-field'>
+      <div className={`grid-x grid-margin-x align-middle input-token-field ${this.deleting ? 'deleting' : ''}`}>
         {this.props.editing &&
           <div className='cell shrink'>
             <button
               className='button inverted'
-              onClick={this.props.field.onDel}
+              onClick={this._remove}
             >
               remove
             </button>

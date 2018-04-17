@@ -26,7 +26,7 @@ const Input = observer(({ field, label, isSelect = false }) => (
         )
       case 'checkbox':
         return (
-          <label htmlFor={field.id}>
+          <label htmlFor={field.id} attr-type='checkbox'>
             <input {...field.bind()} />
             {label || field.label}
           </label>
@@ -40,9 +40,7 @@ const Input = observer(({ field, label, isSelect = false }) => (
         )
       }
     })()}
-    {field.error &&
-        <p className='help-text'>{field.error}</p>
-    }
+    <p className='help-text'>{field.error || <span>&nbsp;</span>}</p>
   </div>
 ))
 
