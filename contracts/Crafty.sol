@@ -10,13 +10,15 @@ import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
  * @dev The game holds multiple CraftableTokens (craftables), which can be
  * crafted by players. Crafting advanced tokens (those with ingredients)
  * requires the player to hold the required amount of said ingredient, which will be
- * consumed up in the crafting process. New craftables (with their ingredients) can be
+ * consumed in the crafting process. New craftables (with their ingredients) can be
  * added by all players.
  */
 contract Crafty is RBAC {
   // Storage for craftables. Some of them may have been zeroed-out (by a deleteCraftable
   // call), so validation of each CraftableToken should be performed by readers.
-  CraftableToken[] public craftables;
+  CraftableToken[] private craftables;
+
+  event CraftableAdded(address addr);
 
   // Role Based Access Control (RBAC)
 
@@ -54,26 +56,13 @@ contract Crafty is RBAC {
 
   // Player API
 
-  /**
-   * @dev Crafts a craftable. The player must have allowed Crafty to use his
-   * tokens, which will be transferred to the null address (destoyed) during
-   * crafting.
-   * @param _craftable The craftable to craft.
-   */
-  function craft(CraftableToken _craftable) public {
-    address player = msg.sender;
+  function getCraftable(uint256 index) public view returns (CraftableToken) {
+    require(index <= craftables.length);
+    return craftables[index];
+  }
 
-    uint256 totalSteps = _craftable.getTotalRecipeSteps();
-    for (uint i = 0; i < totalSteps; ++i) {
-      ERC20 ingredient;
-      uint256 amountNeeded;
-      (ingredient, amountNeeded) = _craftable.getRecipeStep(i);
-
-      ingredient.transferFrom(player, 0, amountNeeded);
-    }
-
-    // Issue the crafted token
-    _craftable.transfer(player, 1);
+  function getTotalCraftables() public view returns (uint256) {
+    return craftables.length;
   }
 
   /**
@@ -86,7 +75,30 @@ contract Crafty is RBAC {
     CraftableToken newCraftable = new CraftableToken(_ingredients, _ingredientAmounts);
     craftables.push(newCraftable);
 
+    emit CraftableAdded(newCraftable);
+
     return newCraftable;
+  }
+
+  /**
+   * @dev Crafts a craftable. The player must have allowed Crafty to use his
+   * tokens, which will be transferred to the game contract during crafting.
+   * @param _craftable The craftable to craft.
+   */
+  function craft(CraftableToken _craftable) public {
+    address player = msg.sender;
+
+    uint256 totalSteps = _craftable.getTotalRecipeSteps();
+    for (uint i = 0; i < totalSteps; ++i) {
+      ERC20 ingredient;
+      uint256 amountNeeded;
+      (ingredient, amountNeeded) = _craftable.getRecipeStep(i);
+
+      ingredient.transferFrom(player, address(this), amountNeeded);
+    }
+
+    // Issue the crafted token
+    _craftable.transfer(player, 1);
   }
 
   // Admin API

@@ -1,198 +1,105 @@
 const _ = require('underscore');
-const fs = require('fs');
-
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
-const addCraftablesFromRules = require('../migrations/addCraftablesFromRules');
 
 const Crafty = artifacts.require('Crafty');
+const CraftableToken = artifacts.require('CraftableToken');
 
-contract.skip('Crafty', accounts => {
+contract('Crafty', accounts => {
   let crafty = null;
   const owner = accounts[0];
   const player = accounts[1];
-  const zeroAddress = '0x0000000000000000000000000000000000000000';
 
-  describe('New game', () => {
-    beforeEach(async () => {
-      crafty = await Crafty.new({from: owner});
-    });
+  async function getCraftableFromAddTX(tx) {
+    const receipt = await tx;
 
-    describe('Adding craftables', () => {
-      it('non-added craftables cannot be retrieved', async () => {
-        await expectPromiseThrow(crafty.getCraftable('table'));
-      });
+    assert.equal(receipt.logs.length, 1);
+    assert.equal(receipt.logs[0].event, 'CraftableAdded');
 
-      it('craftables can be added by the owner', async () => {
-        await crafty.addCraftable('table', {from: owner});
+    return CraftableToken.at(receipt.logs[0].args.addr);
+  }
 
-        const craftable = await crafty.getCraftable('table');
-        assert.notEqual(craftable, zeroAddress);
-      });
-
-      it('initial amount of new craftables is zero', async () => {
-        await crafty.addCraftable('table', {from: owner});
-
-        const amount = await crafty.getAmount('table', {from: player});
-        assert(amount.eq(0));
-      });
-
-      it('craftables cannot be added by players', async () => {
-        await expectPromiseThrow(crafty.addCraftable('table', {from: player}));
-      });
-
-      it('craftables can only be added once', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await expectPromiseThrow(crafty.addCraftable('table', {from: owner}));
-      });
-
-      it('multiple types of craftables can be added by the owner', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await crafty.addCraftable('chair', {from: owner});
-
-        const tableCraftable = await crafty.getCraftable('table');
-        assert.notEqual(tableCraftable, zeroAddress);
-
-        const chairCraftable = await crafty.getCraftable('chair');
-        assert.notEqual(chairCraftable, zeroAddress);
-      });
-    });
-
-    describe('Adding ingredients', () => {
-      // As of now, we have no way of checking if the ingredient was actually added,
-      // so we consider a lack of contract errors a success.
-
-      it('ingredients can be added by the owner', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await crafty.addCraftable('plank', {from: owner});
-
-        await crafty.addIngredient('table', 'plank', 1, {from: owner});
-      });
-
-      it('ingredients cannot be added by players', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await crafty.addCraftable('plank', {from: owner});
-
-        await expectPromiseThrow(crafty.addIngredient('table', 'plank', 1, {from: player}));
-      });
-
-      it('multiple ingredients can be added by the owner', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await crafty.addCraftable('plank', {from: owner});
-        await crafty.addCraftable('stick', {from: owner});
-
-        await crafty.addIngredient('table', 'plank', 1, {from: owner});
-        await crafty.addIngredient('table', 'stick', 4, {from: owner});
-      });
-
-      it('ingredients must exist', async () => {
-        await crafty.addCraftable('table', {from: owner});
-
-        await expectPromiseThrow(crafty.addIngredient('table', 'plank', 1, {from: owner}));
-      });
-
-      it('the ingredient\'s result must exist', async () => {
-        await crafty.addCraftable('plank', {from: owner});
-
-        await expectPromiseThrow(crafty.addIngredient('table', 'plank', 1, {from: owner}));
-      });
-
-      it('the ingredient must not be the result', async () => {
-        await crafty.addCraftable('plank', {from: owner});
-
-        await expectPromiseThrow(crafty.addIngredient('table', 'table', 1, {from: owner}));
-      });
-    });
-
-    describe('Crafting', () => {
-      it('craftables with no ingredients can be crafted', async () => {
-        await crafty.addCraftable('table', {from: owner});
-
-        await crafty.craft('table', {from: player});
-
-        const amount = await crafty.getAmount('table', {from: player});
-        assert(amount.eq(1));
-      });
-
-      it('craftables with ingredients cannot be crafted without the ingredients', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await crafty.addCraftable('plank', {from: owner});
-        await crafty.addCraftable('stick', {from: owner});
-
-        await crafty.addIngredient('table', 'plank', 1, {from: owner});
-        await crafty.addIngredient('table', 'stick', 4, {from: owner});
-
-        await expectPromiseThrow(crafty.craft('table', {from: player}));
-      });
-
-      it('crafting craftables with ingredients destroys all the ingredients', async () => {
-        await crafty.addCraftable('table', {from: owner});
-        await crafty.addCraftable('plank', {from: owner});
-        await crafty.addCraftable('stick', {from: owner});
-
-        await crafty.addIngredient('table', 'plank', 1, {from: owner});
-        await crafty.addIngredient('table', 'stick', 4, {from: owner});
-
-        await crafty.craft('plank', {from: player});
-        await Promise.all(_.range(4).map(() => crafty.craft('stick', {from: player})));
-
-        await crafty.craft('table', {from: player});
-
-        const tableAmount = await crafty.getAmount('table', {from: player});
-        assert(tableAmount.eq(1));
-
-        const plankAmount = await crafty.getAmount('plank', {from: player});
-        assert(plankAmount.eq(0));
-
-        const stickAmount = await crafty.getAmount('stick', {from: player});
-        assert(stickAmount.eq(0));
-      });
-    });
+  beforeEach(async () => {
+    crafty = await Crafty.new({from: owner});
   });
 
-  describe('Official game', () => {
-    const rules = JSON.parse(fs.readFileSync('./app/rules.json', 'utf8'));
-
-    beforeEach(async () => {
-      await deployCraftyWithCraftables();
+  describe('Crafting', () => {
+    it('no default craftables exist', async () => {
+      const totalCraftables = await crafty.getTotalCraftables();
+      assert.equal(totalCraftables, 0);
     });
 
-    async function deployCraftyWithCraftables() {
-      crafty = await Crafty.new({from: owner});
-      await addCraftablesFromRules(crafty, rules);
-    }
+    it('craftables can be added by players', async () => {
+      await crafty.addCraftable([], [], {from: player});
 
-    it('player starts with no craftables', async () => {
-      const amounts = await Promise.all(rules.craftables.map(craftable => crafty.getAmount(craftable.name, {from: player})));
-      assert(amounts.every(amount => amount.eq(0)));
+      const totalCraftables = await crafty.getTotalCraftables();
+      assert.equal(totalCraftables, 1);
     });
 
-    it('all craftables can be crafted', async () => {
-      async function craft(craftable) {
-        // Craft the required amount of each ingredient
-        await Promise.all(craftable.ingredients.map(ingredient => {
-          // Assume the ingredient exists and is unique
-          const ingredientCraftable = rules.craftables.filter(_craftable => _craftable.name === ingredient.name)[0];
+    it('players can always craft ingredient-less craftables', async () => {
+      const craftable = await getCraftableFromAddTX(crafty.addCraftable([], []));
 
-          return Promise.all(_.range(ingredient.amount).map(() => craft(ingredientCraftable)));
-        }));
+      const initialBalance = await craftable.balanceOf(player);
+      assert(initialBalance.eq(0));
 
-        await crafty.craft(craftable.name, {from: player});
-      }
+      await crafty.craft(craftable.address, {from: player});
 
-      // Each craftable will be tested with a new contract, to ensure an empty starting inventory
-      for (const craftable of rules.craftables) { // eslint-disable-line no-await-in-loop
-        await deployCraftyWithCraftables();
+      const finalBalance = await craftable.balanceOf(player);
+      assert(finalBalance.eq(1));
+    });
 
-        await craft(craftable);
+    it('players cannot craft using ingredients without calling approve', async () => {
+      const ingredient = await getCraftableFromAddTX(crafty.addCraftable([], []));
+      await crafty.craft(ingredient.address, {from: player});
 
-        const resultAmount = await crafty.getAmount(craftable.name, {from: player});
-        const othersAmount = await Promise.all(rules.craftables
-          .filter(_craftable => _craftable.name !== craftable.name)
-          .map(_craftable => crafty.getAmount(_craftable.name, {from: player})));
+      const ingredientBalance = await ingredient.balanceOf(player);
+      assert(ingredientBalance.eq(1));
 
-        assert(resultAmount.eq(1));
-        assert(othersAmount.every(amount => amount.eq(0)));
-      }
+      const craftable = await getCraftableFromAddTX(crafty.addCraftable([ingredient.address], [1]));
+
+      // craftable requires just one ingredient, so the crafting requirement has been met,
+      // but since ingredient has not been approved for crafty to use as an ingredient,
+      // the craft call will fail.
+      expectPromiseThrow(crafty.craft(craftable.address, {from: player}));
+    });
+
+    it('players can craft using ingredients if approve is called', async () => {
+      // First, build a craftable that requires two ingredients
+      const ingredients = await Promise.all([
+        getCraftableFromAddTX(crafty.addCraftable([], [])),
+        getCraftableFromAddTX(crafty.addCraftable([], []))
+      ]);
+      const ingredientAmounts = [2, 3];
+      assert.equal(ingredients.length, ingredientAmounts.length);
+
+      // Craft all ingredients
+      await Promise.all(_.range(ingredients.length).map(i =>
+        Promise.all(_.times(ingredientAmounts[i], () =>
+          crafty.craft(ingredients[i].address, {from: player})
+        ))
+      ));
+
+      // Check the balance of the ingredients has been updated
+      await Promise.all(_.range(ingredients.length).map(async i => {
+        const balance = await ingredients[i].balanceOf(player);
+        assert(balance.eq(ingredientAmounts[i]));
+      }));
+
+      // Approve each token to be used by the game
+      await Promise.all(ingredients.map(ingredient =>
+        ingredient.approve(crafty.address, 100, {from: player})
+      ));
+
+      const craftable = await getCraftableFromAddTX(crafty.addCraftable(ingredients.map(ingredient => ingredient.address), ingredientAmounts));
+      await crafty.craft(craftable.address, {from: player});
+
+      const craftableBalance = await craftable.balanceOf(player);
+      assert(craftableBalance.eq(1));
+
+      // Check the ingredients were consumed
+      await Promise.all(_.range(ingredients.length).map(async i => {
+        const balance = await ingredients[i].balanceOf(player);
+        assert(balance.eq(0));
+      }));
     });
   });
 });
