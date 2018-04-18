@@ -55,14 +55,6 @@ contract Crafty is RBAC {
   // Player API
 
   /**
-   * @dev Returns one of the game's craftables. Reverts if the craftable doesn't exist.
-   * @param _id The craftable's id.
-   */
-  function getCraftable(uint256 _id) public view returns (CraftableToken) {
-    return craftables[getCraftableIndex(_id)];
-  }
-
-  /**
    * @dev Crafts a craftable. The player must have allowed Crafty to use his
    * tokens, which will be transferred to the null address (destoyed) during
    * crafting.
@@ -87,33 +79,33 @@ contract Crafty is RBAC {
   /**
    * @dev Adds a new craftable to the game.
    * @param _ingredients An array with the different ERC20s required to craft the new token.
-   * @param _ingredient_amounts The amount of required tokens for each ERC20.
-   * @return The id of the newly created token, which is used to interact with it.
+   * @param _ingredientAmounts The amount of required tokens for each ERC20.
+   * @return The address of the newly created token.
    */
-  function addCraftable(ERC20[] _ingredients, uint256[] _ingredient_amounts) public returns (uint256) {
-    uint256 id = uint256(keccak256(craftables.length)); // No need for these to be random, uniqueness is enough
-    craftables.push(new CraftableToken(id, _ingredients, _ingredient_amounts));
+  function addCraftable(ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+    CraftableToken newCraftable = new CraftableToken(_ingredients, _ingredientAmounts);
+    craftables.push(newCraftable);
 
-    return id;
+    return newCraftable;
   }
 
   // Admin API
 
   /**
    * @dev Deletes a craftable from the game.
-   * @param _id The id of the craftable to delete.
+   * @param _craftable The craftable token to delete.
    */
-  function deleteCraftable(uint256 _id) public onlyAdmin {
-    delete craftables[getCraftableIndex(_id)];
+  function deleteCraftable(CraftableToken _craftable) public onlyAdmin {
+    delete craftables[getCraftableIndex(_craftable)];
   }
 
   // Curator API
 
   // Internals
 
-  function getCraftableIndex(uint256 _id) internal view returns (uint256) {
+  function getCraftableIndex(CraftableToken _craftable) internal view returns (uint256) {
     for (uint i = 0; i < craftables.length; ++i) {
-      if (craftables[i].id() == _id) {
+      if (craftables[i] == _craftable) {
         return i;
       }
     }
