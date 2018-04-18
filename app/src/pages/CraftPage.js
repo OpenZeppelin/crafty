@@ -80,7 +80,7 @@ const rules = {
   symbol: 'required|string|between:2,10',
   description: 'required|string|between:10,140',
   rate: 'required|integer|min:1',
-  // image: 'required',
+  image: 'required|string',
   'inputs': 'required|array|min:1',
   'inputs[].id': 'required|string',
   'inputs[].canonical': 'required|boolean',
@@ -126,13 +126,6 @@ const observers = {
         form.$(addressPath).set('')
         form.$(addressPath).resetValidation()
       }
-      return change
-    },
-  }],
-  'image': [{
-    key: 'value',
-    call: ({ change }) => {
-      console.log(change)
       return change
     },
   }],
@@ -213,7 +206,7 @@ class CraftPage extends React.Component {
   }
 
   render () {
-    console.log(this.form.values())
+    this.form.validate()
     return (
       <div>
         <Header>Build a Craftable Token</Header>
@@ -278,14 +271,20 @@ class CraftPage extends React.Component {
             </div>
           </div>
           <div className='grid-x grid-margin-x align-center'>
-            <div className='cell shrink'>
+            <div className='cell shrink grid-y align-center'>
               <button
-                className='button'
-                onClick={this.form.onSubmit}
+                className='cell button'
+                onClick={this.deploy}
                 disabled={!this.form.isValid || !this._canDeploy()}
               >
                 Deploy em&#39;
               </button>
+              {!this._canDeploy() &&
+                <p className='cell help-text'>
+                  {'We can\'t find the crafty contract! Are you on the right network?'}
+                </p>
+              }
+
             </div>
           </div>
         </div>

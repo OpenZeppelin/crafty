@@ -48,7 +48,17 @@ const Input = observer(({ field, label, isSelect = false }) => (
         )
       }
     })()}
-    <p className='help-text'>{field.error || <span>&nbsp;</span>}</p>
+    <p className='help-text'>
+      {(() => {
+        if (field.error && field.type === 'file') {
+          return 'An image is required!'
+        }
+
+        // @TODO(shrugs) - lol, make that better
+
+        return field.error || <span>&nbsp;</span>
+      })()}
+    </p>
   </div>
 ))
 
