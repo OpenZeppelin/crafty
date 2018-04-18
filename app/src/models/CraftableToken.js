@@ -23,11 +23,6 @@ export default class CraftableToken {
     // return this.contract.methods.name()
   })
 
-  description = asyncComputed('...', 1000, async () => {
-    return 'It\'s a delicious sandwich, what more could you ask for?'
-    // return this.contract.methods.description()
-  })
-
   @computed get shortName () {
     return this.name.get().length > 40
       ? `${this.name.get().substring(0, 40)}…`
@@ -35,9 +30,9 @@ export default class CraftableToken {
   }
 
   @computed get shortDescription () {
-    return this.description.get().length > 140
-      ? `${this.description.get().substring(0, 140)}…`
-      : this.description.get()
+    return this.description.length > 140
+      ? `${this.description.substring(0, 140)}…`
+      : this.description
   }
 
   balanceOf = createTransformer(
@@ -49,12 +44,21 @@ export default class CraftableToken {
       })
   )
 
-  imageUri = asyncComputed('https://placem.at/things?w=200&h=200', 1000, async () => {
-    return 'https://placem.at/things?w=200&h=200'
+  metadata = asyncComputed({}, 1000, async () => {
+    return {}
     // const metadataUri = await this.contract.methods.tokenUri()
     // const res = await fetch(metadataUri)
     // const data = await res.json()
-    // console.log(data)
-    // return data.image
+    // return data
   })
+
+  @computed get imageUri () {
+    return 'https://placem.at/things?w=200&h=200'
+    // return this.metadata.get().image
+  }
+
+  @computed get description () {
+    return 'It\'s a delicious sandwich, what more could you ask for?'
+    // return this.metadata.get().description
+  }
 }

@@ -8,7 +8,7 @@ import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 
 import MobxReactForm from 'mobx-react-form'
-import validatorjs from 'validatorjs'
+import * as validatorjs from 'validatorjs'
 import InputTokenField from '../components/InputTokenField'
 
 import { uid } from '../util'
@@ -78,7 +78,7 @@ const placeholders = {
 const rules = {
   name: 'required|string|alpha_num|between:4,42',
   symbol: 'required|string|between:2,10',
-  description: 'required|string|between:10,140',
+  description: 'required|string|between:10,400',
   rate: 'required|integer|min:1',
   image: 'required|string',
   'inputs': 'required|array|min:1',
@@ -107,14 +107,6 @@ const initials = {
 }
 
 const observers = {
-  // 'inputs': [{
-  //   key: 'value',
-  //   call: ({ form, field, change }) => {
-  //     // form.$('inputs[].id')
-  //     console.log(change)
-  //     return change
-  //   },
-  // }],
   'inputs[].canonical': [{
     key: 'value',
     call: ({ form, field, change }) => {
@@ -162,13 +154,29 @@ class CraftPage extends React.Component {
       observers,
       interceptors,
     }, {
-      plugins: { dvr: validatorjs },
+      plugins: {
+        dvr: {
+          package: validatorjs,
+          extendInstance: ($validator) => {
+            $validator.setAttributeNames({
+              'name': 'name',
+              'symbol': 'symbol',
+              'description': 'description',
+              'rate': 'rate',
+              'image': 'image',
+              'inputs': 'inputs',
+              'id': 'id',
+              'canonical': 'canonical',
+              'address': 'address',
+              'amount': 'amount',
+            })
+          },
+        },
+      },
     })
 
-    // add the first input with defaults
-    this.form.$('inputs').add({
-      id: uid(),
-    })
+    // add initial input
+    this._addInput()
   }
 
   _canDeploy = () => {
