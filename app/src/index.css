@@ -65,3 +65,64 @@ label[attr-type="checkbox"] {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
+
+.hella-spacing {
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+}
+
+
+input[type="checkbox"],
+button.button,
+{
+    margin-bottom: 0;
+}
+
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 200px;
+    height: 200px;
+    border: 1px dashed #000000;
+    border-radius: 5px;
+}
+
+.dropzone.active {
+    border: 3px solid #000000;
+}
+
+.dropzone.accept {
+    border-color: green;
+}
+
+.dropzone.reject {
+    border-color: red;
+}
+
+.file-input {
+    margin-bottom: 1rem;
+}
+
+.switch-container p {
+    display: block;
+    margin: 0;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.8;
+}
+
+.switch,
+.switch-paddle {
+    height: 2.4375rem;
+}
+
+.switch-paddle::after {
+    height: 1.9375rem;
+}
+
+input:checked~.switch-paddle {
+    background-color: #000000;
+}

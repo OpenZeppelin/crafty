@@ -11,37 +11,3 @@
     transform: scaleY(0);
     max-height: 0;
 }
-
-input[type="checkbox"],
-button.button,
-{
-    margin-bottom: 0;
-}
-
-.dropzone {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    width: 200px;
-    height: 200px;
-    border: 1px dashed #000000;
-    border-radius: 5px;
-}
-
-.dropzone.active {
-    border: 3px solid #000000;
-}
-
-.dropzone.accept {
-    border-color: green;
-}
-
-.dropzone.reject {
-    border-color: red;
-}
-
-.file-input {
-    margin-bottom: 1rem;
-}

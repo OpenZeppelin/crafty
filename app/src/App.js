@@ -6,6 +6,7 @@ import IndexPage from './pages/IndexPage'
 import DiscoverPage from './pages/DiscoverPage'
 import CraftPage from './pages/CraftPage'
 import ShowcasePage from './pages/ShowcasePage'
+import CraftableTokenPage from './pages/CraftableTokenPage'
 
 configure({ enforceActions: true })
 
@@ -26,7 +27,7 @@ class App extends Component {
           <Route exact path='/discover' component={DiscoverPage} />
           <Route exact path='/craft' component={CraftPage} />
           <Route path='/tokens/:address' component={ShowcasePage} />
-          {/* <CraftableTokenPage /> */}
+          <Route path='/craft/:address' component={CraftableTokenPage} />
         </Switch>
       </div>
     )

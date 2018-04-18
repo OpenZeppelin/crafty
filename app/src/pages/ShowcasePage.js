@@ -6,6 +6,8 @@ import Footer from '../components/Footer'
 import Subtitle from '../components/Subtitle'
 import CraftableTokenFeed from '../components/CraftableTokenFeed'
 import SectionHeader from '../components/SectionHeader'
+import WithWeb3Context from '../components/WithWeb3Context'
+import EmptyState from '../components/EmptyState'
 
 @inject('store')
 @observer
@@ -22,16 +24,24 @@ class ShowcasePage extends React.Component {
         <SectionHeader>
           My Craftable Tokens
         </SectionHeader>
-        {domain.crafty &&
+        <WithWeb3Context read render={() => (
           <CraftableTokenFeed
+            emptyChildren={() => <EmptyState />}
             tokens={domain.myCraftedTokens.get()}
             withBalanceOfAddress={match.params.address}
           />
-        }
+        )} />
 
         <SectionHeader>
           My Recipes
         </SectionHeader>
+
+        <WithWeb3Context read render={() => (
+          <CraftableTokenFeed
+            emptyChildren={() => <EmptyState />}
+            tokens={domain.myRecipes.get()}
+          />
+        )} />
 
         <Footer />
       </div>

@@ -2,11 +2,11 @@ import React from 'react'
 
 import './Subtitle.css'
 
-const Subtitle = ({ children }) => (
+const Subtitle = ({ children, className }) => (
   <section className='grid-container'>
-    <div className='grid-x grid-margin-x'>
+    <div className={`'grid-x grid-margin-x' ${className}`}>
       <div className='cell small-12 align-center-middle text-center'>
-        <p className='subtitle'>{children}</p>
+        <div className='subtitle'>{children}</div>
       </div>
     </div>
   </section>

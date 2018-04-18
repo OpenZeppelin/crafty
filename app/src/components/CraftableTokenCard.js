@@ -23,7 +23,6 @@ class CraftableTokenCard extends React.Component {
     const balance = withBalanceOfAddress &&
       token.balanceOf(withBalanceOfAddress).get()
 
-    console.log(balance, balance && balance.toString(10))
     return (
       <div
         className={`${this.props.className} grid-y craftable-card with-border`}

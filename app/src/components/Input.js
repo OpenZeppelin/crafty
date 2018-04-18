@@ -2,6 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react'
 
 import FileInput from './FileInput'
+import Switch from './Switch'
 
 const Input = observer(({ field, label, isSelect = false }) => (
   <div>
@@ -28,10 +29,9 @@ const Input = observer(({ field, label, isSelect = false }) => (
         )
       case 'checkbox':
         return (
-          <label htmlFor={field.id} attr-type='checkbox'>
-            <input {...field.bind()} />
-            {label || field.label}
-          </label>
+          <Switch
+            field={field}
+          />
         )
       case 'file':
         return (

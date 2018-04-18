@@ -1,4 +1,4 @@
-import { observable, flow, action, transaction } from 'mobx'
+import { observable, flow, action, transaction, computed } from 'mobx'
 import Web3 from 'web3'
 
 const networkDescById = {
@@ -26,6 +26,31 @@ export default class Web3ContextStore {
         this._getAndSetWeb3()
       })
     })
+  }
+
+  @computed get hasWeb3 () {
+    return !!this.root.web3Context.web3
+  }
+
+  @computed get hasNetwork () {
+    return !!this.root.web3Context.network.id
+  }
+
+  @computed get isLocked () {
+    return !this.isUnlocked
+  }
+
+  @computed get isUnlocked () {
+    return !!this.root.web3Context.currentAddress
+  }
+
+  @computed get canRead () {
+    return this.hasWeb3 &&
+      this.hasNetwork
+  }
+
+  @computed get canWrite () {
+    return this.isUnlocked
   }
 
   _getAndSetWeb3 = action(() => {

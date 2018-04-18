@@ -20,7 +20,12 @@ export default class CraftableToken {
 
   name = asyncComputed('...', 1000, async () => {
     return 'A Nice Sandwich'
-    // return this.contract.methods.name()
+    // return this.contract.methods.name().call()
+  })
+
+  creator = asyncComputed('0x0', 1000, async () => {
+    return '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC'
+    // return this.contract.methods.creator().call()
   })
 
   @computed get shortName () {
