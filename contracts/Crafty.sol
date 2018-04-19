@@ -56,12 +56,15 @@ contract Crafty is RBAC {
 
   /**
    * @dev Adds a new craftable to the game.
+   * @param _name The name of the craftable.
+   * @param _symbol The symbol of the craftable.
+   * @param _tokenURI A URI ponting to craftable metadata (i.e. a thumbnail).
    * @param _ingredients An array with the different ERC20s required to craft the new token.
    * @param _ingredientAmounts The amount of required tokens for each ERC20.
    * @return The address of the newly created token.
    */
-  function addCraftable(string _name, string _symbol, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
-    CraftableToken newCraftable = new CraftableToken(_name, _symbol, _ingredients, _ingredientAmounts);
+  function addCraftable(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+    CraftableToken newCraftable = new CraftableToken(_name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
     craftables.push(newCraftable);
 
     emit CraftableAdded(newCraftable);

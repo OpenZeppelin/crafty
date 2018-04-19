@@ -21,17 +21,24 @@ contract CraftableToken is StandardToken, DetailedERC20 {
     uint256 amountNeeded;
   }
 
+  string public tokenURI;
+
   RecipeStep[] private recipe;
 
   uint256 constant MAX_UINT_256 = 2**256 - 1;
 
   /**
    * @dev Constructor. The recipe is created here, and cannot be modified afterwards.
+   * @param _name The name of the token.
+   * @param _symbol The symbol of the token.
+   * @param _tokenURI A URI pointing to token metadata (i.e. a thumbnail).
    * @param _ingredients An array with the ERC20s required to craft this token.
    * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
    */
-  function CraftableToken(string _name, string _symbol, ERC20[] _ingredients, uint256[] _ingredientAmounts) DetailedERC20(_name, _symbol, 0) public {
+  function CraftableToken(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) DetailedERC20(_name, _symbol, 0) public {
     require(_ingredients.length == _ingredientAmounts.length);
+
+    tokenURI = _tokenURI;
 
     // The token creator (who is in charge of enforcing the crafting rules) holds all of the
     // initial supply, which is issued to players as they craft tokens (and taken back when

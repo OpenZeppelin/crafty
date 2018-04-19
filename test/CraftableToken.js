@@ -8,9 +8,10 @@ contract('CraftableToken', accounts => {
   const players = accounts.slice(1, accounts.length);
   const name = 'CraftableTest';
   const symbol = 'CRFT';
+  const tokenURI = 'http://hosting.com/CraftableToken.json';
 
   function newCraftable(ingredients = [], ingredientAmounts = []) {
-    return CraftableToken.new(name, symbol, ingredients, ingredientAmounts, {from: deployer});
+    return CraftableToken.new(name, symbol, tokenURI, ingredients, ingredientAmounts, {from: deployer});
   }
 
   it('metadata is stored', async () => {
@@ -19,6 +20,7 @@ contract('CraftableToken', accounts => {
     await craftable.name().should.eventually.equal(name);
     await craftable.symbol().should.eventually.equal(symbol);
     await craftable.decimals().should.eventually.be.bignumber.equal(0);
+    await craftable.tokenURI().should.eventually.equal(tokenURI);
   });
 
   it('all initial balance is held by the deployer', async () => {
