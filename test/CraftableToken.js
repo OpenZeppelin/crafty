@@ -4,21 +4,21 @@ const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 const CraftableToken = artifacts.require('CraftableToken');
 
 contract('CraftableToken', accounts => {
-  const owner = accounts[0]; // This is the account that creates the token
+  const deployer = accounts[0];
   const players = accounts.slice(1, accounts.length);
 
   function newCraftable(ingredients = [], ingredientAmounts = []) {
-    return CraftableToken.new(ingredients, ingredientAmounts, {from: owner});
+    return CraftableToken.new(ingredients, ingredientAmounts, {from: deployer});
   }
 
-  it('all initial balance is held by the owner', async () => {
+  it('all initial balance is held by the deployer', async () => {
     const craftable = await newCraftable();
 
-    const ownerBalance = await craftable.balanceOf(owner);
+    const deployerBalance = await craftable.balanceOf(deployer);
     const playersBalances = await Promise.all(players.map(player => craftable.balanceOf(player)));
     const totalSupply = await craftable.totalSupply();
 
-    assert(ownerBalance.eq(totalSupply));
+    assert(deployerBalance.eq(totalSupply));
     assert(playersBalances.every(balance => balance.eq(0)));
   });
 

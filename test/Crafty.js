@@ -1,13 +1,20 @@
 const _ = require('underscore');
+const BigNumber = web3.BigNumber;
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
+
+require('chai')
+  .use(require('chai-bignumber')(BigNumber))
+  .use(require('chai-as-promised'))
+  .should();
 
 const Crafty = artifacts.require('Crafty');
 const CraftableToken = artifacts.require('CraftableToken');
 
 contract('Crafty', accounts => {
   let crafty = null;
-  const owner = accounts[0];
+  const deployer = accounts[0];
   const player = accounts[1];
+  const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
   async function getCraftableFromAddTX(tx) {
     const receipt = await tx;
@@ -19,7 +26,7 @@ contract('Crafty', accounts => {
   }
 
   beforeEach(async () => {
-    crafty = await Crafty.new({from: owner});
+    crafty = await Crafty.new({from: deployer});
   });
 
   describe('Crafting', () => {
@@ -56,8 +63,8 @@ contract('Crafty', accounts => {
 
       const craftable = await getCraftableFromAddTX(crafty.addCraftable([ingredient.address], [1]));
 
-      // craftable requires just one ingredient, so the crafting requirement has been met,
-      // but since ingredient has not been approved for crafty to use as an ingredient,
+      // craftable requires just one ingredient, so the crafting requirement has been met.
+      // However since ingredient has not been approved for crafty to use as an ingredient,
       // the craft call will fail.
       expectPromiseThrow(crafty.craft(craftable.address, {from: player}));
     });
@@ -100,6 +107,49 @@ contract('Crafty', accounts => {
         const balance = await ingredients[i].balanceOf(player);
         assert(balance.eq(0));
       }));
+    });
+  });
+
+  describe('RBAC', () => {
+    let adminRolename = '';
+
+    before(async () => {
+      adminRolename = await crafty.ROLE_ADMIN();
+    });
+
+    it('deployer is admin', async () => {
+      await crafty.hasRole(deployer, adminRolename).should.eventually.be.true;
+    });
+
+    it('admins can appoint new admins', async () => {
+      await crafty.hasRole(player, adminRolename).should.eventually.be.false;
+
+      await crafty.addAdminRole(player, {from: deployer});
+
+      await crafty.hasRole(player, adminRolename).should.eventually.be.true;
+    });
+
+    it('non-admins cannot appoint new admins', async () => {
+      expectPromiseThrow(crafty.addAdminRole(player, {from: player}));
+    });
+
+    it('admins can delete craftables', async () => {
+      const craftable = await getCraftableFromAddTX(crafty.addCraftable([], []));
+
+      // The craftable will be stored at index 0 (because it is the first craftable)
+      await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
+      await crafty.getCraftable(0).should.eventually.equal(craftable.address);
+
+      await crafty.deleteCraftable(craftable.address, {from: deployer});
+
+      // The craftable itself is not deleted, but its entry is zeroed-out in the game's storage
+      await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
+      await crafty.getCraftable(0).should.eventually.equal(ZERO_ADDRESS);
+    });
+
+    it('non-admins cannnot delete craftables', async () => {
+      const craftable = await getCraftableFromAddTX(crafty.addCraftable([], []));
+      expectPromiseThrow(crafty.deleteCraftable(craftable.address, {from: player}));
     });
   });
 });

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.21;
 
 import './CraftableToken.sol';
 import 'zeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
@@ -19,34 +19,16 @@ contract Crafty is RBAC {
   CraftableToken[] private craftables;
 
   event CraftableAdded(address addr);
+  event CraftableDeleted(address addr);
 
   // Role Based Access Control (RBAC)
 
   string public constant ROLE_ADMIN = "admin";
-  string public constant ROLE_CURATOR = "curator";
 
-  modifier onlyAdmin() {
-    checkRole(msg.sender, ROLE_ADMIN);
-    _;
-  }
+  // Admins can add new admins.
 
-  modifier onlyCurator() {
-    checkRole(msg.sender, ROLE_CURATOR);
-    _;
-  }
-
-  // Admins can add new admins, and add and remove curators.
-
-  function addAdminRole(address _user) onlyAdmin public {
+  function addAdminRole(address _user) onlyRole(ROLE_ADMIN) public {
     addRole(_user, ROLE_ADMIN);
-  }
-
-  function addCuratorRole(address _user) onlyAdmin public {
-    addRole(_user, ROLE_CURATOR);
-  }
-
-  function removeCuratorRole(address _user) onlyAdmin public {
-    removeRole(_user, ROLE_CURATOR);
   }
 
   function Crafty() public {
@@ -56,13 +38,20 @@ contract Crafty is RBAC {
 
   // Player API
 
-  function getCraftable(uint256 index) public view returns (CraftableToken) {
-    require(index <= craftables.length);
-    return craftables[index];
-  }
-
+  /**
+   * @dev Returns the total number of craftables in the game.
+   */
   function getTotalCraftables() public view returns (uint256) {
     return craftables.length;
+  }
+
+  /**
+   * @dev Returns one of the game's craftables.
+   * @param  _index The index of the requested craftable (from 0 to getTotalCraftables() - 1).
+   */
+  function getCraftable(uint256 _index) public view returns (CraftableToken) {
+    require(_index < craftables.length);
+    return craftables[_index];
   }
 
   /**
@@ -107,14 +96,18 @@ contract Crafty is RBAC {
    * @dev Deletes a craftable from the game.
    * @param _craftable The craftable token to delete.
    */
-  function deleteCraftable(CraftableToken _craftable) public onlyAdmin {
+  function deleteCraftable(CraftableToken _craftable) public onlyRole(ROLE_ADMIN) {
     delete craftables[getCraftableIndex(_craftable)];
+    emit CraftableDeleted(_craftable);
   }
 
   // Curator API
 
   // Internals
 
+  /**
+   * @dev Returns the index of a craftable stored in the game.
+   */
   function getCraftableIndex(CraftableToken _craftable) internal view returns (uint256) {
     for (uint i = 0; i < craftables.length; ++i) {
       if (craftables[i] == _craftable) {
