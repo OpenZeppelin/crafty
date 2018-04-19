@@ -60,8 +60,8 @@ contract Crafty is RBAC {
    * @param _ingredientAmounts The amount of required tokens for each ERC20.
    * @return The address of the newly created token.
    */
-  function addCraftable(ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
-    CraftableToken newCraftable = new CraftableToken(_ingredients, _ingredientAmounts);
+  function addCraftable(string _name, string _symbol, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+    CraftableToken newCraftable = new CraftableToken(_name, _symbol, _ingredients, _ingredientAmounts);
     craftables.push(newCraftable);
 
     emit CraftableAdded(newCraftable);

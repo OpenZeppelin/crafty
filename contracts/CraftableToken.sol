@@ -1,5 +1,6 @@
 pragma solidity ^0.4.21;
 
+import 'zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
 
@@ -12,7 +13,7 @@ import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
  * Note that this contract DOES NOT enforce the ingredients requirement: it merely
  * provides storage for them, and it is the creator's choice whether or not to comply.
  */
-contract CraftableToken is StandardToken {
+contract CraftableToken is StandardToken, DetailedERC20 {
   // Each step of the recipe has an ERC20 ingredient, of which a certain amount
   // are required to craft the recipe.
   struct RecipeStep {
@@ -29,7 +30,7 @@ contract CraftableToken is StandardToken {
    * @param _ingredients An array with the ERC20s required to craft this token.
    * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
    */
-  function CraftableToken(ERC20[] _ingredients, uint256[] _ingredientAmounts) public {
+  function CraftableToken(string _name, string _symbol, ERC20[] _ingredients, uint256[] _ingredientAmounts) DetailedERC20(_name, _symbol, 0) public {
     require(_ingredients.length == _ingredientAmounts.length);
 
     // The token creator (who is in charge of enforcing the crafting rules) holds all of the

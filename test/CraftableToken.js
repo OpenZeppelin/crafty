@@ -6,10 +6,20 @@ const CraftableToken = artifacts.require('CraftableToken');
 contract('CraftableToken', accounts => {
   const deployer = accounts[0];
   const players = accounts.slice(1, accounts.length);
+  const name = 'CraftableTest';
+  const symbol = 'CRFT';
 
   function newCraftable(ingredients = [], ingredientAmounts = []) {
-    return CraftableToken.new(ingredients, ingredientAmounts, {from: deployer});
+    return CraftableToken.new(name, symbol, ingredients, ingredientAmounts, {from: deployer});
   }
+
+  it('metadata is stored', async () => {
+    const craftable = await newCraftable();
+
+    await craftable.name().should.eventually.equal(name);
+    await craftable.symbol().should.eventually.equal(symbol);
+    await craftable.decimals().should.eventually.be.bignumber.equal(0);
+  });
 
   it('all initial balance is held by the deployer', async () => {
     const craftable = await newCraftable();
