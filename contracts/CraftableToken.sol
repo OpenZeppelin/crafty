@@ -1,30 +1,53 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.21;
 
+import 'zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 
 /**
  * @title Craftable Token
- * @dev Token that can be minted or burned by it's owner, who can also add
- * ingredients required for the minting of the token. Note that this contract
- * DOES NOT enforce the ingredients requirement: it merely provides storage
- * for them, and it is the owner's choice whether or not to comply.
- * Borrows from OpenZeppelin's Mintable (https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/ERC20/MintableToken.sol)
- * and Burnable (https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/ERC20/BurnableToken.sol) tokens.
+ * @dev Token with a recipe containing the required ingredients to craft it. Crafting
+ * is simply a way of issuing tokens: the token creator holds a large (virtually
+ * infinite) initial supply, and transfers from said supply to crafters.
+ * Note that this contract DOES NOT enforce the ingredients requirement: it merely
+ * provides storage for them, and it is the creator's choice whether or not to comply.
  */
-contract CraftableToken is StandardToken, Ownable {
-  event Mint(address indexed player, uint256 amount);
-  event Burn(address indexed player, uint256 amount);
-
-  // Each step of the recipe is an CraftableToken that must be consumed
-  // (burned), and the amount of tokens to burn.
+contract CraftableToken is StandardToken, DetailedERC20 {
+  // Each step of the recipe has an ERC20 ingredient, of which a certain amount
+  // are required to craft the recipe.
   struct RecipeStep {
-    CraftableToken ingredient;
+    ERC20 ingredient;
     uint256 amountNeeded;
   }
 
   RecipeStep[] private recipe;
+
+  uint256 constant MAX_UINT_256 = 2**256 - 1;
+
+  /**
+   * @dev Constructor. The recipe is created here, and cannot be modified afterwards.
+   * @param _ingredients An array with the ERC20s required to craft this token.
+   * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
+   */
+  function CraftableToken(string _name, string _symbol, ERC20[] _ingredients, uint256[] _ingredientAmounts) DetailedERC20(_name, _symbol, 0) public {
+    require(_ingredients.length == _ingredientAmounts.length);
+
+    // The token creator (who is in charge of enforcing the crafting rules) holds all of the
+    // initial supply, which is issued to players as they craft tokens (and taken back when
+    // they are consumed for crafting purposes).
+    totalSupply_ = MAX_UINT_256;
+    balances[msg.sender] = totalSupply_;
+
+    for (uint i = 0; i < _ingredients.length; ++i) {
+      require(_ingredientAmounts[i] > 0);
+
+      recipe.push(RecipeStep({
+        ingredient: _ingredients[i],
+        amountNeeded: _ingredientAmounts[i]
+      }));
+    }
+  }
 
   // Public API
 
@@ -35,66 +58,12 @@ contract CraftableToken is StandardToken, Ownable {
     return recipe.length;
   }
 
-  modifier validStep(uint256 step) {
-    require(step < recipe.length);
-    _;
-  }
-
   /**
-   * @dev Returns the CraftableToken that must be burned, and the amount to
-   * burn, to comply with a recipe step.
-   * @return A tuple containing the token and the amount to burn.
+   * @dev Returns the ERC20 required to comply with a recipe step, along with the amount of tokens needed.
+   * @return A tuple containing the token and the amount.
    */
-  function getRecipeStep(uint256 recipeStep) public view validStep(recipeStep) returns (CraftableToken, uint256) {
-    return (recipe[recipeStep].ingredient, recipe[recipeStep].amountNeeded);
-  }
-
-  // Owner API
-
-  /**
-   * @dev Permanently adds a new recipe step to the CraftableToken.
-   * @param ingredient The CraftableToken to burn as part of the new recipe
-   * step.
-   * @param amountNeeded The amount of ingredient tokens to burn as part of
-   * the new recipe step.
-   */
-  function addRecipeStep(CraftableToken ingredient, uint256 amountNeeded) public onlyOwner {
-    require(ingredient != address(0));
-    require(amountNeeded > 0);
-
-    recipe.push(RecipeStep({
-      ingredient: ingredient,
-      amountNeeded: amountNeeded
-    }));
-  }
-
-  /**
-   * @dev Mints (creates) new tokens and adds it to a player's supply.
-   * @param player The player that will receive the minted tokens.
-   * @param amount The amount of tokens to mint.
-   */
-  function mint(address player, uint256 amount) public onlyOwner {
-    totalSupply_ = totalSupply_.add(amount);
-    balances[player] = balances[player].add(amount);
-
-    Mint(player, amount);
-    Transfer(address(0), player, amount);
-  }
-
-  /**
-   * @dev Burns (destroys) tokens from a player's supply.
-   * @param player The player whose tokens will be burned.
-   * @param amount The amount of tokens to burn.
-   */
-  function burn(address player, uint256 amount) public onlyOwner {
-    require(amount <= balances[player]);
-    // No need to require amount <= totalSupply, since that would imply the
-    // player's balance is greater than the totalSupply, which *should* be an
-    // assertion failure
-
-    totalSupply_ = totalSupply_.sub(amount);
-    balances[player] = balances[player].sub(amount);
-
-    Burn(player, amount);
+  function getRecipeStep(uint256 _recipeStepNumber) public view returns (ERC20, uint256) {
+    require(_recipeStepNumber < recipe.length);
+    return (recipe[_recipeStepNumber].ingredient, recipe[_recipeStepNumber].amountNeeded);
   }
 }

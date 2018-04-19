@@ -1,100 +1,118 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.21;
 
 import './CraftableToken.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+import 'zeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 
 
 /**
  * @title Crafting token game
  * @dev The game holds multiple CraftableTokens (craftables), which can be
- * crafted by players. Crafting advanced tokens (with ingredients) requires
- * the player to hold the required amount of said ingredient, which will be
- * used up in the crafting process. New craftables and ingredients can be
- * added by the game owner at any point in time.
+ * crafted by players. Crafting advanced tokens (those with ingredients)
+ * requires the player to hold the required amount of said ingredient, which will be
+ * consumed in the crafting process. New craftables (with their ingredients) can be
+ * added by all players.
  */
-contract Crafty is Ownable {
-  // Craftable storage. Each craftable is referenced using a unique string.
-  // An enum could be used for this, but Solidity doesn't yet support having
-  // mappings with enum keys, and enums are not exposed to JS, so strings are
-  // far easier to work with.
-  mapping (string => CraftableToken) private craftables;
+contract Crafty is RBAC {
+  // Storage for craftables. Some of them may have been zeroed-out (by a deleteCraftable
+  // call), so validation of each CraftableToken should be performed by readers.
+  CraftableToken[] private craftables;
+
+  event CraftableAdded(address addr);
+  event CraftableDeleted(address addr);
+
+  // Role Based Access Control (RBAC)
+
+  string public constant ROLE_ADMIN = "admin";
+
+  // Admins can add new admins.
+
+  function addAdminRole(address _user) onlyRole(ROLE_ADMIN) public {
+    addRole(_user, ROLE_ADMIN);
+  }
+
+  function Crafty() public {
+    // Make the deployer the initial admin.
+    addRole(msg.sender, ROLE_ADMIN);
+  }
 
   // Player API
 
   /**
-   * @dev Returns one of the game's craftables.
-   * @param name The craftable's name.
+   * @dev Returns the total number of craftables in the game.
    */
-  function getCraftable(string name) public view returns (CraftableToken) {
-    require(craftables[name] != address(0));
-
-    return craftables[name];
+  function getTotalCraftables() public view returns (uint256) {
+    return craftables.length;
   }
 
   /**
-   * @dev Crafts a craftable. All of the craftable's ingredients must be
-   * present in the player's inventory in the required amounts, and they
-   * will be consumed (destroyed) by the crafting process.
-   * @param name The name of the craftable to craft.
+   * @dev Returns one of the game's craftables.
+   * @param  _index The index of the requested craftable (from 0 to getTotalCraftables() - 1).
    */
-  function craft(string name) public {
-    CraftableToken result = getCraftable(name);
+  function getCraftable(uint256 _index) public view returns (CraftableToken) {
+    require(_index < craftables.length);
+    return craftables[_index];
+  }
+
+  /**
+   * @dev Adds a new craftable to the game.
+   * @param _ingredients An array with the different ERC20s required to craft the new token.
+   * @param _ingredientAmounts The amount of required tokens for each ERC20.
+   * @return The address of the newly created token.
+   */
+  function addCraftable(string _name, string _symbol, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+    CraftableToken newCraftable = new CraftableToken(_name, _symbol, _ingredients, _ingredientAmounts);
+    craftables.push(newCraftable);
+
+    emit CraftableAdded(newCraftable);
+
+    return newCraftable;
+  }
+
+  /**
+   * @dev Crafts a craftable. The player must have allowed Crafty to use his
+   * tokens, which will be transferred to the game contract during crafting.
+   * @param _craftable The craftable to craft.
+   */
+  function craft(CraftableToken _craftable) public {
     address player = msg.sender;
 
-    // Check the required craftables are present in the player's inventory,
-    // and then consume those items. All burn calls will be reverted if the
-    // player is missing any ingredient.
-    uint256 totalSteps = result.getTotalRecipeSteps();
+    uint256 totalSteps = _craftable.getTotalRecipeSteps();
     for (uint i = 0; i < totalSteps; ++i) {
-      CraftableToken ingredient;
+      ERC20 ingredient;
       uint256 amountNeeded;
-      (ingredient, amountNeeded) = result.getRecipeStep(i);
+      (ingredient, amountNeeded) = _craftable.getRecipeStep(i);
 
-      require(ingredient.balanceOf(player) >= amountNeeded);
-      ingredient.burn(player, amountNeeded);
+      ingredient.transferFrom(player, address(this), amountNeeded);
     }
 
-    // Add the resulting item
-    result.mint(player, 1);
+    // Issue the crafted token
+    _craftable.transfer(player, 1);
   }
 
+  // Admin API
+
   /**
-   * @dev Returns the amount of craftables or a certain type owned by the
-   * player.
-   * @param name The name of the craftable to query.
+   * @dev Deletes a craftable from the game.
+   * @param _craftable The craftable token to delete.
    */
-  function getAmount(string name) public view returns (uint256) {
-    return getCraftable(name).balanceOf(msg.sender);
+  function deleteCraftable(CraftableToken _craftable) public onlyRole(ROLE_ADMIN) {
+    delete craftables[getCraftableIndex(_craftable)];
+    emit CraftableDeleted(_craftable);
   }
 
-  // Owner API
+  // Internals
 
   /**
-   * @dev Adds a new craftable to the game by deploying a new CraftableToken.
-   * @param name The name of the new craftable, which will be later used to
-   * interact with it. Once a name has been taken, it cannot be reused.
+   * @dev Returns the index of a craftable stored in the game.
    */
-  function addCraftable(string name) public onlyOwner {
-    require(craftables[name] == address(0));
+  function getCraftableIndex(CraftableToken _craftable) internal view returns (uint256) {
+    for (uint i = 0; i < craftables.length; ++i) {
+      if (craftables[i] == _craftable) {
+        return i;
+      }
+    }
 
-    craftables[name] = new CraftableToken();
-  }
-
-  /**
-   * @dev Adds an ingredient requirement to a craftable. After calling this
-   * function, crafting the craftable will require consuming (destroying) the
-   * new ingredient.
-   * @param resultName The name of the craftable to add the ingredient to.
-   * @param ingredientName The name of the ingredient craftable.
-   * @param amountNeeded The number of ingredient craftables to consume during
-   * the result's craftable crafting.
-   */
-  function addIngredient(string resultName, string ingredientName, uint256 amountNeeded) public onlyOwner {
-    require(keccak256(resultName) != keccak256(ingredientName));
-
-    CraftableToken result = getCraftable(resultName);
-    CraftableToken ingredient = getCraftable(ingredientName);
-
-    result.addRecipeStep(ingredient, amountNeeded);
+    revert();
   }
 }
