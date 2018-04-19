@@ -1,6 +1,7 @@
 import React from 'react'
-import { computed, observable, action } from 'mobx'
+import { observe, computed, observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
+import { asyncComputed } from 'computed-async-mobx'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -12,48 +13,31 @@ import Input from '../components/Input'
 
 import CraftableToken from '../models/CraftableToken'
 
-import craftCraftableForm from '../forms/CraftCraftable'
-
 @inject('store')
 @observer
 class CraftableTokenPage extends React.Component {
-  constructor (props) {
-    super(props)
-
-    this.form = craftCraftableForm({
-      extra: {
-        'approvals[].approved': {
-          async: true,
-          requestChange: () => {
-            const value = observable.box(false)
-
-            setTimeout(action(() => {
-              value.set(true)
-            }), 5000)
-
-            return value
-          },
-        },
-      },
-      // interceptors: {
-      //   'approvals[].approved': [{
-      //     key: 'value',
-      //     call: async ({ form, field, change }) => {
-      //       field.extra.pending = true
-      //       if (change.newValue) {
-
-      //       } else {
-
-      //       }
-
-      //       return null
-      //     },
-      //   }],
-      // },
+  componentDidMount () {
+    // auto dispose
+    observe(this.disposers, (change) => {
+      if (change.type === 'del') {
+        debugger
+        change.oldValue()
+      }
     })
-
-    this.form.$('approvals').add()
   }
+
+  componentWillUnmount () {
+    this.disposers.forEach(d => d())
+  }
+
+  @computed get disposers () {
+
+    // watch token.ingredients
+  }
+
+  approvals = asyncComputed([], 1000, async () => {
+    const token = this.token
+  })
 
   @computed get token () {
     const address = this.props.match.params.address
@@ -66,9 +50,6 @@ class CraftableTokenPage extends React.Component {
   }
 
   render () {
-    console.log(this.form.values())
-    const { store } = this.props
-    const { domain } = store
     return (
       <div>
         <Header>Craft a Token</Header>
@@ -121,12 +102,12 @@ class CraftableTokenPage extends React.Component {
             </Subtitle>
             <div className='grid-container'>
               <div className='grid-x grid-margin-x'>
-                {this.form.$('approvals').map(f =>
+                {/* {this.form.$('approvals').map(f =>
                   <Input
-                    key={f.$('approved').id}
+                    key={'test'}
                     field={f.$('approved')}
                   />
-                )}
+                )} */}
               </div>
             </div>
           </div>

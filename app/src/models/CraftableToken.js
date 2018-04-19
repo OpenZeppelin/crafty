@@ -66,4 +66,9 @@ export default class CraftableToken {
     return 'It\'s a delicious sandwich, what more could you ask for?'
     // return this.metadata.get().description
   }
+
+  totalRecipeSteps = asyncComputed(0, 1000, async () => {
+    return 2
+    return this.contract.methods.getTotalRecipeSteps().call()
+  })
 }
