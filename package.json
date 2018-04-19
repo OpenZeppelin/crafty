@@ -7,6 +7,8 @@
     "test": "npx truffle test",
     "build": "bash scripts/build.sh",
     "deploy": "bash scripts/deploy.sh",
+    "lint:sol": "solium -d contracts",
+    "lint:sol:fix": "solium -d contracts --fix",
     "copy-artifacts": "bash scripts/copy-artifacts.sh",
     "app": "bash scripts/app.sh"
   },
@@ -24,6 +26,7 @@
     "dotenv": "^5.0.1",
     "ganache-cli": "^6.1.0",
     "openzeppelin-solidity": "1.9.0",
+    "solium": "^1.1.7",
     "truffle": "^4.1.5",
     "truffle-hdwallet-provider": "0.0.3",
     "underscore": "^1.8.3"
