@@ -1,6 +1,6 @@
 import React from 'react'
-import { observe, computed, observable, action } from 'mobx'
-import { observer, inject } from 'mobx-react'
+import { observe, computed, observable, action, autorun } from 'mobx'
+import { observer, inject, componentByNodeRegistery } from 'mobx-react'
 import { asyncComputed } from 'computed-async-mobx'
 
 import Header from '../components/Header'
@@ -12,22 +12,21 @@ import EmptyState from '../components/EmptyState'
 import Input from '../components/Input'
 
 import CraftableToken from '../models/CraftableToken'
+import RootStore from '../store/RootStore'
 
 @inject('store')
 @observer
 class CraftableTokenPage extends React.Component {
   componentDidMount () {
-    // auto dispose
-    observe(this.disposers, (change) => {
-      if (change.type === 'del') {
-        debugger
-        change.oldValue()
-      }
-    })
+    // this.stopSyncingToForm = autorun(() => {
+    //   this.form.init({
+    //     approvals: this.approvals,
+    //   })
+    // })
   }
 
   componentWillUnmount () {
-    this.disposers.forEach(d => d())
+    // this.stopSyncingToForm()
   }
 
   @computed get disposers () {
@@ -35,8 +34,14 @@ class CraftableTokenPage extends React.Component {
     // watch token.ingredients
   }
 
+  // is crafty approved to spend the current address' tokens
   approvals = asyncComputed([], 1000, async () => {
-    const token = this.token
+    return this.token.ingredients.map(i =>
+      i.isApproved({
+        owner: RootStore.web3Context.currentAddress,
+        spender: RootStore.domain.crafty.address,
+      })
+    )
   })
 
   @computed get token () {
@@ -108,6 +113,7 @@ class CraftableTokenPage extends React.Component {
                     field={f.$('approved')}
                   />
                 )} */}
+                {this.token && JSON.stringify(this.approvals.get())}
               </div>
             </div>
           </div>

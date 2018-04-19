@@ -2,13 +2,14 @@ import { observable, computed } from 'mobx'
 import { createTransformer } from 'mobx-utils'
 import { asyncComputed } from 'computed-async-mobx'
 import ERC20Artifact from '../artifacts/DetailedERC20.json'
+import RootStore from '../store/RootStore'
+import BN from 'bn.js'
 
 export default class ERC20 {
   @observable contract = null
 
-  constructor (web3, at) {
-    this.web3 = web3
-    this.contract = new web3.eth.Contract(
+  constructor (at) {
+    this.contract = new RootStore.web3Context.web3.eth.Contract(
       ERC20Artifact.abi,
       at
     )
@@ -60,17 +61,17 @@ export default class ERC20 {
   )
 
   allowance = createTransformer(
-    (address) => asyncComputed(
-      new this.web3.utils.BN(0),
+    ({ owner, spender }) => asyncComputed(
+      new BN(0),
       500,
       async () => {
-        return new this.web3.utils.BN(0)
-        // return this.contract.methods.allowance(
-        //   address,
-        //   // @TODO(shrugs) - how to get crafty address here?
-        //   this.store.crafty.address
-        // )
-      }
-    )
+        return new BN(
+          await this.contract.methods.allowance(owner, spender).call()
+        )
+      })
+  )
+
+  isApproved = createTransformer(
+    (opts) => this.allowance(opts).get().gt(new BN(0))
   )
 }

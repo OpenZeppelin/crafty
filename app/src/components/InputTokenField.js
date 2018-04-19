@@ -21,7 +21,7 @@ class InputTokenField extends React.Component {
     const web3 = this.props.store.web3Context.web3
     const tokenAddress = this.props.field.$('address').values()
     if (!web3.utils.isAddress(tokenAddress)) { return null }
-    return new ERC20(web3, tokenAddress)
+    return new ERC20(tokenAddress)
   })
 
   @action

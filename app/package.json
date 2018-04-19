@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bn.js": "^4.11.8",
     "computed-async-mobx": "^4.1.0",
     "foundation-sites": "^6.4.4-rc1",
+    "lodash": "^4.17.5",
     "mobx": "^4.1.1",
     "mobx-react": "^5.0.0",
     "mobx-react-form": "^1.32.3",
@@ -13,9 +15,11 @@
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "react-dropzone": "^4.2.9",
+    "react-portal": "^4.1.5",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.4",
+    "react-tetris": "0.0.6",
     "validatorjs": "^3.14.2",
     "web3": "^1.0.0-beta.34"
   },

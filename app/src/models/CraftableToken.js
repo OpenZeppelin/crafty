@@ -2,6 +2,10 @@ import { observable, computed } from 'mobx'
 import { createTransformer } from 'mobx-utils'
 import { asyncComputed } from 'computed-async-mobx'
 import CraftableTokenArtifact from '../artifacts/CraftableToken.json'
+import pMap from 'p-map'
+import BN from 'bn.js'
+import range from 'lodash/range'
+import ERC20 from './ERC20'
 
 export default class CraftableToken {
   @observable contract = null
@@ -19,13 +23,11 @@ export default class CraftableToken {
   }
 
   name = asyncComputed('...', 1000, async () => {
-    return 'A Nice Sandwich'
-    // return this.contract.methods.name().call()
+    return this.contract.methods.name().call()
   })
 
   creator = asyncComputed('0x0', 1000, async () => {
-    return '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC'
-    // return this.contract.methods.creator().call()
+    return this.contract.methods.creator().call()
   })
 
   @computed get shortName () {
@@ -42,10 +44,12 @@ export default class CraftableToken {
 
   balanceOf = createTransformer(
     (address) => asyncComputed(
-      new this.web3.utils.BN(0),
+      new BN(0),
       500,
       async () => {
-        return this.contract.methods.balanceOf(address).call()
+        return new BN(
+          await this.contract.methods.balanceOf(address).call()
+        )
       })
   )
 
@@ -67,8 +71,31 @@ export default class CraftableToken {
     // return this.metadata.get().description
   }
 
-  totalRecipeSteps = asyncComputed(0, 1000, async () => {
-    return 2
-    return this.contract.methods.getTotalRecipeSteps().call()
-  })
+  totalRecipeSteps = asyncComputed(
+    new BN(0),
+    1000,
+    async () => {
+      return new BN(
+        await this.contract.methods.getTotalRecipeSteps().call()
+      )
+    })
+
+  ingredientAddressesAndAmounts = asyncComputed(
+    [], 1000, async () => {
+      const totalSteps = this.totalRecipeSteps.get().toNumber()
+      return pMap(range(totalSteps), async (i) => {
+        const res = await this.contract.methods.getRecipeStep(i).call()
+        return {
+          address: res[0],
+          amount: new BN(res[1]),
+        }
+      }, { concurrency: 10 })
+    }
+  )
+
+  @computed get ingredients () {
+    return this.ingredientAddressesAndAmounts.get().map(i =>
+      new ERC20(i.address)
+    )
+  }
 }

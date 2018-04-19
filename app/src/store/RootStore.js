@@ -10,6 +10,4 @@ class RootStore {
   }
 }
 
-export default () => {
-  return new RootStore()
-}
+export default new RootStore()

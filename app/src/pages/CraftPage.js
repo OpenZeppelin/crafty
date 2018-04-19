@@ -1,5 +1,7 @@
 import React from 'react'
+import { action, observable, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
+import { Redirect } from 'react-router-dom'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -7,6 +9,7 @@ import Subtitle from '../components/Subtitle'
 import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
+import BlockingLoader from '../components/BlockingLoader'
 
 import InputTokenField from '../components/InputTokenField'
 
@@ -17,6 +20,11 @@ import { uid } from '../util'
 @inject('store')
 @observer
 class CraftPage extends React.Component {
+  @observable deploying = false
+  @observable playing = false
+  @observable totallyDone = false
+  @observable tokenAddress
+
   constructor (props) {
     super(props)
 
@@ -37,26 +45,39 @@ class CraftPage extends React.Component {
     this.form.$('inputs').add({ id: uid() })
   }
 
+  @action
+  closeLoader = () => {
+    this.playing = false
+    this.totallyDone = true
+  }
+
+  @action
   deploy = async () => {
     if (!this._canDeploy()) { return }
-    this.loading = true
+    this.deploying = true
 
     try {
       const crafty = this.props.store.domain.crafty
-      const ingredients = this.data.inputs.map(i => i.address)
-      const amounts = this.data.inputs.map(i => i.amount)
+      const values = this.form.values()
+      const ingredients = values.inputs.map(i => i.address)
+      const amounts = values.inputs.map(i => i.amount)
 
-      await crafty.contract.methods.addCraftable(
+      const tokenAddress = await crafty.addCraftable(
+        values.name,
+        values.symbol,
         ingredients,
         amounts,
-        this.data.name,
-        this.data.symbol,
-        this.data.rate,
-      ).send()
+      )
+      runInAction(() => {
+        this.tokenAddress = tokenAddress
+        this.totallyDone = true
+      })
     } catch (error) {
       console.error(error)
     } finally {
-      this.loading = false
+      runInAction(() => {
+        this.deploying = false
+      })
     }
   }
 
@@ -64,6 +85,16 @@ class CraftPage extends React.Component {
     this.form.validate()
     return (
       <div>
+        {this.totallyDone &&
+          <Redirect to={`/craft/${this.tokenAddress}`} />
+        }
+        <BlockingLoader
+          title='Deploying your Craftable Token'
+          open={this.playing}
+          canClose={!this.deploying}
+          finishText='Done deploying! You can continue playing or return to the Crafting Game'
+          requestClose={this.closeLoader}
+        />
         <Header>Build a Craftable Token</Header>
         <Subtitle>
           Here you can <b>create your own craftable token</b>.
@@ -130,7 +161,7 @@ class CraftPage extends React.Component {
               <div className='grid-x grid-margin-x align-center'>
                 <div className='cell shrink grid-y align-center'>
                   <button
-                    className='cell button'
+                    className='cell button inverted'
                     onClick={this.deploy}
                     disabled={!this.form.isValid || !this._canDeploy()}
                   >

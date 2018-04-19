@@ -85,6 +85,8 @@ export default class Web3ContextStore {
 
       const accounts = yield this.web3.eth.getAccounts()
       this.currentAddress = accounts[0] || null
+
+      this.web3.eth.defaultAddress = this.currentAddress
     } catch (error) {
       console.log(error)
       this.root.ui.error = new Error('Could not get info from MetaMask')
