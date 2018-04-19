@@ -14,19 +14,16 @@ contract('CraftableToken', accounts => {
   it('all initial balance is held by the deployer', async () => {
     const craftable = await newCraftable();
 
-    const deployerBalance = await craftable.balanceOf(deployer);
-    const playersBalances = await Promise.all(players.map(player => craftable.balanceOf(player)));
-    const totalSupply = await craftable.totalSupply();
-
-    assert(deployerBalance.eq(totalSupply));
-    assert(playersBalances.every(balance => balance.eq(0)));
+    await craftable.balanceOf(deployer).should.eventually.be.bignumber.equal(await craftable.totalSupply());
+    await Promise.all(players.map(player =>
+      craftable.balanceOf(player).should.eventually.be.bignumber.equal(0)
+    ));
   });
 
   describe('Ingredients', () => {
     it('craftables can have no ingredients', async () => {
       const craftable = await newCraftable();
-      const recipeSteps = await craftable.getTotalRecipeSteps();
-      assert.equal(recipeSteps, 0);
+      await craftable.getTotalRecipeSteps().should.eventually.be.bignumber.equal(0);
     });
 
     it('all ingredients can be retrieved', async () => {
@@ -38,13 +35,12 @@ contract('CraftableToken', accounts => {
 
       const craftable = await newCraftable(ingredients, amounts);
 
-      const recipeSteps = await craftable.getTotalRecipeSteps();
-      assert(recipeSteps.eq(2));
+      await craftable.getTotalRecipeSteps().should.eventually.be.bignumber.equal(2);
 
       _.range(2).forEach(async i => {
         const [ingredient, amount] = await craftable.getRecipeStep(i);
-        assert.equal(ingredient, ingredients[i]);
-        assert(amount.eq(amounts[i]));
+        ingredient.should.be.bignumber.equal(ingredients[i]);
+        amount.should.be.bignumber.equal(amounts[i]);
       });
     });
 

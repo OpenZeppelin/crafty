@@ -101,8 +101,6 @@ contract Crafty is RBAC {
     emit CraftableDeleted(_craftable);
   }
 
-  // Curator API
-
   // Internals
 
   /**
