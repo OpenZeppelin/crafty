@@ -11,17 +11,21 @@ export const uid = () => {
 
 export const createFromEthereumBlock = (blockNumber) => (initial, dataFn, fn) => {
   let disposer
-  return fromResource(
+  let isBusy
+  const resource = fromResource(
     (sink) => {
       disposer = reaction(
         () => [dataFn(), blockNumber],
         async ([data]) => {
           try {
+            isBusy = true
             sink(await fn(data))
           } catch (error) {
             // @TODO(handle errors)
             console.error(error)
             debugger
+          } finally {
+            isBusy = false
           }
         },
         { fireImmediately: true }
@@ -32,6 +36,11 @@ export const createFromEthereumBlock = (blockNumber) => (initial, dataFn, fn) =>
     },
     initial
   )
+
+  return {
+    ...resource,
+    busy: () => isBusy,
+  }
 }
 
 export const asyncComputed = (initial, fn) => {

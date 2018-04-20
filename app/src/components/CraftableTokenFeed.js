@@ -5,6 +5,7 @@ import CraftableTokenCard from './CraftableTokenCard'
 
 const CraftableTokenFeed = observer(({
   tokens,
+  isLoading = false,
   emptyChildren = () => null,
   withBalanceOfAddress = null,
 }) => (
@@ -18,6 +19,9 @@ const CraftableTokenFeed = observer(({
           withBalanceOfAddress={withBalanceOfAddress}
         />
       )}
+      {isLoading &&
+        <p>Loading</p>
+      }
       {(!tokens || tokens.length === 0) && emptyChildren()}
     </div>
   </div>

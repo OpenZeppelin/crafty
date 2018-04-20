@@ -27,6 +27,7 @@ class DiscoverPage extends React.Component {
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
             tokens={domain.crafty.craftableTokens}
+            isLoading={domain.crafty.craftableTokenAddresses.busy()}
           />
         )} />
         <Footer />
