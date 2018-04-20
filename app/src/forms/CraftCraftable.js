@@ -38,9 +38,6 @@ const defaults = {
 }
 
 const extra = {
-  'approvals[].approved': {
-    async: true,
-  },
 }
 
 const initials = {
