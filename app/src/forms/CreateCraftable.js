@@ -1,4 +1,4 @@
-import Form from '../components/Form'
+import Form from 'mobx-react-form'
 import * as validatorjs from 'validatorjs'
 
 const canonicalTokens = [{
