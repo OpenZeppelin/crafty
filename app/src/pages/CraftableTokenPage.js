@@ -1,6 +1,6 @@
 import React from 'react'
 import { observe, computed, observable, action, autorun } from 'mobx'
-import { observer, inject, componentByNodeRegistery } from 'mobx-react'
+import { observer, inject } from 'mobx-react'
 import { asyncComputed } from '../util'
 
 import Header from '../components/Header'
@@ -113,7 +113,7 @@ class CraftableTokenPage extends React.Component {
                     field={f.$('approved')}
                   />
                 )} */}
-                {this.token && JSON.stringify(this.approvals.get())}
+                {this.token && JSON.stringify(this.approvals.current())}
               </div>
             </div>
           </div>
