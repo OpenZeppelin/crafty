@@ -1,8 +1,8 @@
 import { computed } from 'mobx'
-import { asyncComputed } from 'computed-async-mobx'
-import Crafty from '../models/Crafty'
-import featured from '../featured.json'
+import { asyncComputed } from '../util'
 import pMap from 'p-map'
+
+import featured from '../featured.json'
 
 export default class DomainStore {
   constructor (root) {
@@ -14,8 +14,12 @@ export default class DomainStore {
       return null
     }
 
+    if (!this.Crafty) {
+      this.Crafty = require('../models/Crafty').default
+    }
+
     try {
-      return new Crafty(
+      return new this.Crafty(
         this.root.web3Context.web3,
         this.root.web3Context.network.id
       )
@@ -35,12 +39,12 @@ export default class DomainStore {
   }
 
   @computed get craftableTokens () {
-    return this.crafty.craftableTokens.get()
+    return this.crafty.craftableTokens
   }
 
   @computed get featuredCraftableTokens () {
-    const tokens = this.crafty.craftableTokens.get()
-    return tokens.filter((t) => featured.includes(t.address))
+    return this.craftableTokens
+      .filter((t) => featured.includes(t.address))
   }
 
   /**
@@ -53,7 +57,7 @@ export default class DomainStore {
       this.hasCrafty
   }
 
-  myCraftedTokens = asyncComputed([], 500, async () => {
+  myCraftedTokens = asyncComputed([], async () => {
     const me = this.root.web3Context.currentAddress
     const allCraftabletokens = this.craftableTokens
 
@@ -70,7 +74,7 @@ export default class DomainStore {
     // return myTokens.map(tc => tc.token)
   })
 
-  myRecipes = asyncComputed([], 500, async () => {
+  myRecipes = asyncComputed([], async () => {
     const me = this.root.web3Context.currentAddress
     const allCraftabletokens = this.craftableTokens
 

@@ -143,7 +143,7 @@ class CraftPage extends React.Component {
                     </div>
                   </div>
                   <Input field={this.form.$('description')} />
-                  <Input field={this.form.$('rate')} />
+                  {/* <Input field={this.form.$('rate')} /> */}
                 </div>
               </div>
             </div>

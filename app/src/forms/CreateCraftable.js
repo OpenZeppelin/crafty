@@ -15,7 +15,7 @@ const fields = [
   'name',
   'symbol',
   'description',
-  'rate',
+  // 'rate',
   'image',
   'inputs',
   'inputs[].id',
@@ -28,7 +28,7 @@ const types = {
   'name': 'text',
   'symbol': 'text',
   'description': 'text',
-  'rate': 'number',
+  // 'rate': 'number',
   'image': 'file',
   'inputs': 'array',
   'inputs[].canonical': 'checkbox',
@@ -40,7 +40,7 @@ const values = {
   name: '',
   symbol: '',
   description: '',
-  rate: 1,
+  // rate: 1,
   inputs: [],
 }
 
@@ -48,7 +48,7 @@ const labels = {
   name: 'Your Craftable Token\'s Name',
   symbol: 'Your Craftable Token\'s Symbol',
   description: 'Describe Your Craftable Token',
-  rate: 'How many Craftable Tokens are created with this recipe?',
+  // rate: 'How many Craftable Tokens are created with this recipe?',
   image: 'Your Craftable Token\'s Image',
   inputs: 'Sacrificial Tokens',
   'inputs[].canonical': 'Canonical Token?',
@@ -64,10 +64,10 @@ const placeholders = {
 }
 
 const rules = {
-  name: 'required|string|alpha_num|between:4,42',
+  name: 'required|string|between:4,42',
   symbol: 'required|string|between:2,10',
   description: 'required|string|between:10,400',
-  rate: 'required|integer|min:1',
+  // rate: 'required|integer|min:1',
   image: 'required|string',
   'inputs': 'required|array|min:1',
   'inputs[].id': 'required|string',
@@ -145,7 +145,7 @@ export default () => {
             'name': 'name',
             'symbol': 'symbol',
             'description': 'description',
-            'rate': 'rate',
+            // 'rate': 'rate',
             'image': 'image',
             'inputs': 'inputs',
           })

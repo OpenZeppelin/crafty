@@ -1,12 +1,18 @@
-import { observable, computed } from 'mobx'
+import { computed } from 'mobx'
 import { createTransformer } from 'mobx-utils'
-import { asyncComputed } from 'computed-async-mobx'
-import ERC20Artifact from '../artifacts/DetailedERC20.json'
-import RootStore from '../store/RootStore'
 import BN from 'bn.js'
 
+import ERC20Artifact from '../artifacts/DetailedERC20.json'
+
+import RootStore from '../store/RootStore'
+
+import {
+  asyncComputed,
+  createFromEthereumBlock,
+} from '../util'
+
 export default class ERC20 {
-  @observable contract = null
+  contract = null
 
   constructor (at) {
     this.contract = new RootStore.web3Context.web3.eth.Contract(
@@ -19,7 +25,7 @@ export default class ERC20 {
     return this.contract._address
   }
 
-  name = asyncComputed('...', 1000, async () => {
+  name = asyncComputed('...', async () => {
     try {
       const name = await this.contract.methods.name().call()
       if (!name) { throw new Error() }
@@ -29,7 +35,13 @@ export default class ERC20 {
     }
   })
 
-  symbol = asyncComputed('...', 1000, async () => {
+  @computed get shortName () {
+    return this.name.current().length > 40
+      ? `${this.name.current().substring(0, 40)}…`
+      : this.name.current()
+  }
+
+  symbol = asyncComputed('...', async () => {
     try {
       const symbol = await this.contract.methods.symbol().call()
       if (!symbol) { throw new Error() }
@@ -39,39 +51,39 @@ export default class ERC20 {
     }
   })
 
-  @computed get shortName () {
-    return this.name.get().length > 22
-      ? `${this.name.get().substring(0, 14)}…`
-      : this.name.get()
-  }
-
   @computed get shortSymbol () {
-    return this.symbol.get().length > 6
-      ? `${this.symbol.get().substring(0, 6)}…`
-      : this.symbol.get()
+    return this.symbol.current().length > 6
+      ? `${this.symbol.current().substring(0, 6)}…`
+      : this.symbol.current()
   }
 
   balanceOf = createTransformer(
-    (address) => asyncComputed(
-      new this.web3.utils.BN(0),
-      500,
-      async () => {
-        return this.contract.methods.balanceOf(address).call()
-      })
+    (address) => createFromEthereumBlock(
+      RootStore.web3Context.latestBlock
+    )(
+      new BN(0),
+      () => {},
+      async () =>
+        new BN(
+          await this.contract.methods.balanceOf(address).call()
+        )
+    )
   )
 
   allowance = createTransformer(
-    ({ owner, spender }) => asyncComputed(
+    ({ owner, spender }) => createFromEthereumBlock(
+      RootStore.web3Context.latestBlock
+    )(
       new BN(0),
-      500,
-      async () => {
-        return new BN(
+      () => {},
+      async () =>
+        new BN(
           await this.contract.methods.allowance(owner, spender).call()
         )
-      })
+    )
   )
 
   isApproved = createTransformer(
-    (opts) => this.allowance(opts).get().gt(new BN(0))
+    (opts) => this.allowance(opts).current().gt(new BN(0))
   )
 }

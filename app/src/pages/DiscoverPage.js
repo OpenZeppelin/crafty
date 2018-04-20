@@ -26,7 +26,7 @@ class DiscoverPage extends React.Component {
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
-            tokens={domain.crafty.craftableTokens.get()}
+            tokens={domain.crafty.craftableTokens}
           />
         )} />
         <Footer />

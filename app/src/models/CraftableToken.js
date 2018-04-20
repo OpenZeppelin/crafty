@@ -1,40 +1,28 @@
-import { observable, computed } from 'mobx'
-import { createTransformer } from 'mobx-utils'
-import { asyncComputed } from 'computed-async-mobx'
-import CraftableTokenArtifact from '../artifacts/CraftableToken.json'
-import pMap from 'p-map'
+import { computed } from 'mobx'
 import BN from 'bn.js'
-import range from 'lodash/range'
+
+import CraftableTokenArtifact from '../artifacts/CraftableToken.json'
+import RootStore from '../store/RootStore'
 import ERC20 from './ERC20'
 
-export default class CraftableToken {
-  @observable contract = null
+import {
+  asyncComputed,
+  collect,
+} from '../util'
 
-  constructor (web3, at) {
-    this.web3 = web3
-    this.contract = new web3.eth.Contract(
+export default class CraftableToken extends ERC20 {
+  constructor (at) {
+    super(at)
+
+    this.contract = new RootStore.web3Context.web3.eth.Contract(
       CraftableTokenArtifact.abi,
       at
     )
   }
 
-  @computed get address () {
-    return this.contract._address
-  }
-
-  name = asyncComputed('...', 1000, async () => {
-    return this.contract.methods.name().call()
-  })
-
-  creator = asyncComputed('0x0', 1000, async () => {
-    return this.contract.methods.creator().call()
-  })
-
-  @computed get shortName () {
-    return this.name.get().length > 40
-      ? `${this.name.get().substring(0, 40)}…`
-      : this.name.get()
-  }
+  creator = asyncComputed('0x0', async () =>
+    this.contract.methods.creator().call()
+  )
 
   @computed get shortDescription () {
     return this.description.length > 140
@@ -42,18 +30,7 @@ export default class CraftableToken {
       : this.description
   }
 
-  balanceOf = createTransformer(
-    (address) => asyncComputed(
-      new BN(0),
-      500,
-      async () => {
-        return new BN(
-          await this.contract.methods.balanceOf(address).call()
-        )
-      })
-  )
-
-  metadata = asyncComputed({}, 1000, async () => {
+  metadata = asyncComputed({}, async () => {
     return {}
     // const metadataUri = await this.contract.methods.tokenUri()
     // const res = await fetch(metadataUri)
@@ -73,28 +50,26 @@ export default class CraftableToken {
 
   totalRecipeSteps = asyncComputed(
     new BN(0),
-    1000,
-    async () => {
-      return new BN(
+    async () =>
+      new BN(
         await this.contract.methods.getTotalRecipeSteps().call()
       )
-    })
+  )
 
   ingredientAddressesAndAmounts = asyncComputed(
-    [], 1000, async () => {
-      const totalSteps = this.totalRecipeSteps.get().toNumber()
-      return pMap(range(totalSteps), async (i) => {
+    [],
+    async () =>
+      collect(this.totalRecipeSteps.current().toNumber(), async (i) => {
         const res = await this.contract.methods.getRecipeStep(i).call()
         return {
           address: res[0],
           amount: new BN(res[1]),
         }
-      }, { concurrency: 10 })
-    }
+      })
   )
 
   @computed get ingredients () {
-    return this.ingredientAddressesAndAmounts.get().map(i =>
+    return this.ingredientAddressesAndAmounts.current().map(i =>
       new ERC20(i.address)
     )
   }

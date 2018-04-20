@@ -1,7 +1,7 @@
 import React from 'react'
 import { observe, computed, observable, action, autorun } from 'mobx'
 import { observer, inject, componentByNodeRegistery } from 'mobx-react'
-import { asyncComputed } from 'computed-async-mobx'
+import { asyncComputed } from '../util'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -35,7 +35,7 @@ class CraftableTokenPage extends React.Component {
   }
 
   // is crafty approved to spend the current address' tokens
-  approvals = asyncComputed([], 1000, async () => {
+  approvals = asyncComputed([], async () => {
     return this.token.ingredients.map(i =>
       i.isApproved({
         owner: RootStore.web3Context.currentAddress,
@@ -51,7 +51,7 @@ class CraftableTokenPage extends React.Component {
     if (!web3) { return null }
     if (!web3.utils.isAddress(address)) { return null }
 
-    return new CraftableToken(web3, address)
+    return new CraftableToken(address)
   }
 
   render () {
@@ -79,7 +79,7 @@ class CraftableTokenPage extends React.Component {
               </div>
               <div key='text' className='cell small-12 medium-auto grid-y'>
                 <div className='cell shrink'>
-                  <h3>{this.token.name.get()}</h3>
+                  <h3>{this.token.name.current()}</h3>
                 </div>
                 <div className='cell auto grid-x align-middle'>
                   <p className='cell'>{this.token.description}</p>
@@ -95,7 +95,7 @@ class CraftableTokenPage extends React.Component {
         {this.token &&
           <div>
             <SectionHeader>
-              Craft &#34;{this.token.name.get()}&#34;
+              Craft &#34;{this.token.name.current()}&#34;
             </SectionHeader>
           </div>
         }

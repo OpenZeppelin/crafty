@@ -27,7 +27,7 @@ class ShowcasePage extends React.Component {
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
-            tokens={domain.myCraftedTokens.get()}
+            tokens={domain.myCraftedTokens.current()}
             withBalanceOfAddress={match.params.address}
           />
         )} />
@@ -39,7 +39,7 @@ class ShowcasePage extends React.Component {
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
-            tokens={domain.myRecipes.get()}
+            tokens={domain.myRecipes.current()}
           />
         )} />
 

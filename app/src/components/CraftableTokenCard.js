@@ -21,7 +21,7 @@ class CraftableTokenCard extends React.Component {
   render () {
     const { token, withBalanceOfAddress } = this.props
     const balance = withBalanceOfAddress &&
-      token.balanceOf(withBalanceOfAddress).get()
+      token.balanceOf(withBalanceOfAddress).current()
 
     return (
       <div

@@ -1,14 +1,18 @@
-import { observable, computed } from 'mobx'
+import { computed } from 'mobx'
 import BN from 'bn.js'
-import pMap from 'p-map'
-import range from 'lodash/range'
-import { asyncComputed } from 'computed-async-mobx'
+
 import CraftyArtifact from '../artifacts/Crafty.json'
-import CraftableToken from '../models/CraftableToken'
+
 import RootStore from '../store/RootStore'
+import CraftableToken from '../models/CraftableToken'
+
+import {
+  createFromEthereumBlock,
+  collect,
+} from '../util'
 
 export default class Crafty {
-  @observable contract = null
+  contract = null
 
   constructor (web3, networkId) {
     this.web3 = web3
@@ -40,28 +44,31 @@ export default class Crafty {
     return this.contract._address
   }
 
-  totalCraftables = asyncComputed(
+  totalCraftables = createFromEthereumBlock(
+    RootStore.web3Context.latestBlock
+  )(
     new BN(0),
-    1000,
+    () => {},
     async () => {
       return new BN(
         await this.contract.methods.getTotalCraftables().call()
       )
-    })
+    }
+  )
 
-  craftableTokenAddresses = asyncComputed([], 1000, async () => {
-    const totalCraftables = this.totalCraftables.get().toNumber()
-    const addresses = await pMap(
-      range(totalCraftables),
-      async (i) => {
+  craftableTokenAddresses = createFromEthereumBlock(
+    RootStore.web3Context.latestBlock
+  )(
+    [],
+    () => this.totalCraftables.current(),
+    async (totalCraftables) =>
+      collect(totalCraftables.toNumber(), async (i) => {
         return this.contract.methods.getCraftable(i).call()
-      }, { concurrency: 10 })
+      })
+  )
 
-    return addresses
-  })
-
-  craftableTokens = asyncComputed([], 1000, async () => {
-    return this.craftableTokenAddresses.get()
-      .map(a => new CraftableToken(this.web3, a))
-  })
+  @computed get craftableTokens () {
+    return this.craftableTokenAddresses.current()
+      .map(a => new CraftableToken(a))
+  }
 }

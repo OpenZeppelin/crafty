@@ -17,6 +17,7 @@ export default class Web3ContextStore {
   @observable currentAddress = null
   @observable web3 = null
   @observable network = defaultNetwork
+  @observable latestBlock = null
 
   constructor (root) {
     this.root = root
@@ -87,6 +88,8 @@ export default class Web3ContextStore {
       this.currentAddress = accounts[0] || null
 
       this.web3.eth.defaultAddress = this.currentAddress
+
+      this.latestBlock = yield this.web3.eth.getBlockNumber()
     } catch (error) {
       console.log(error)
       this.root.ui.error = new Error('Could not get info from MetaMask')

@@ -1,7 +1,7 @@
 import React from 'react'
 import { observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { asyncComputed } from 'computed-async-mobx'
+import { asyncComputed } from '../util'
 
 import Input from './Input'
 import ERC20 from '../models/ERC20'
@@ -17,10 +17,12 @@ class InputTokenField extends React.Component {
     editing: false,
   }
 
-  inferredToken = asyncComputed(null, 500, async () => {
+  inferredToken = asyncComputed(null, async () => {
     const web3 = this.props.store.web3Context.web3
     const tokenAddress = this.props.field.$('address').values()
+
     if (!web3.utils.isAddress(tokenAddress)) { return null }
+
     return new ERC20(tokenAddress)
   })
 
