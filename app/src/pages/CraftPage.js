@@ -65,6 +65,7 @@ class CraftPage extends React.Component {
       const tokenAddress = await crafty.addCraftable(
         values.name,
         values.symbol,
+        '',
         ingredients,
         amounts,
       )
