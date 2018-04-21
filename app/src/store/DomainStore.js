@@ -1,8 +1,13 @@
 import { computed } from 'mobx'
 import { asyncComputed } from '../util'
+import some from 'lodash/some'
 import pMap from 'p-map'
 
+import Test1Token from '../artifacts/Test1Token.json'
+import Test2Token from '../artifacts/Test2Token.json'
+import Test3Token from '../artifacts/Test3Token.json'
 import featured from '../featured.json'
+import ERC20 from '../models/ERC20'
 
 export default class DomainStore {
   constructor (root) {
@@ -91,4 +96,34 @@ export default class DomainStore {
       .filter(tc => tc.creator === me)
       .map(tc => tc.token)
   })
+
+  get canonicalTokens () {
+    // we need to stop this method from creating new ERC20 objects
+    // every time it's called
+    // because it resets the observables for all
+    // of the dependent properties like name, symbol
+    if (this._canonicalTokens) {
+      return this._canonicalTokens
+    }
+
+    const networkId = this.root.web3Context.network.id
+    if (!networkId) { return [] }
+
+    const tokenArtifacts = [Test1Token, Test2Token, Test3Token]
+    this._canonicalTokens = tokenArtifacts.map(ct =>
+      new ERC20(ct.networks[networkId].address)
+    )
+
+    return this._canonicalTokens
+  }
+
+  @computed get canonicalTokensInfo () {
+    return this.canonicalTokens.map(ct => ct.info)
+  }
+
+  // are any of the canonical token things busy?
+  @computed get isLoadingCanonicalTokens () {
+    const anyBusy = this.canonicalTokensInfo.map(ct => ct.busy)
+    return this.canonicalTokensInfo.length === 0 || some(anyBusy)
+  }
 }

@@ -3,6 +3,8 @@
 pragma solidity ^0.4.18;
 
 import "zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol";
+import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 
 
-contract ExampleToken is DetailedERC20 {}
+
+contract ExampleToken is StandardToken, DetailedERC20 {}

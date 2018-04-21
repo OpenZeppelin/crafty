@@ -1,5 +1,5 @@
 import React from 'react'
-import { action, observable, runInAction } from 'mobx'
+import { action, observable, runInAction, when } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Redirect } from 'react-router-dom'
 
@@ -10,28 +10,46 @@ import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
+import SectionLoader from '../components/SectionLoader'
 
 import InputTokenField from '../components/InputTokenField'
 
-import createCraftableForm from '../forms/CreateCraftable'
+import buildRecipeForm from '../forms/BuildRecipe'
 
 import { uid } from '../util'
 
 @inject('store')
 @observer
-class CraftPage extends React.Component {
+class BuildRecipePage extends React.Component {
   @observable deploying = false
   @observable playing = false
   @observable totallyDone = false
   @observable tokenAddress
+  @observable form = null
 
   constructor (props) {
     super(props)
 
-    this.form = createCraftableForm()
+    this._lazyInitForm()
+  }
 
-    // add initial input
-    this._addInput()
+  _lazyInitForm = async () => {
+    const start = Date.now()
+
+    await when(() => !this.props.store.domain.isLoadingCanonicalTokens)
+    const finished = Date.now()
+    const diff = finished - start // ms
+
+    const minimumDelay = 800
+    const timeLeft = minimumDelay - diff
+    const restDelay = Math.max(0, timeLeft)
+
+    setTimeout(action(() => {
+      this.form = buildRecipeForm(this.props.store.domain.canonicalTokensInfo)
+
+      // add initial input
+      this._addInput()
+    }), restDelay)
   }
 
   _canDeploy = () => {
@@ -83,7 +101,7 @@ class CraftPage extends React.Component {
   }
 
   render () {
-    this.form.validate()
+    this.form && this.form.validate()
     return (
       <div>
         {this.totallyDone &&
@@ -107,9 +125,10 @@ class CraftPage extends React.Component {
               <code>01.</code> Sacrificial Tokens
             </SectionHeader>
 
-            <div className='grid-container'>
-              <div className='grid-x grid-margin-x'>
-                <div className='cell auto'>
+            <SectionLoader
+              loading={!this.form}
+              render={() =>
+                <div>
                   {this.form.$('inputs').map(field =>
                     <InputTokenField
                       key={field.id}
@@ -121,19 +140,20 @@ class CraftPage extends React.Component {
                     className='button'
                     onClick={this._addInput}
                   >
-                + Add Token
+                  + Add Token
                   </button>
                 </div>
-              </div>
-            </div>
+              }
+            />
 
             <SectionHeader>
               <code>02.</code> Describe Your New Craftable Token
             </SectionHeader>
 
-            <div className='grid-container'>
-              <div className='grid-x grid-margin-x'>
-                <div className='cell auto'>
+            <SectionLoader
+              loading={!this.form}
+              render={() =>
+                <div>
                   <Input field={this.form.$('image')} />
                   <div className='grid-x grid-margin-x'>
                     <div className='cell small-12 medium-6'>
@@ -146,37 +166,35 @@ class CraftPage extends React.Component {
                   <Input field={this.form.$('description')} />
                   {/* <Input field={this.form.$('rate')} /> */}
                 </div>
-              </div>
-            </div>
+              }
+            />
 
             <SectionHeader>
               <code>03.</code> Deploy
             </SectionHeader>
 
-            <div className='grid-container'>
-              <div className='grid-x grid-margin-x align-center'>
-                <div className='cell text-center'>
-                  {this.form.error}
+            <SectionLoader
+              loading={!this.form}
+              render={() =>
+                <div className='grid-x grid-margin-x align-center'>
+                  <div className='cell shrink grid-y align-center'>
+                    {!this.form.isValid && this.form.error}
+                    <button
+                      className='cell button inverted'
+                      onClick={this.deploy}
+                      disabled={!this.form.isValid || !this._canDeploy()}
+                    >
+                      Deploy em&#39;
+                    </button>
+                    {!this._canDeploy() &&
+                      <p className='cell help-text'>
+                        {'We can\'t find the crafty contract! Are you on the right network?'}
+                      </p>
+                    }
+                  </div>
                 </div>
-              </div>
-              <div className='grid-x grid-margin-x align-center'>
-                <div className='cell shrink grid-y align-center'>
-                  <button
-                    className='cell button inverted'
-                    onClick={this.deploy}
-                    disabled={!this.form.isValid || !this._canDeploy()}
-                  >
-                  Deploy em&#39;
-                  </button>
-                  {!this._canDeploy() &&
-                <p className='cell help-text'>
-                  {'We can\'t find the crafty contract! Are you on the right network?'}
-                </p>
-                  }
-
-                </div>
-              </div>
-            </div>
+              }
+            />
           </div>
         )} />
         <Footer />
@@ -185,4 +203,4 @@ class CraftPage extends React.Component {
   }
 }
 
-export default CraftPage
+export default BuildRecipePage

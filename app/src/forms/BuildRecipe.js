@@ -1,16 +1,6 @@
 import Form from 'mobx-react-form'
 import * as validatorjs from 'validatorjs'
 
-const canonicalTokens = [{
-  name: 'Zeppelin OS',
-  symbol: 'ZEP',
-  address: '0xEC6d36A487d85CF562B7b8464CE8dc60637362AC',
-}, {
-  name: 'Aragon Network Token',
-  symbol: 'ANT',
-  address: '0xEC6d36A487d85CF562B7b8464CE8dc60637362AB',
-}]
-
 const fields = [
   'name',
   'symbol',
@@ -76,24 +66,6 @@ const rules = {
   'inputs[].amount': 'required|integer|min:1',
 }
 
-const extra = {
-  'inputs[].address': canonicalTokens.map(ct => ({
-    k: ct.address,
-    v: `${ct.name} (${ct.symbol})`,
-  })),
-}
-
-const defaults = {
-  inputs: [],
-  'inputs[].canonical': true,
-  'inputs[].amount': 1,
-  'inputs[].address': extra['inputs[].address'][0].k,
-}
-
-const initials = {
-  ...defaults,
-}
-
 const observers = {
   'inputs[].canonical': [{
     key: 'value',
@@ -123,7 +95,25 @@ const interceptors = {
   }],
 }
 
-export default () => {
+export default (canonicalTokensInfo) => {
+  const extra = {
+    'inputs[].address': canonicalTokensInfo.map(ct => ({
+      k: ct.address,
+      v: `${ct.name} (${ct.symbol})`,
+    })),
+  }
+
+  const defaults = {
+    inputs: [],
+    'inputs[].canonical': true,
+    'inputs[].amount': 1,
+    'inputs[].address': extra['inputs[].address'][0].k,
+  }
+
+  const initials = {
+    ...defaults,
+  }
+
   return new Form({
     fields,
     types,

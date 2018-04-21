@@ -63,10 +63,15 @@ export default class ERC20 {
     )(
       new BN(0),
       () => {},
-      async () =>
-        new BN(
-          await this.contract.methods.balanceOf(address).call()
-        )
+      async () => {
+        try {
+          const balance = await this.contract.methods.balanceOf(address).call()
+          if (!balance) { throw new Error() }
+          return new BN(balance)
+        } catch (error) {
+          return new BN(0)
+        }
+      }
     )
   )
 
@@ -76,14 +81,29 @@ export default class ERC20 {
     )(
       new BN(0),
       () => {},
-      async () =>
-        new BN(
-          await this.contract.methods.allowance(owner, spender).call()
-        )
+      async () => {
+        try {
+          const allowance = await this.contract.methods.allowance(owner, spender).call()
+          if (!allowance) { throw new Error() }
+          return new BN(allowance)
+        } catch (error) {
+          return new BN(0)
+        }
+      }
+
     )
   )
 
   isApproved = createTransformer(
     (opts) => this.allowance(opts).current().gt(new BN(0))
   )
+
+  @computed get info () {
+    return {
+      busy: this.name.busy() || this.symbol.busy(),
+      name: this.name.current(),
+      symbol: this.symbol.current(),
+      address: this.address,
+    }
+  }
 }

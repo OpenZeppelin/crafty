@@ -1,5 +1,7 @@
 import React from 'react'
+import { observable } from 'mobx'
 import { inject, observer } from 'mobx-react'
+import { now } from 'mobx-utils'
 
 import Subtitle from './Subtitle'
 import Emoji from './Emoji'
@@ -12,7 +14,13 @@ class WithWeb3Context extends React.Component {
     write: false,
   }
 
-  layout = (children) => {
+  @observable start = now()
+
+  renderNotice = (children) => {
+    // avoid flashing the screen when loading
+    if (Date.now() - this.start < 300) {
+      return null
+    }
     return (
       <Subtitle className='with-border hella-spacing'>
         {children}
@@ -29,7 +37,7 @@ class WithWeb3Context extends React.Component {
       // but we don't have it
 
       if (!web3Context.hasWeb3) {
-        return this.layout(
+        return this.renderNotice(
           <p className='text-center'>
             We need a web3 connection to display this content! Connect to this website with
             MetaMask, Mist, or a mobile dApp browser like Cipher, Toshi, or Status.
@@ -38,7 +46,7 @@ class WithWeb3Context extends React.Component {
       }
 
       if (!web3Context.hasNetwork) {
-        return this.layout(
+        return this.renderNotice(
           <p className='text-center'>
             We have a web3 connection, but it&#39;s not connected to a network! Something has gone horribly wrong.
           </p>
@@ -46,7 +54,7 @@ class WithWeb3Context extends React.Component {
       }
 
       if (!domain.hasCrafty) {
-        return this.layout(
+        return this.renderNotice(
           <p className='text-center'>
             We&#39;re connected to a network, but the Crafty contract isn&#39;t available.
             Are you sure you&#39;re connected to the right network?
@@ -54,7 +62,7 @@ class WithWeb3Context extends React.Component {
         )
       }
 
-      return this.layout(
+      return this.renderNotice(
         <p className='text-center'>
           ¯\_(ツ)_/¯ Whelp, something went horribly wrong here.
         </p>
@@ -67,13 +75,13 @@ class WithWeb3Context extends React.Component {
 
       if (web3Context.isLocked) {
         if (ui.isMetaMask) {
-          return this.layout(
+          return this.renderNotice(
             <p className='text-center'>
               Your MetaMask is locked! <Emoji e='🔐' />
             </p>
           )
         } else {
-          return this.layout(
+          return this.renderNotice(
             <p className='text-center'>
               We&#39;ve got a web3 connection, but no access to accounts!
             </p>
@@ -81,7 +89,7 @@ class WithWeb3Context extends React.Component {
         }
       }
 
-      return this.layout(
+      return this.renderNotice(
         <p className='text-center'>
           ¯\_(ツ)_/¯ Whelp, something went horribly wrong here.
         </p>

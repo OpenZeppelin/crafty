@@ -45,7 +45,7 @@ export const createFromEthereumBlock = (blockNumber) => (initial, dataFn, fn) =>
 
 export const asyncComputed = (initial, fn) => {
   // wrap asyncComputed so it follows the same api as fromResource
-  const computed = originalAsyncComputed(initial, 1000, fn)
+  const computed = originalAsyncComputed(initial, 15000, fn)
   return {
     busy: () => computed.busy,
     current: computed.get,
