@@ -26,6 +26,10 @@ export default class Crafty {
     }
   }
 
+  @computed get address () {
+    return this.contract._address
+  }
+
   addCraftable = async (...args) => {
     const receipt = await this.contract.methods.addCraftable(
       ...args
@@ -40,8 +44,12 @@ export default class Crafty {
     return receipt.events.CraftableAdded.returnValues.addr
   }
 
-  @computed get address () {
-    return this.contract._address
+  craft = async (...args) => {
+    return this.contract.methods.craft(
+      ...args
+    ).send({
+      from: RootStore.web3Context.currentAddress,
+    })
   }
 
   totalCraftables = createFromEthereumBlock(

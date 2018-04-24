@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
-import PacmanLoader from './PacmanLoader'
+import Loader from './Loader'
 
 @observer
 export default class SectionLoader extends React.Component {
@@ -20,7 +20,7 @@ export default class SectionLoader extends React.Component {
   render () {
     if (this.props.loading) {
       return this.layout(
-        <PacmanLoader />
+        <Loader pacman />
       )
     }
 

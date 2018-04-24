@@ -83,7 +83,6 @@ export default class ERC20 {
       () => {},
       async () => {
         try {
-          console.log('ask for allowance')
           const allowance = await this.contract.methods.allowance(owner, spender).call()
           if (!allowance) { throw new Error() }
           return new BN(allowance)
@@ -94,6 +93,14 @@ export default class ERC20 {
 
     )
   )
+
+  approve = async (...args) => {
+    return this.contract.methods.approve(
+      ...args
+    ).send({
+      from: RootStore.web3Context.currentAddress,
+    })
+  }
 
   isApproved = createTransformer(
     (opts) => this.allowance(opts).current().gt(new BN(0))

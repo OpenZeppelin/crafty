@@ -1,4 +1,4 @@
-import { reaction } from 'mobx'
+import { reaction, observable, runInAction } from 'mobx'
 import { fromResource } from 'mobx-utils'
 
 import pMap from 'p-map'
@@ -11,21 +11,21 @@ export const uid = () => {
 
 export const createFromEthereumBlock = (blockNumber) => (initial, dataFn, fn) => {
   let disposer
-  let isBusy
+  let isBusy = observable.box(false)
   const resource = fromResource(
     (sink) => {
       disposer = reaction(
         () => [dataFn(), blockNumber],
         async ([data]) => {
           try {
-            isBusy = true
+            runInAction(() => isBusy.set(true))
             sink(await fn(data))
           } catch (error) {
             // @TODO(handle errors)
             console.error(error)
             debugger
           } finally {
-            isBusy = false
+            runInAction(() => isBusy.set(false))
           }
         },
         { fireImmediately: true }
@@ -39,7 +39,7 @@ export const createFromEthereumBlock = (blockNumber) => (initial, dataFn, fn) =>
 
   return {
     ...resource,
-    busy: () => isBusy,
+    busy: isBusy.get.bind(isBusy),
   }
 }
 

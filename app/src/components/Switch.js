@@ -1,11 +1,16 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
-const Switch = observer(({ field, className = '' }) => {
+import Loader from './Loader'
+
+const Switch = observer(({ pending = false, field, className = '' }) => {
   return (
     <div className='switch-container'>
       <p>{field.label} {field.pending && '...'}</p>
-      <div className={`switch ${className}`}>
+      <div className={`switch ${className} input-container`}>
+        {pending &&
+          <Loader tiny />
+        }
         <input
           {...field.bind()}
           className='switch-input'

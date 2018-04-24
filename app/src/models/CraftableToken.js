@@ -63,14 +63,22 @@ export default class CraftableToken extends ERC20 {
         const res = await this.contract.methods.getRecipeStep(i).call()
         return {
           address: res[0],
-          amount: new BN(res[1]),
+          amount: RootStore.web3Context.web3.utils.toBN(res[1]),
         }
       })
   )
 
-  @computed get ingredients () {
-    return this.ingredientAddressesAndAmounts.current().map(i =>
-      new ERC20(i.address)
-    )
+  @computed get ingredientsAndAmounts () {
+    if (this._ingredientsAndAmounts && this._ingredientsAndAmounts.length) {
+      return this._ingredientsAndAmounts
+    }
+
+    this._ingredientsAndAmounts = this.ingredientAddressesAndAmounts
+      .current().map(i => ({
+        token: new ERC20(i.address),
+        amount: i.amount,
+      }))
+
+    return this._ingredientsAndAmounts
   }
 }

@@ -117,12 +117,39 @@ button.button,
 .switch,
 .switch-paddle {
     height: 2.4375rem;
+    min-width: 5rem;
 }
 
 .switch-paddle::after {
     height: 1.9375rem;
+    width: 2.5rem;
+}
+
+.switch-inactive {
+    right: 11%;
 }
 
 input:checked~.switch-paddle {
     background-color: #000000;
+}
+
+
+.input-container {
+    position: relative;
+}
+
+.tiny-loader {
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    line-height: 1rem;
+
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

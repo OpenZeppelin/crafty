@@ -4,8 +4,8 @@ import { observer } from 'mobx-react'
 import FileInput from './FileInput'
 import Switch from './Switch'
 
-const Input = observer(({ field, label, isSelect = false }) => (
-  <div>
+const Input = observer(({ field, label, pending = false, isSelect = false }) => (
+  <div className='input-container'>
     {(() => {
       if (isSelect) {
         return [
@@ -30,6 +30,7 @@ const Input = observer(({ field, label, isSelect = false }) => (
       case 'checkbox':
         return (
           <Switch
+            pending={pending}
             field={field}
           />
         )
