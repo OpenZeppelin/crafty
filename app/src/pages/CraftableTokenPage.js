@@ -156,23 +156,27 @@ class CraftableTokenPage extends React.Component {
     this._syncApprovalsToForm()
   }
 
-  get myPendingBalance () {
+  pendingBalanceFor (address) {
     if (!this.token) { return null }
     if (!RootStore.web3Context.canRead) { return null }
     if (!RootStore.web3Context.currentAddress) { return null }
 
-    return this.token.balanceOf(RootStore.web3Context.currentAddress)
+    return this.token.balanceOf(address)
   }
 
   @computed get myBalance () {
-    // if (pendingBalance.busy()) {
+    const pendingBalance = this.pendingBalanceFor(RootStore.web3Context.currentAddress)
+    if (!pendingBalance) { return null }
+
+    // @TODO(shrugs) - I can't check busy here, because it causes
+    // a loop ??
+    // if (this.myPendingBalance.busy()) {
     //   console.log('busy')
     //   return `... ${this.token.shortSymbol}`
     // }
-    if (!this.myPendingBalance) { return null }
-    const balance = this.myPendingBalance.current()
+    const balance = pendingBalance.current()
 
-    console.log('not busy')
+    // console.log('not busy')
     return `${balance.toString(10)} ${this.token.shortSymbol}`
   }
 
@@ -234,6 +238,17 @@ class CraftableTokenPage extends React.Component {
 
   @computed get allGoodInTheHood () {
     return !this.isLoadingAnyApprovals && this.allApproved
+  }
+
+  displayInfoForIngredient (address) {
+    const token = this.ingredientsByAddress[address]
+    const amount = this.amountsByAddress[address].amount
+
+    const balance = token
+      .balanceOf(RootStore.web3Context.currentAddress)
+      .current()
+
+    return { token, amount, balance }
   }
 
   doTheCraft = async () => {
@@ -328,8 +343,7 @@ class CraftableTokenPage extends React.Component {
                     {this.form.$('approvals').map(f =>
                       <div key={f.id} className='cell small-12 medium-10 large-8'>
                         <CraftingIngredientRow
-                          token={this.ingredientsByAddress[f.$('address').values()]}
-                          amount={this.amountsByAddress[f.$('address').values()].amount}
+                          {...this.displayInfoForIngredient(f.$('address').values())}
                           field={f}
                         />
                       </div>
@@ -354,16 +368,20 @@ class CraftableTokenPage extends React.Component {
             loading={!this.form}
             render={() =>
               <div>
-                <div className='hella-spacing'>
-                  <Subtitle>
-                    {this._approvalText()}
-                  </Subtitle>
-
-                  {this.allGoodInTheHood &&
-                    <button className='button inverted' onClick={this.doTheCraft}>
-                      Craft {this.token.shortName}
-                    </button>
-                  }
+                <Subtitle>
+                  {this._approvalText()}
+                </Subtitle>
+                <div className='grid-x align-center'>
+                  <div className='cell small-12 medium-10 large-8 hella-spacing'>
+                    {this.allGoodInTheHood &&
+                      <button
+                        className='cell auto button inverted'
+                        onClick={this.doTheCraft}
+                      >
+                        Craft {this.token.shortName}
+                      </button>
+                    }
+                  </div>
                 </div>
               </div>
             }
