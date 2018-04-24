@@ -49,8 +49,8 @@ class InputTokenField extends React.Component {
       )
     }
 
-    const label = this.inferredToken.get()
-      ? `${this.inferredToken.get().shortName} (${this.inferredToken.get().shortSymbol})`
+    const label = this.inferredToken.current()
+      ? `${this.inferredToken.current().shortName} (${this.inferredTokencurrentget().shortSymbol})`
       : 'Token Address'
 
     return (
