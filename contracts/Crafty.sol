@@ -90,7 +90,7 @@ contract Crafty is RBAC {
     }
 
     // Issue the crafted token
-    _craftable.transfer(player, 1);
+    _craftable.mint(player, 1);
   }
 
   // Admin API

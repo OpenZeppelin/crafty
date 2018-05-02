@@ -23,13 +23,14 @@ contract('CraftableToken', accounts => {
     await craftable.tokenURI().should.eventually.equal(tokenURI);
   });
 
-  it('all initial balance is held by the deployer', async () => {
+  it('all players start with no balance', async () => {
     const craftable = await newCraftable();
 
-    await craftable.balanceOf(deployer).should.eventually.be.bignumber.equal(await craftable.totalSupply());
     await Promise.all(players.map(player =>
       craftable.balanceOf(player).should.eventually.be.bignumber.equal(0)
     ));
+
+    await craftable.totalSupply().should.eventually.be.bignumber.equal(0);
   });
 
   describe('Ingredients', () => {
@@ -49,11 +50,11 @@ contract('CraftableToken', accounts => {
 
       await craftable.getTotalRecipeSteps().should.eventually.be.bignumber.equal(2);
 
-      _.range(2).forEach(async i => {
+      await Promise.all(_.range(2).map(async i => {
         const [ingredient, amount] = await craftable.getRecipeStep(i);
         ingredient.should.be.bignumber.equal(ingredients[i]);
         amount.should.be.bignumber.equal(amounts[i]);
-      });
+      }));
     });
 
     it('ingredient amounts must be non-zero', async () => {
