@@ -1,0 +1,6 @@
+.chalice/deployments/
+.chalice/venv/
+
+# Artifacts
+.chalice/config.json
+.chalice/deployed/*
