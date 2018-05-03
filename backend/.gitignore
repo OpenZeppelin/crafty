@@ -4,3 +4,5 @@
 # Artifacts
 .chalice/config.json
 .chalice/deployed/*
+
+*.pyc
