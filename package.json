@@ -20,10 +20,11 @@
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
     "dotenv": "^5.0.1",
-    "truffle": "^4.0.6",
+    "ganache-cli": "^6.1.0",
+    "openzeppelin-solidity": "1.9.0",
+    "truffle": "^4.1.5",
     "truffle-hdwallet-provider": "0.0.3",
-    "underscore": "^1.8.3",
-    "zeppelin-solidity": "git://github.com/OpenZeppelin/zeppelin-solidity.git#master"
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.3",

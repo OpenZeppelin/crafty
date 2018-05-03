@@ -1,8 +1,8 @@
 pragma solidity ^0.4.21;
 
 import './CraftableToken.sol';
-import 'zeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
-import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
+import 'openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 
 
 /**
@@ -90,7 +90,7 @@ contract Crafty is RBAC {
     }
 
     // Issue the crafted token
-    _craftable.transfer(player, 1);
+    _craftable.mint(player, 1);
   }
 
   // Admin API

@@ -1,8 +1,8 @@
 pragma solidity ^0.4.21;
 
-import 'zeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
-import 'zeppelin-solidity/contracts/token/ERC20/ERC20.sol';
-import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
+import 'openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
 
 
 /**
@@ -13,7 +13,7 @@ import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
  * Note that this contract DOES NOT enforce the ingredients requirement: it merely
  * provides storage for them, and it is the creator's choice whether or not to comply.
  */
-contract CraftableToken is StandardToken, DetailedERC20 {
+contract CraftableToken is MintableToken, DetailedERC20 {
   // Each step of the recipe has an ERC20 ingredient, of which a certain amount
   // are required to craft the recipe.
   struct RecipeStep {
@@ -24,8 +24,6 @@ contract CraftableToken is StandardToken, DetailedERC20 {
   string public tokenURI;
 
   RecipeStep[] private recipe;
-
-  uint256 constant MAX_UINT_256 = 2**256 - 1;
 
   /**
    * @dev Constructor. The recipe is created here, and cannot be modified afterwards.
@@ -39,12 +37,6 @@ contract CraftableToken is StandardToken, DetailedERC20 {
     require(_ingredients.length == _ingredientAmounts.length);
 
     tokenURI = _tokenURI;
-
-    // The token creator (who is in charge of enforcing the crafting rules) holds all of the
-    // initial supply, which is issued to players as they craft tokens (and taken back when
-    // they are consumed for crafting purposes).
-    totalSupply_ = MAX_UINT_256;
-    balances[msg.sender] = totalSupply_;
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);
