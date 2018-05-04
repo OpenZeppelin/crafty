@@ -2,6 +2,7 @@ import React from 'react'
 import { action, observable, runInAction, when } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Redirect } from 'react-router-dom'
+import axios from 'axios'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -80,10 +81,19 @@ class BuildRecipePage extends React.Component {
       const ingredients = values.inputs.map(i => i.address)
       const amounts = values.inputs.map(i => i.amount)
 
+      const apiURL = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty'
+      const response = await axios.post(`${apiURL}/metadata`, {
+        "name": values.name,
+        "description": values.description,
+        "image": ''
+      })
+      const tokenMetadataURI = response.data
+      console.log(tokenMetadataURI)
+
       const tokenAddress = await crafty.addCraftable(
         values.name,
         values.symbol,
-        '',
+        tokenMetadataURI,
         ingredients,
         amounts,
       )

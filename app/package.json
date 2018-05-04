@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.18.0",
     "bn.js": "^4.11.8",
     "computed-async-mobx": "^4.1.0",
     "foundation-sites": "^6.4.4-rc1",

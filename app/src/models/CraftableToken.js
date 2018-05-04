@@ -31,11 +31,10 @@ export default class CraftableToken extends ERC20 {
   }
 
   metadata = asyncComputed({}, async () => {
-    return {}
-    // const metadataUri = await this.contract.methods.tokenUri()
-    // const res = await fetch(metadataUri)
-    // const data = await res.json()
-    // return data
+    const metadataUri = await this.contract.methods.tokenURI().call()
+    const res = await fetch(metadataUri)
+    const data = await res.json()
+    return data
   })
 
   @computed get imageUri () {
@@ -44,8 +43,10 @@ export default class CraftableToken extends ERC20 {
   }
 
   @computed get description () {
-    return 'It\'s a delicious sandwich, what more could you ask for?'
-    // return this.metadata.get().description
+    if (this.metadata.busy()) {
+      return ''
+    }
+    return this.metadata.current().description
   }
 
   totalRecipeSteps = asyncComputed(
