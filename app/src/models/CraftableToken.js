@@ -38,8 +38,10 @@ export default class CraftableToken extends ERC20 {
   })
 
   @computed get imageUri () {
-    return 'https://placem.at/things?w=200&h=200'
-    // return this.metadata.get().image
+    if (this.metadata.busy()) {
+      return 'https://placem.at/things?w=200&h=200'
+    }
+    return this.metadata.current().image
   }
 
   @computed get description () {

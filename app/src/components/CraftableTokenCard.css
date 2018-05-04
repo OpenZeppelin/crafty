@@ -19,8 +19,8 @@
 }
 
 .craftable-image {
-    width: auto;
-    height: 100%;
+    width: 222px !important;
+    height: 222px !important;
 }
 
 .craftable-text-container {

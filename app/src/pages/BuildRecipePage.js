@@ -82,13 +82,17 @@ class BuildRecipePage extends React.Component {
       const amounts = values.inputs.map(i => i.amount)
 
       const apiURL = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty'
-      const response = await axios.post(`${apiURL}/metadata`, {
-        "name": values.name,
-        "description": values.description,
-        "image": ''
+
+      // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
+      const imageResponse = await axios.post(`${apiURL}/thumbnail`, {'image-base64': values.image.split(/,/)[1]})
+
+      // The image URL is then stored in the metadata
+      const metadataResponse = await axios.post(`${apiURL}/metadata`, {
+        'name': values.name,
+        'description': values.description,
+        'image': imageResponse.data
       })
-      const tokenMetadataURI = response.data
-      console.log(tokenMetadataURI)
+      const tokenMetadataURI = metadataResponse.data
 
       const tokenAddress = await crafty.addCraftable(
         values.name,

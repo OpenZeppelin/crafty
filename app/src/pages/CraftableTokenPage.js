@@ -296,7 +296,7 @@ class CraftableTokenPage extends React.Component {
         <WithWeb3Context read render={() => (
           <div className='grid-container'>
             <div className='grid-x grid-margin-x'>
-              <div key='img' className='cell small-12 medium-shrink'>
+              <div key='img' className='craftable-image cell small-12 medium-shrink'>
                 <img
                   src={this.token.imageUri}
                   alt='the token'

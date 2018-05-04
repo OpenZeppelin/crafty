@@ -42,14 +42,14 @@ def get_metadata_key(uuid):
 
 # Thumbnail
 
-@app.route('/%s/thumbnail' % DIR , methods=['POST'], content_types=['application/octet-stream'], cors=True)
+@app.route('/%s/thumbnail' % DIR , methods=['POST'], cors=True)
 @error_catching
 def upload_thumbnail():
   uuid = randint(0, 2 ** 32)
 
   tmp_file_name = '/tmp/%s' % uuid
   with open(tmp_file_name, 'wb') as tmp_file:
-    tmp_file.write(app.current_request.raw_body)
+    tmp_file.write(app.current_request.json_body['image-base64'].decode('base64'))
 
   key = get_thumbnail_key(uuid)
   S3.upload_file(Filename=tmp_file_name, Bucket=BUCKET, Key=key, ExtraArgs={'ACL': 'public-read'})
