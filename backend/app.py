@@ -30,7 +30,7 @@ def error_response(msg):
 
 # Metadata
 
-@app.route('/%s/metadata' % DIR , methods=['POST'])
+@app.route('/%s/metadata' % DIR , methods=['POST'], cors=True)
 @error_catching
 def upload_metadata():
   key = get_metadata_key(randint(0, 2 ** 32))
@@ -42,7 +42,7 @@ def get_metadata_key(uuid):
 
 # Thumbnail
 
-@app.route('/%s/thumbnail' % DIR , methods=['POST'], content_types=['application/octet-stream'])
+@app.route('/%s/thumbnail' % DIR , methods=['POST'], content_types=['application/octet-stream'], cors=True)
 @error_catching
 def upload_thumbnail():
   uuid = randint(0, 2 ** 32)
