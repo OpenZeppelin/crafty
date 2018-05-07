@@ -14,7 +14,7 @@ contract Test2Token is StandardToken {
 
   string public constant name = "Test2"; // solium-disable-line uppercase
   string public constant symbol = "T2"; // solium-disable-line uppercase
-  uint8 public constant decimals = 18; // solium-disable-line uppercase
+  uint8 public constant decimals = 12; // solium-disable-line uppercase
 
   uint256 public constant INITIAL_SUPPLY = 10000 * (10 ** uint256(decimals));
 

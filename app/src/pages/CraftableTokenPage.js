@@ -177,7 +177,7 @@ class CraftableTokenPage extends React.Component {
     const balance = pendingBalance.current()
 
     // console.log('not busy')
-    return `${balance.toString(10)} ${this.token.shortSymbol}`
+    return `${(balance / (10 ** this.token.decimals.current())).toString(10)} ${this.token.shortSymbol}`
   }
 
   @computed get ingredientsByAddress () {
@@ -248,7 +248,9 @@ class CraftableTokenPage extends React.Component {
       .balanceOf(RootStore.web3Context.currentAddress)
       .current()
 
-    return { token, amount, balance }
+    const decimals = token.decimals.current()
+
+    return { token, amount, balance, decimals}
   }
 
   doTheCraft = async () => {

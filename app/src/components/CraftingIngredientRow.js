@@ -4,16 +4,16 @@ import BN from 'bn.js'
 
 import Input from './Input'
 
-const CraftingIngredientRow = observer(({ token, amount = new BN(0), balance = new BN(0), field }) => (
+const CraftingIngredientRow = observer(({ token, amount = new BN(0), balance = new BN(0), decimals = new BN(0), field }) => (
   <div className='grid-x grid-padding-x align-middle'>
     <div className='cell auto grid-y'>
       <p>{token.shortName} ({token.shortSymbol})</p>
       <p className='help-text'>
-        {balance.toString(10)} {token.shortSymbol}
+        {(balance / (10 ** decimals)).toString(10)} {token.shortSymbol}
       </p>
     </div>
     <div className='cell auto'>
-      <p>x{amount.toString(10)}</p>
+      <p>x{(amount / (10 ** decimals)).toString(10)}</p>
     </div>
     <div className='cell shrink'>
       <Input

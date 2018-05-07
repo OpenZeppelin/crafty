@@ -57,6 +57,16 @@ export default class ERC20 {
       : this.symbol.current()
   }
 
+  decimals = asyncComputed('...', async () => {
+    try {
+      const decimals = await this.contract.methods.decimals().call()
+      if (!decimals) { throw new Error() }
+      return new BN(decimals)
+    } catch (error) {
+      return new BN(0)
+    }
+  })
+
   balanceOf = createTransformer(
     (address) => createFromEthereumBlock(
       RootStore.web3Context.latestBlock
