@@ -178,7 +178,6 @@ class BuildRecipePage extends React.Component {
                     </div>
                   </div>
                   <Input field={this.form.$('description')} />
-                  {/* <Input field={this.form.$('rate')} /> */}
                 </div>
               }
             />
