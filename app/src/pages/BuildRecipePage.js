@@ -131,12 +131,34 @@ class BuildRecipePage extends React.Component {
         <Header>Build a Craftable Token</Header>
         <Subtitle>
           Here you can <b>create your own craftable token</b>.
-          Choose the sacrificial ERC20 tokens and then describe your creation.
+          Choose the ingredient ERC20 tokens and then describe your creation.
         </Subtitle>
         <WithWeb3Context read write render={() => (
           <div>
             <SectionHeader>
-              <code>01.</code> Sacrificial Tokens
+              <code>01.</code> Describe Your New Craftable Token
+            </SectionHeader>
+
+            <SectionLoader
+              loading={!this.form}
+              render={() =>
+                <div>
+                  <Input field={this.form.$('image')} />
+                  <div className='grid-x grid-margin-x'>
+                    <div className='cell small-12 medium-6'>
+                      <Input field={this.form.$('name')} />
+                    </div>
+                    <div className='cell small-12 medium-6'>
+                      <Input field={this.form.$('symbol')} />
+                    </div>
+                  </div>
+                  <Input field={this.form.$('description')} />
+                </div>
+              }
+            />
+
+            <SectionHeader>
+              <code>02.</code> Ingredient Tokens
             </SectionHeader>
 
             <SectionLoader
@@ -156,28 +178,6 @@ class BuildRecipePage extends React.Component {
                   >
                   + Add Token
                   </button>
-                </div>
-              }
-            />
-
-            <SectionHeader>
-              <code>02.</code> Describe Your New Craftable Token
-            </SectionHeader>
-
-            <SectionLoader
-              loading={!this.form}
-              render={() =>
-                <div>
-                  <Input field={this.form.$('image')} />
-                  <div className='grid-x grid-margin-x'>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('name')} />
-                    </div>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('symbol')} />
-                    </div>
-                  </div>
-                  <Input field={this.form.$('description')} />
                 </div>
               }
             />
