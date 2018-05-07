@@ -9,13 +9,25 @@ DIR = 'crafty'
 
 app = Chalice(app_name='crafty-backend')
 
-def error_catching(f):
+# Generic decorator to catch misc errors
+def error_catching(func):
   def wrapper():
     try:
-      return f()
+      return func()
     except Exception as e:
       return error_response(str(e))
   return wrapper
+
+# Decorator to limit the payload of a request's body
+def limit_raw_body_kb(max_kbytes):
+  def limit_raw_body_kb_fixed(func):
+    def wrapper():
+      if len(app.current_request.raw_body) > (max_kbytes * 1024):
+        return error_response('max data size is %skB' % max_kbytes)
+      else:
+        return func()
+    return wrapper
+  return limit_raw_body_kb_fixed
 
 def ok_response(msg):
   return Response(body=msg,
@@ -27,11 +39,11 @@ def error_response(msg):
            status_code=500,
            headers={'Content-Type': 'text/plain'})
 
-
 # Metadata
 
 @app.route('/%s/metadata' % DIR , methods=['POST'], cors=True)
 @error_catching
+@limit_raw_body_kb(2)
 def upload_metadata():
   key = get_metadata_key(randint(0, 2 ** 32))
   S3.put_object(Bucket=BUCKET, Key=key, Body=json.dumps(app.current_request.json_body), ACL='public-read')
@@ -44,6 +56,7 @@ def get_metadata_key(uuid):
 
 @app.route('/%s/thumbnail' % DIR , methods=['POST'], cors=True)
 @error_catching
+@limit_raw_body_kb(400)
 def upload_thumbnail():
   uuid = randint(0, 2 ** 32)
 
