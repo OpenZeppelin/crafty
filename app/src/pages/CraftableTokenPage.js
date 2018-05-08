@@ -2,7 +2,6 @@ import React from 'react'
 import { observable, computed, when, reaction, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { asyncComputed } from '../util'
-import some from 'lodash/some'
 import keyBy from 'lodash/keyBy'
 import BN from 'bn.js'
 
@@ -231,13 +230,11 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get isLoadingAnyApprovals () {
-    const anyBusy = this.approvalsInfo.map(ai => ai.busy)
-    return this.approvalsInfo.length === 0 || some(anyBusy)
+    return this.approvalsInfo.some(ai => ai.busy)
   }
 
   @computed get allApproved () {
-    const anyNotApproved = this.approvalsInfo.map(ai => !ai.approved)
-    return !some(anyNotApproved)
+    return this.approvalsInfo.every(ai => !ai.approved)
   }
 
   @computed get allGoodInTheHood () {
