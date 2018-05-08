@@ -177,7 +177,7 @@ class CraftableTokenPage extends React.Component {
     const balance = pendingBalance.current()
 
     // console.log('not busy')
-    return `${(balance / (10 ** this.token.decimals.current())).toString(10)} ${this.token.shortSymbol}`
+    return `${(balance / (10 ** this.token.decimals.current())).toString(10)} ${this.token.symbol.current()}`
   }
 
   @computed get ingredientsByAddress () {

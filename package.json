@@ -27,12 +27,16 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "axios": "^0.18.0",
     "babel-eslint": "^8.2.3",
+    "capitalize": "^1.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
-    "ganache-cli": "^6.0.3",
     "eslint-plugin-async-await": "0.0.0",
-    "mocha-eslint": "^4.1.0"
+    "fs": "0.0.1-security",
+    "ganache-cli": "^6.0.3",
+    "mocha-eslint": "^4.1.0",
+    "unvowel": "^1.1.0"
   }
 }
