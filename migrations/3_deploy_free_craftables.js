@@ -11,15 +11,15 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports = async function (deployer) {
+module.exports = async function (deployer) { // eslint-disable-line no-unused-vars
   const crafty = await Crafty.deployed();
 
   const emojis = JSON.parse(fs.readFileSync('migrations/assets/emoji-tokens.json', 'utf8'));
 
-  for (let emoji of emojis) {
-    const picture = fs.readFileSync(`migrations/assets/${emoji.picture}`)
+  for (let emoji of emojis) { // eslint-disable-line no-await-in-loop
+    const picture = fs.readFileSync(`migrations/assets/${emoji.picture}`);
     const imageResponse = await axios.post(`${API}/thumbnail`, {'image-base64': picture.toString('base64')});
-    if (imageResponse.status != 200) {
+    if (imageResponse.status !== 200) {
       throw new Error();
     }
 
@@ -31,9 +31,9 @@ module.exports = async function (deployer) {
       'name': name,
       'description': emoji.description,
       'image': imageResponse.data
-    })
+    });
 
-    if (metadataResponse.status != 200) {
+    if (metadataResponse.status !== 200) {
       throw new Error();
     }
 
