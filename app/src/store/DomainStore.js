@@ -29,7 +29,6 @@ export default class DomainStore {
         this.root.web3Context.network.id
       )
     } catch (error) {
-      console.log(error)
       return null
     }
   }

@@ -2,7 +2,6 @@ import React from 'react'
 import { observable, computed, when, reaction, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { asyncComputed } from '../util'
-import some from 'lodash/some'
 import keyBy from 'lodash/keyBy'
 import BN from 'bn.js'
 
@@ -132,10 +131,11 @@ class CraftableTokenPage extends React.Component {
 
   _lazyLoadForm = async () => {
     await when(() => this.token)
-    // we have token, so let's render its ingredients
-    await when(() => this.token.ingredientsAndAmounts.length)
-    // now we have ingredients so let's create the form with defaults
 
+    // we have token, so let's render its ingredients
+    await when(() => this.token.ingredientsAndAmounts)
+
+    // now we have ingredients so let's create the form with defaults
     runInAction(() => {
       this.form = craftCraftableForm({
         values: {
@@ -148,6 +148,9 @@ class CraftableTokenPage extends React.Component {
         },
       })
     })
+
+    // check that crafty is up before checking approvals against it
+    await when(() => RootStore.domain.crafty)
 
     // load all of the approvals first
     await when(() => !this.isLoadingAnyApprovals)
@@ -177,7 +180,7 @@ class CraftableTokenPage extends React.Component {
     const balance = pendingBalance.current()
 
     // console.log('not busy')
-    return `${balance.toString(10)} ${this.token.shortSymbol}`
+    return `${(balance / (10 ** this.token.decimals.current())).toString(10)} ${this.token.symbol.current()}`
   }
 
   @computed get ingredientsByAddress () {
@@ -227,13 +230,11 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get isLoadingAnyApprovals () {
-    const anyBusy = this.approvalsInfo.map(ai => ai.busy)
-    return this.approvalsInfo.length === 0 || some(anyBusy)
+    return this.approvalsInfo.some(ai => ai.busy)
   }
 
   @computed get allApproved () {
-    const anyNotApproved = this.approvalsInfo.map(ai => !ai.approved)
-    return !some(anyNotApproved)
+    return this.approvalsInfo.every(ai => !ai.approved)
   }
 
   @computed get allGoodInTheHood () {
@@ -248,7 +249,9 @@ class CraftableTokenPage extends React.Component {
       .balanceOf(RootStore.web3Context.currentAddress)
       .current()
 
-    return { token, amount, balance }
+    const decimals = token.decimals.current()
+
+    return { token, amount, balance, decimals}
   }
 
   doTheCraft = async () => {

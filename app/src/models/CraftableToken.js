@@ -51,29 +51,27 @@ export default class CraftableToken extends ERC20 {
     return this.metadata.current().description
   }
 
-  totalRecipeSteps = asyncComputed(
-    new BN(0),
-    async () =>
-      new BN(
-        await this.contract.methods.getTotalRecipeSteps().call()
-      )
-  )
-
   ingredientAddressesAndAmounts = asyncComputed(
-    [],
-    async () =>
-      collect(this.totalRecipeSteps.current().toNumber(), async (i) => {
+    null,
+    async () => {
+      const totalRecipeSteps = new BN(await this.contract.methods.getTotalRecipeSteps().call());
+      return collect(totalRecipeSteps.toNumber(), async (i) => {
         const res = await this.contract.methods.getRecipeStep(i).call()
         return {
           address: res[0],
           amount: RootStore.web3Context.web3.utils.toBN(res[1]),
         }
       })
+    }
   )
 
   @computed get ingredientsAndAmounts () {
-    if (this._ingredientsAndAmounts && this._ingredientsAndAmounts.length) {
+    if (this._ingredientsAndAmounts) {
       return this._ingredientsAndAmounts
+    }
+
+    if (this.ingredientAddressesAndAmounts.busy()) {
+      return null;
     }
 
     this._ingredientsAndAmounts = this.ingredientAddressesAndAmounts

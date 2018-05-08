@@ -58,7 +58,7 @@ const rules = {
   'inputs[].id': 'required|string',
   'inputs[].canonical': 'required|boolean',
   'inputs[].address': 'required|string|alpha_num|size:42',
-  'inputs[].amount': 'required|integer|min:1',
+  'inputs[].amount': 'required|numeric|min:0.01',
 }
 
 const observers = {
