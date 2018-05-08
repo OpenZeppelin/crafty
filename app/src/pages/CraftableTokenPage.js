@@ -132,10 +132,11 @@ class CraftableTokenPage extends React.Component {
 
   _lazyLoadForm = async () => {
     await when(() => this.token)
-    // we have token, so let's render its ingredients
-    await when(() => this.token.ingredientsAndAmounts.length)
-    // now we have ingredients so let's create the form with defaults
 
+    // we have token, so let's render its ingredients
+    await when(() => this.token.ingredientsAndAmounts)
+
+    // now we have ingredients so let's create the form with defaults
     runInAction(() => {
       this.form = craftCraftableForm({
         values: {
@@ -148,6 +149,9 @@ class CraftableTokenPage extends React.Component {
         },
       })
     })
+
+    // check that crafty is up before checking approvals against it
+    await when(() => RootStore.domain.crafty)
 
     // load all of the approvals first
     await when(() => !this.isLoadingAnyApprovals)
