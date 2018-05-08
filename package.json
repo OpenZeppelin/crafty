@@ -6,7 +6,9 @@
   "scripts": {
     "test": "npx truffle test",
     "build": "bash scripts/build.sh",
-    "copy": "bash scripts/copy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "copy-artifacts": "bash scripts/copy-artifacts.sh",
+    "full-app-setup": "bash scripts/full-app-setup.sh"
   },
   "repository": {
     "type": "git",

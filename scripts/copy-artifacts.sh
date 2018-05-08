@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Delete any old artifacts from the app's directory
 rm -f app/src/artifacts/*
 
