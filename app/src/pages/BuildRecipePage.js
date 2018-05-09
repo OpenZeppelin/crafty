@@ -12,8 +12,9 @@ import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
 import SectionLoader from '../components/SectionLoader'
-
 import InputTokenField from '../components/InputTokenField'
+
+import RootStore from '../store/RootStore'
 
 import buildRecipeForm from '../forms/BuildRecipe'
 
@@ -81,25 +82,14 @@ class BuildRecipePage extends React.Component {
       const ingredients = values.inputs.map(i => i.address)
       const amounts = values.inputs.map(i => i.amount)
 
-      const apiURL = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty'
-
-      // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
-      const imageResponse = await axios.post(`${apiURL}/thumbnail`, {'image-base64': values.image.split(/,/)[1]})
-
-      // The image URL is then stored in the metadata
-      const metadataResponse = await axios.post(`${apiURL}/metadata`, {
-        'name': values.name,
-        'description': values.description,
-        'image': imageResponse.data
-      })
-      const tokenMetadataURI = metadataResponse.data
+      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image, RootStore.web3Context.currentAddress)
 
       const tokenAddress = await crafty.addCraftable(
         values.name,
         values.symbol,
         tokenMetadataURI,
         ingredients,
-        amounts,
+        amounts
       )
       runInAction(() => {
         this.tokenAddress = tokenAddress
@@ -112,6 +102,30 @@ class BuildRecipePage extends React.Component {
         this.deploying = false
       })
     }
+  }
+
+  async uploadMetadata(name, description, image, author) {
+    const API = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty'
+
+    // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
+    const imageResponse = await axios.post(`${API}/thumbnail`, {'image-base64': image.split(/,/)[1]})
+    if (imageResponse.status !== 200) {
+      throw new Error(`Unexpected API response: ${imageResponse.status}`)
+    }
+
+    // The image URL is then stored in the metadata
+    const metadataResponse = await axios.post(`${API}/metadata`, {
+      'name': name,
+      'description': description,
+      'image': imageResponse.data,
+      'author': author
+    })
+
+    if (metadataResponse.status !== 200) {
+      throw new Error(`Unexpected API response: ${metadataResponse.status}`)
+    }
+
+    return metadataResponse.data
   }
 
   render () {
