@@ -1,10 +1,10 @@
 import React from 'react'
+import { computed } from 'mobx'
 import { observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { asyncComputed } from '../util'
 
 import Input from './Input'
-import ERC20 from '../models/ERC20'
+import ExtendedERC20 from '../models/ExtendedERC20'
 
 import './InputTokenField.css'
 
@@ -17,14 +17,14 @@ class InputTokenField extends React.Component {
     editing: false,
   }
 
-  inferredToken = asyncComputed(null, async () => {
+  @computed get inferredToken () {
     const web3 = this.props.store.web3Context.web3
     const tokenAddress = this.props.field.$('address').values()
 
     if (!web3.utils.isAddress(tokenAddress)) { return null }
 
-    return new ERC20(tokenAddress)
-  })
+    return new ExtendedERC20(tokenAddress)
+  }
 
   @action
   _remove = () => {
@@ -49,8 +49,8 @@ class InputTokenField extends React.Component {
       )
     }
 
-    const label = this.inferredToken.current()
-      ? `${this.inferredToken.current().shortName} (${this.inferredTokencurrentget().shortSymbol})`
+    const label = this.inferredToken
+      ? `${this.inferredToken.shortName} (${this.inferredToken.shortSymbol}) - ${this.inferredToken.shortDescription}`
       : 'Token Address'
 
     return (
@@ -85,7 +85,14 @@ class InputTokenField extends React.Component {
             <Input field={this.props.field.$('canonical')} />
           </div>
         }
-        <div className='cell small-5'>
+        <div className='cell small-3'>
+          <img
+            className='cell shrink craftable-image'
+            alt='the token'
+            src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
+          />
+        </div>
+        <div className='cell small-4'>
           {this._renderTokenSelector()}
         </div>
         <div className='cell auto'>

@@ -35,7 +35,7 @@ class CraftableTokenCard extends React.Component {
           <img
             className='cell shrink craftable-image'
             alt='the craftable token'
-            src={token.imageUri}
+            src={token.image}
           />
         </div>
         <div className='cell small-4 craftable-text-container'>

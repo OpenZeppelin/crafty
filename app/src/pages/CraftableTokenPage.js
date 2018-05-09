@@ -251,7 +251,9 @@ class CraftableTokenPage extends React.Component {
 
     const decimals = token.decimals.current()
 
-    return { token, amount, balance, decimals}
+    const image = token.image
+
+    return { token, amount, balance, decimals, image}
   }
 
   doTheCraft = async () => {
@@ -301,7 +303,7 @@ class CraftableTokenPage extends React.Component {
             <div className='grid-x grid-margin-x'>
               <div key='img' className='craftable-image cell small-12 medium-shrink'>
                 <img
-                  src={this.token.imageUri}
+                  src={this.token.image}
                   alt='the token'
                 />
               </div>
