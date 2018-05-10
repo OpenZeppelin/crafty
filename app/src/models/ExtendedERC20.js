@@ -8,6 +8,8 @@ import {
   asyncComputed
 } from '../util'
 
+const fallbackImage = 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+
 export default class ExtendedERC20 extends ERC20 {
   constructor (at) {
     super(at)
@@ -31,10 +33,29 @@ export default class ExtendedERC20 extends ERC20 {
   })
 
   @computed get image () {
-    if (this.metadata.busy() || (this.metadata.current() === null)) {
-      return 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+    if (this._image) {
+      return this._image
     }
-    return this.metadata.current().image
+
+    if (this.metadata.busy()) {
+      // Might have metadata, fallback until we know for sure
+      return fallbackImage
+    }
+
+    if (this.metadata.current() !== null) {
+      this._image = this.metadata.current().image
+    } else {
+      // No metadata
+      const canonical = RootStore.config.canonicals.find(canon => canon.address.toLowerCase() === this.address.toLowerCase())
+      if (canonical) {
+        this._image = canonical.image
+      } else {
+        // Non-canonical, we have no info, so default to the fallback
+        this._image = fallbackImage
+      }
+    }
+
+    return this._image
   }
 
   @computed get description () {

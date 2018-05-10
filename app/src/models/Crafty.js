@@ -19,7 +19,7 @@ export default class Crafty {
     try {
       this.contract = new web3.eth.Contract(
         CraftyArtifact.abi,
-        CraftyArtifact.networks[networkId].address
+        RootStore.config.crafty
       )
     } catch (error) {
       throw error

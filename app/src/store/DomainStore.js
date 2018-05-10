@@ -4,7 +4,7 @@ import some from 'lodash/some'
 import pMap from 'p-map'
 
 import featured from '../featured.json'
-import ERC20 from '../models/ERC20'
+import ExtendedERC20 from '../models/ExtendedERC20'
 
 export default class DomainStore {
   constructor (root) {
@@ -102,7 +102,7 @@ export default class DomainStore {
     if (!networkId) { return [] }
 
     this._canonicalTokens = this.root.config.canonicals.map(ct =>
-      new ERC20(ct.address)
+      new ExtendedERC20(ct.address)
     )
 
     return this._canonicalTokens

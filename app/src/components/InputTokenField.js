@@ -49,9 +49,7 @@ class InputTokenField extends React.Component {
       )
     }
 
-    const label = this.inferredToken
-      ? `${this.inferredToken.shortName} (${this.inferredToken.shortSymbol}) - ${this.inferredToken.shortDescription}`
-      : 'Token Address'
+    const label = this.inferredToken ? this.inferredToken.label : 'Token Address'
 
     return (
       <div className='grid-x grid-margin-x'>
