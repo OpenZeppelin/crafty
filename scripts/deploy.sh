@@ -1,5 +1,4 @@
 #!/bin/bash
 
-# Deploy contracts to testnet
-rm -rf build
-npx truffle migrate --network $1
+# Deploy contracts
+npx truffle exec deploy/deploy.js --network $1
