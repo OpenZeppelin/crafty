@@ -13,7 +13,7 @@ export default class ConfigStore {
     return this.config.networks[this.root.web3Context.network.id].crafty
   }
 
-  @computed get canonicals () {
+  @computed get canonicalAddressesAndImages () {
     if (!this.root.web3Context.hasNetwork) {
       return []
     }

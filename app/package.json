@@ -14,6 +14,7 @@
     "mobx-utils": "^4.0.0",
     "p-map": "^1.2.0",
     "react": "^16.3.1",
+    "react-autocomplete": "^1.8.1",
     "react-dom": "^16.3.1",
     "react-dropzone": "^4.2.9",
     "react-portal": "^4.1.5",

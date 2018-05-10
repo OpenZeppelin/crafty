@@ -102,7 +102,7 @@ export default (canonicalTokensInfo) => {
     inputs: [],
     'inputs[].canonical': true,
     'inputs[].amount': 1,
-    'inputs[].address': extra['inputs[].address'][0].k,
+    'inputs[].address': '',
   }
 
   const initials = {

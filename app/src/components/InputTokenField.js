@@ -5,6 +5,9 @@ import { observer, inject } from 'mobx-react'
 
 import Input from './Input'
 import ExtendedERC20 from '../models/ExtendedERC20'
+import Autocomplete from 'react-autocomplete'
+
+import RootStore from '../store/RootStore'
 
 import './InputTokenField.css'
 
@@ -34,40 +37,22 @@ class InputTokenField extends React.Component {
     }, 251)
   }
 
-  _renderTokenSelector = () => {
-    if (this.props.field.$('canonical').values()) {
-      return (
-        <div className='grid-x grid-margin-x'>
-          <div className='cell auto'>
-            <Input
-              field={this.props.field.$('address')}
-              isSelect
-            />
-          </div>
-        </div>
-
-      )
-    }
-
-    const label = this.inferredToken ? this.inferredToken.label : 'Token Address'
-
-    return (
-      <div className='grid-x grid-margin-x'>
-        <div className='cell auto'>
-          <Input
-            field={this.props.field.$('address')}
-            label={label}
-          />
-        </div>
-      </div>
-    )
-  }
-
   render () {
-    const { token } = this.props
-
     return (
       <div className={`grid-x grid-margin-x align-middle input-token-field ${this.deleting ? 'deleting' : ''}`}>
+        <div className='cell small-2'>
+          <img
+            className='cell shrink craftable-image'
+            alt='the token'
+            src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
+          />
+        </div>
+        <div className='cell small-6'>
+          {this._renderTokenSelector()}
+        </div>
+        <div className='cell auto'>
+          <Input field={this.props.field.$('amount')} />
+        </div>
         {this.props.editing &&
           <div className='cell shrink'>
             <button
@@ -78,29 +63,35 @@ class InputTokenField extends React.Component {
             </button>
           </div>
         }
-        {this.props.editing &&
-          <div className='cell small-2'>
-            <Input field={this.props.field.$('canonical')} />
-          </div>
-        }
-        <div className='cell small-3'>
-          <img
-            className='cell shrink craftable-image'
-            alt='the token'
-            src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
+      </div>
+    )
+  }
+
+  _renderTokenSelector = () => {
+    return (
+      <div className='grid-x grid-margin-x'>
+        <div className='cell auto'>
+          <p>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</p>
+          <Autocomplete
+            items={
+              RootStore.domain.canonicalTokens.map(token => {
+                return {id: token.address, label: token.label}
+              })
+            }
+            shouldItemRender={(item, value) => item.label.toLowerCase().includes(value.toLowerCase())}
+            getItemValue={item => item.id}
+            renderItem={(item, highlighted) =>
+              <div
+                key={item.id}
+                style={{ backgroundColor: highlighted ? '#eee' : 'transparent'}}
+              >
+                {item.label}
+              </div>
+            }
+            {...this.props.field.$('address').bind()}
+            onSelect={value => this.props.field.$('address').value = value}
           />
         </div>
-        <div className='cell small-4'>
-          {this._renderTokenSelector()}
-        </div>
-        <div className='cell auto'>
-          <Input field={this.props.field.$('amount')} />
-        </div>
-        {!this.props.editing &&
-          <div className='cell small-3'>
-            <input type='checkbox' value={token.approved} />
-          </div>
-        }
       </div>
     )
   }

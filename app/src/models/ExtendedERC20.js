@@ -46,7 +46,7 @@ export default class ExtendedERC20 extends ERC20 {
       this._image = this.metadata.current().image
     } else {
       // No metadata
-      const canonical = RootStore.config.canonicals.find(canon => canon.address.toLowerCase() === this.address.toLowerCase())
+      const canonical = RootStore.config.canonicalAddressesAndImages.find(canon => canon.address.toLowerCase() === this.address.toLowerCase())
       if (canonical) {
         this._image = canonical.image
       } else {

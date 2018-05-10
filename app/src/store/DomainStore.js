@@ -101,7 +101,7 @@ export default class DomainStore {
     const networkId = this.root.web3Context.network.id
     if (!networkId) { return [] }
 
-    this._canonicalTokens = this.root.config.canonicals.map(ct =>
+    this._canonicalTokens = this.root.config.canonicalAddressesAndImages.map(ct =>
       new ExtendedERC20(ct.address)
     )
 

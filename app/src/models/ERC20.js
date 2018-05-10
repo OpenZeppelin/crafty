@@ -58,7 +58,7 @@ export default class ERC20 {
   }
 
   @computed get label () {
-    return `${this.shortName.current()} (${this.shortSymbol.current()})`
+    return `${this.shortName} (${this.shortSymbol})`
   }
 
   decimals = asyncComputed('...', async () => {
