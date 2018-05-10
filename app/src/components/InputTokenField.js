@@ -68,16 +68,16 @@ class InputTokenField extends React.Component {
   }
 
   _renderTokenSelector = () => {
+    const tokens = RootStore.domain.craftableTokens.concat(RootStore.domain.canonicalTokens).sort((lhs, rhs) => lhs.label > rhs.label)
+
     return (
       <div className='grid-x grid-margin-x'>
         <div className='cell auto'>
           <p>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</p>
           <Autocomplete
-            items={
-              RootStore.domain.canonicalTokens.map(token => {
-                return {id: token.address, label: token.label}
-              })
-            }
+            items={tokens.map(token => {
+              return {id: token.address, label: token.label}
+            })}
             shouldItemRender={(item, value) => item.label.toLowerCase().includes(value.toLowerCase())}
             getItemValue={item => item.id}
             renderItem={(item, highlighted) =>
