@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+
+body {
+    overflow-x: hidden;
+    font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, a, p, span {
+    font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
+    /* replace this with a settings when using scss for foundation */
+}
+
+
+.button {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.button.active,
+.button:hover,
+.button:focus
+{
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.button.inverted {
+    background-color: #000000;
+    color: #ffffff;
+    border: 1px solid #ffffff;
+}
+
+.button.inverted.active,
+.button.inverted:hover,
+.button.inverted:focus
+{
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.button.disabled,
+.button.disabled:focus,
+.button.disabled:hover,
+.button[disabled],
+.button[disabled]:focus,
+.button[disabled]:hover {
+    background-color: #000000;
+}
+
+
+.with-border {
+    border: 1px solid #000000;
+}
+
+label[attr-type="checkbox"] {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.hella-spacing {
+    margin-top: 10rem;
+    margin-bottom: 10rem;
+}
+
+
+input[type="checkbox"],
+button.button,
+{
+    margin-bottom: 0;
+}
+
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 200px;
+    height: 200px;
+    border: 1px dashed #000000;
+    border-radius: 5px;
+}
+
+.dropzone.active {
+    border: 3px solid #000000;
+}
+
+.dropzone.accept {
+    border-color: green;
+}
+
+.dropzone.reject {
+    border-color: red;
+}
+
+.file-input {
+    margin-bottom: 1rem;
+}
+
+.switch-container p {
+    display: block;
+    margin: 0;
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.8;
+}
+
+.switch,
+.switch-paddle {
+    height: 2.4375rem;
+    min-width: 5rem;
+}
+
+.switch-paddle::after {
+    height: 1.9375rem;
+    width: 2.5rem;
+}
+
+.switch-inactive {
+    right: 11%;
+}
+
+input:checked~.switch-paddle {
+    background-color: #000000;
+}
+
+
+.input-container {
+    position: relative;
+}
+
+.tiny-loader {
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    line-height: 1rem;
+
+    background-color: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

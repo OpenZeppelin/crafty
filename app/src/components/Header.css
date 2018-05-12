@@ -1,0 +1,39 @@
+header {
+    margin: 0.75rem;
+    background: hsla(0, 0%, 100%, .15);
+    border: 1px solid #000;
+    z-index: 10;
+
+    min-height: 20vh;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+
+    padding-right: 0.6875rem;
+}
+
+.info-item {
+    border: 1px solid red;
+
+    padding: 0.75rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}

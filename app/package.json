@@ -1,0 +1,52 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bn.js": "^4.11.8",
+    "computed-async-mobx": "^4.1.0",
+    "foundation-sites": "^6.4.4-rc1",
+    "lodash": "^4.17.5",
+    "mobx": "^4.1.1",
+    "mobx-react": "^5.0.0",
+    "mobx-react-form": "git://github.com/shrugs/mobx-react-form.git#master",
+    "mobx-utils": "^4.0.0",
+    "p-map": "^1.2.0",
+    "react": "^16.3.1",
+    "react-autocomplete": "^1.8.1",
+    "react-dom": "^16.3.1",
+    "react-dropzone": "^4.2.9",
+    "react-portal": "^4.1.5",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4",
+    "react-tetris": "0.0.6",
+    "validatorjs": "^3.14.2",
+    "web3": "^1.0.0-beta.34"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject",
+    "link": "npm link mobx-react-form && ln -sF `pwd`/node_modules/mobx node_modules/mobx-react-form/node_modules/mobx"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-promise": "^1.2.6",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-babel": "^5.0.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "react-app-rewire-mobx": "^1.0.8",
+    "react-app-rewire-polyfills": "^0.2.0",
+    "react-app-rewired": "^1.5.0"
+  }
+}

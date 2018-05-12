@@ -1,0 +1,13 @@
+.input-token-field {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease-in-out;
+    transform-origin: top center;
+    max-height: 200px;
+}
+
+.input-token-field.deleting {
+    opacity: 0;
+    transform: scaleY(0);
+    max-height: 0;
+}

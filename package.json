@@ -5,7 +5,10 @@
   "main": "truffle.js",
   "scripts": {
     "test": "npx truffle test",
-    "build": "bash scripts/build.sh"
+    "build": "bash scripts/build.sh",
+    "deploy": "bash scripts/deploy.sh",
+    "copy-artifacts": "bash scripts/copy-artifacts.sh",
+    "app": "bash scripts/app.sh"
   },
   "repository": {
     "type": "git",
@@ -18,8 +21,6 @@
   },
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
-    "browserify": "^16.2.0",
-    "copy-to-clipboard": "^3.0.8",
     "dotenv": "^5.0.1",
     "ganache-cli": "^6.1.0",
     "openzeppelin-solidity": "1.9.0",
@@ -28,11 +29,16 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "axios": "^0.18.0",
     "babel-eslint": "^8.2.3",
+    "capitalize": "^1.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "eslint-plugin-async-await": "0.0.0",
-    "mocha-eslint": "^4.1.0"
+    "fs": "0.0.1-security",
+    "ganache-cli": "^6.0.3",
+    "mocha-eslint": "^4.1.0",
+    "unvowel": "^1.1.0"
   }
 }

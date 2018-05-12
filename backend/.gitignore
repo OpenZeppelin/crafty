@@ -1,0 +1,7 @@
+.chalice/deployments/
+.chalice/venv/
+
+# Artifacts
+.chalice/deployed/*
+
+*.pyc

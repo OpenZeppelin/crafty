@@ -1,0 +1,23 @@
+{
+  "api": "https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty",
+  "networks": {
+    "3": {
+      "crafty": "0xd9099e8ec6fad35887217cdb51d1873b602e975a",
+      "canonicals": [
+        {
+          "address": "0xca2665b6310e92192e9d1b641397d9b685bf3064",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1680.png"
+        }, {
+          "address": "0x4f87ab038c1f4a65f5029fd2dc3cd770249530b9",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1104.png"
+        }, {
+          "address": "0x31bad50d09206d77100ed958bc2c3f17f46758b3",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1896.png"
+        }, {
+          "address": "0x58ab506795ec0d3bfae4448122afa4cde51cfdd2",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1966.png"
+        }
+      ]
+    }
+  }
+}

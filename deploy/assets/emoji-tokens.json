@@ -1,0 +1,45 @@
+[
+  {
+    "picture": "atm.png",
+    "description": "Soon working with crypto!"
+  }, {
+    "picture": "champagne.png",
+    "description": "Pulling it out"
+  }, {
+    "picture": "coffee.png",
+    "description": "We run on this"
+  }, {
+    "picture": "cool.png",
+    "description": "Are we not?"
+  }, {
+    "picture": "fist.png",
+    "description": "Fight the power"
+  }, {
+    "picture": "fork.png",
+    "description": "Don't!"
+  }, {
+    "picture": "ghost.png",
+    "description": "Casper the Friendly Ghost"
+  }, {
+    "picture": "hammer.png",
+    "description": "BUIDL!"
+  }, {
+    "picture": "muscle.png",
+    "description": "Harder, better, faster, stronger"
+  }, {
+    "picture": "ok.png",
+    "description": "Just okay"
+  }, {
+    "picture": "rain.png",
+    "description": "Red rain is pouring down"
+  }, {
+    "picture": "rainbow.png",
+    "description": "Double rainbow all the way"
+  }, {
+    "picture": "rocket.png",
+    "description": "To the moon!"
+  }, {
+    "picture": "sun.png",
+    "description": "Here comes the sun (doo doo doo doo)"
+  }
+]

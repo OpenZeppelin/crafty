@@ -1,0 +1,17 @@
+.section-header {
+    background-color: #000000;
+    color: #ffffff;
+    padding-left: 1rem;
+    padding-right: 3rem;
+
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-header code {
+    background-color: inherit;
+    color: inherit;
+    border: none;
+    padding: 0;
+    margin: 0;
+}

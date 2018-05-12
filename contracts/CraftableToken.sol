@@ -1,8 +1,9 @@
 pragma solidity ^0.4.21;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/DetailedERC20.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
+
+import './ExtendedERC20.sol';
 
 
 /**
@@ -13,15 +14,13 @@ import 'openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
  * Note that this contract DOES NOT enforce the ingredients requirement: it merely
  * provides storage for them, and it is the creator's choice whether or not to comply.
  */
-contract CraftableToken is MintableToken, DetailedERC20 {
+contract CraftableToken is MintableToken, ExtendedERC20 {
   // Each step of the recipe has an ERC20 ingredient, of which a certain amount
   // are required to craft the recipe.
   struct RecipeStep {
     ERC20 ingredient;
     uint256 amountNeeded;
   }
-
-  string public tokenURI;
 
   RecipeStep[] private recipe;
 
@@ -33,10 +32,8 @@ contract CraftableToken is MintableToken, DetailedERC20 {
    * @param _ingredients An array with the ERC20s required to craft this token.
    * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
    */
-  function CraftableToken(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) DetailedERC20(_name, _symbol, 0) public {
+  function CraftableToken(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) ExtendedERC20(_name, _symbol, 0, _tokenURI) public {
     require(_ingredients.length == _ingredientAmounts.length);
-
-    tokenURI = _tokenURI;
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);
