@@ -1,4 +1,5 @@
 {
+  "api": "https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty",
   "networks": {
     "3": {
       "crafty": "0xd9099e8ec6fad35887217cdb51d1873b602e975a",

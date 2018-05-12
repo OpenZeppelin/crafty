@@ -7,8 +7,6 @@ const fields = [
   'description',
   'image',
   'inputs',
-  'inputs[].id',
-  'inputs[].canonical',
   'inputs[].address',
   'inputs[].amount',
 ]
@@ -19,7 +17,6 @@ const types = {
   'description': 'text',
   'image': 'file',
   'inputs': 'array',
-  'inputs[].canonical': 'checkbox',
   'inputs[].address': 'text',
   'inputs[].amount': 'number',
 }
@@ -37,7 +34,6 @@ const labels = {
   description: 'Describe Your Craftable Token',
   image: 'Your Craftable Token\'s Image',
   inputs: 'Sacrificial Tokens',
-  'inputs[].canonical': 'Canonical Token?',
   'inputs[].address': 'Token',
   'inputs[].amount': 'How many are required?',
 }
@@ -55,27 +51,8 @@ const rules = {
   description: 'required|string|between:10,400',
   //image: 'required|string',
   'inputs': 'required|array|min:1',
-  'inputs[].id': 'required|string',
-  'inputs[].canonical': 'required|boolean',
   'inputs[].address': 'required|string|alpha_num|size:42',
   'inputs[].amount': 'required|numeric|min:0.01',
-}
-
-const observers = {
-  'inputs[].canonical': [{
-    key: 'value',
-    call: ({ form, field, change }) => {
-      const willBeCanonical = change.newValue
-      const addressPath = field.path.replace('canonical', 'address')
-      if (willBeCanonical) {
-        form.$(addressPath).reset()
-      } else {
-        form.$(addressPath).set('')
-        form.$(addressPath).resetValidation()
-      }
-      return change
-    },
-  }],
 }
 
 const interceptors = {
@@ -91,16 +68,8 @@ const interceptors = {
 }
 
 export default (canonicalTokensInfo) => {
-  const extra = {
-    'inputs[].address': canonicalTokensInfo.map(ct => ({
-      k: ct.address,
-      v: `${ct.name} (${ct.symbol})`,
-    })),
-  }
-
   const defaults = {
     inputs: [],
-    'inputs[].canonical': true,
     'inputs[].amount': 1,
     'inputs[].address': '',
   }
@@ -116,10 +85,8 @@ export default (canonicalTokensInfo) => {
     labels,
     placeholders,
     rules,
-    extra,
     defaults,
     initials,
-    observers,
     interceptors,
   }, {
     plugins: {

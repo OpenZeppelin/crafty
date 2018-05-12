@@ -1,5 +1,4 @@
 const Crafty = artifacts.require('Crafty');
-const CraftableToken = artifacts.require('CraftableToken');
 const DetailedStandardToken = artifacts.require('DetailedStandardToken');
 
 const axios = require('axios');
@@ -40,7 +39,7 @@ async function deploy() {
 }
 
 async function deployCrafty() {
-  console.log('- Deploying crafty')
+  console.log('- Deploying crafty');
 
   const crafty = await Crafty.new();
   console.log(`Crafty: ${crafty.address}`);
@@ -99,6 +98,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports = function(cb) {
-  deploy().then(cb).catch(cb)
-}
+module.exports = function (cb) {
+  deploy().then(cb).catch(cb);
+};

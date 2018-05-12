@@ -6,6 +6,10 @@ export default class ConfigStore {
     this.config = require('./config.json')
   }
 
+  @computed get api () {
+    return this.config.api
+  }
+
   @computed get crafty () {
     if (!this.root.web3Context.hasNetwork) {
       return null

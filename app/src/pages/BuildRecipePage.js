@@ -105,7 +105,7 @@ class BuildRecipePage extends React.Component {
   }
 
   async uploadMetadata(name, description, image, author) {
-    const API = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty'
+    const API = RootStore.config.api
 
     // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
     const imageResponse = await axios.post(`${API}/thumbnail`, {'image-base64': image.split(/,/)[1]})
@@ -179,9 +179,9 @@ class BuildRecipePage extends React.Component {
               loading={!this.form}
               render={() =>
                 <div>
-                  {this.form.$('inputs').map(field =>
+                  {this.form.$('inputs').map((field, index) =>
                     <InputTokenField
-                      key={field.id}
+                      key={index}
                       field={field}
                       editing
                     />
