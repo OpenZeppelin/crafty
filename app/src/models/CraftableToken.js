@@ -51,4 +51,12 @@ export default class CraftableToken extends ExtendedERC20 {
 
     return this._ingredientsAndAmounts
   }
+
+  @computed get basicCraftable () {
+    if (!this.ingredientsAndAmounts) {
+      return false
+    }
+
+    return this.ingredientsAndAmounts.length === 0
+  }
 }
