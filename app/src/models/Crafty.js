@@ -77,6 +77,7 @@ export default class Crafty {
 
   @computed get craftableTokens () {
     return this.craftableTokenAddresses.current()
+      .filter(a => a !== '0x0000000000000000000000000000000000000000') // Filter-out deleted tokens
       .map(a => new CraftableToken(a))
   }
 }
