@@ -74,5 +74,11 @@ contract('CraftableToken', accounts => {
       await expectPromiseThrow(newCraftable([ingredientA.address, ingredientB.address], [2]));
       await expectPromiseThrow(newCraftable([ingredientA.address], [2, 3]));
     });
+
+    it('ingredients cannot be repeated', async () => {
+      const ingredient = await newCraftable();
+
+      await expectPromiseThrow(newCraftable([ingredient.address, ingredient.address], [2, 3]));
+    });
   });
 });

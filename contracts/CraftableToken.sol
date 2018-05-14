@@ -38,6 +38,13 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);
 
+      // Prevent the same ingredient from being used multiple times
+      for (uint k = 0; k < _ingredients.length; ++k) {
+        if (i != k) {
+          require(_ingredients[i] != _ingredients[k]);
+        }
+      }
+
       recipe.push(RecipeStep({
         ingredient: _ingredients[i],
         amountNeeded: _ingredientAmounts[i]
