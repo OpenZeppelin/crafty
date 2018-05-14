@@ -3,7 +3,7 @@ import React from 'react'
 import './SectionHeader.css'
 
 const SectionHeader = ({ children }) => (
-  <section className='grid-container full'>
+  <section className='grid-container medium'>
     <div className='grid-x grid-margin-x'>
       <div className='cell auto medium-shrink'>
         <h3 className='section-header'>

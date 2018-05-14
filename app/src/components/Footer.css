@@ -1,13 +1,12 @@
 footer {
-    display: flex !important;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-
-    margin: 0.75rem;
-    background: hsla(0, 0%, 100%, .15);
-    border: 1px solid #000;
-    z-index: 10;
-
-    min-height: 20vh;
+  background: white;
+  margin: 0;
+  z-index: 10;
+  -webkit-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.7);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.7);
+  min-height: 65px;
+  margin-top: 30px;
+}
+footer p {
+	text-align: right;
 }

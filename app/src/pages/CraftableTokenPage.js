@@ -180,7 +180,7 @@ class CraftableTokenPage extends React.Component {
     const balance = pendingBalance.current()
 
     // console.log('not busy')
-    return `${(balance / (10 ** this.token.decimals.current())).toString(10)} ${this.token.symbol.current()}`
+    return (<div><h6 className="token-symbol">{this.token.symbol.current()}</h6><h5 className="balance">YOUR BALANCE: {(balance / (10 ** this.token.decimals.current())).toString(10)}</h5></div>)
   }
 
   @computed get ingredientsByAddress () {
@@ -299,24 +299,22 @@ class CraftableTokenPage extends React.Component {
         }
 
         <WithWeb3Context read render={() => (
-          <div className='grid-container'>
-            <div className='grid-x grid-margin-x'>
+          <div className='token-container'>
+            <div className='grid-x grid-margin-x relative'>
               <div key='img' className='craftable-image cell small-12 medium-shrink'>
                 <img
                   src={this.token.image}
                   alt='the token'
                 />
               </div>
-              <div key='text' className='cell small-12 medium-auto grid-y'>
-                <div className='cell shrink'>
+              <div key='text' className='token-info-container'>
+                <div>
                   <h3>{this.token.name.current()}</h3>
-                </div>
-                <div className='cell auto grid-x align-middle'>
-                  <p className='cell'>{this.token.description}</p>
+                  <p className='description'>{this.token.description}</p>
                 </div>
                 {this.myBalance &&
-                  <div className='cell auto grid-x align-middle'>
-                    <p className='cell'>You have {this.myBalance}</p>
+                  <div>
+                    {this.myBalance}
                   </div>
                 }
               </div>
@@ -346,7 +344,7 @@ class CraftableTokenPage extends React.Component {
                 <div className='grid-container'>
                   <div className='grid-x grid-margin-x align-center'>
                     {this.form.$('approvals').map(f =>
-                      <div key={f.id} className='cell small-12 medium-10 large-8'>
+                      <div key={f.id} className='cell small-12 medium-6 large-4'>
                         <CraftingIngredientRow
                           {...this.displayInfoForIngredient(f.$('address').values())}
                           field={f}
@@ -376,11 +374,11 @@ class CraftableTokenPage extends React.Component {
                 <Subtitle>
                   {this._approvalText()}
                 </Subtitle>
-                <div className='grid-x align-center'>
-                  <div className='cell small-12 medium-10 large-8 hella-spacing'>
+                <div className='align-center'>
+                  <div className='hella-spacing align-center'>
                     {this.allGoodInTheHood &&
                       <button
-                        className='cell auto button inverted'
+                        className='craft-btn'
                         onClick={this.doTheCraft}
                       >
                         Craft {this.token.shortName}
