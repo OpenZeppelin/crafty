@@ -1,37 +1,36 @@
 .craftable-card {
-    background: white;
-    margin-top: 30px;
-    min-height: 200px !important;
-    transition: all 0.15s ease-in-out;
+  background: white;
+  margin-top: 30px;
+  min-height: 200px !important;
+  transition: all 0.15s ease-in-out;
 }
 
 .craftable-card:hover {
-    cursor: pointer;
-    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2),
-    inset 0px 10px 30px 5px rgba(255, 255, 255, 1);
+  cursor: pointer;
+  transform: scale(1.1);
 }
 
 .craftable-image-container {
-    display: flex;
+  display: flex;
 }
 
 .craftable-image {
-    width: 128px !important;
-    height: 128px !important;
+  width: 128px !important;
+  height: 128px !important;
 }
 
 .craftable-text-container {
-    position: relative;
+  position: relative;
 }
 
 .craftable-text {
-    position: absolute;
-    bottom: 0px;
-    background-color: #ffffff;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    width: 100%;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  position: absolute;
+  bottom: 0px;
+  background-color: #ffffff;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  width: 100%;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 .craftable-text h3 {
   font-family: 'Open Sans';
