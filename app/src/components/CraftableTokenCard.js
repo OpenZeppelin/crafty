@@ -45,6 +45,9 @@ class CraftableTokenCard extends React.Component {
             {withBalanceOfAddress &&
               <p>Balance: {balance.toString(10)}</p>
             }
+            {token.basicCraftable &&
+              <p>Basic</p>
+            }
           </div>
         </div>
       </div>

@@ -64,6 +64,13 @@ contract Crafty is RBAC {
    * @return The address of the newly created token.
    */
   function addCraftable(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+    require(_ingredients.length == _ingredientAmounts.length);
+
+    // Only admins can create craftables with no ingredients
+    if (!hasRole(msg.sender, ROLE_ADMIN)) {
+      require(_ingredients.length > 0);
+    }
+
     CraftableToken newCraftable = new CraftableToken(_name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
     craftables.push(newCraftable);
 
@@ -74,7 +81,7 @@ contract Crafty is RBAC {
 
   /**
    * @dev Crafts a craftable. The player must have allowed Crafty to use his
-   * tokens, which will be transferred to the game contract during crafting.
+   * ingredient tokens, which will be transferred to the game contract during crafting.
    * @param _craftable The craftable to craft.
    */
   function craft(CraftableToken _craftable) public {
@@ -89,8 +96,10 @@ contract Crafty is RBAC {
       ingredient.transferFrom(player, address(this), amountNeeded);
     }
 
-    // Issue the crafted token
-    _craftable.mint(player, 1);
+    // Issue the crafted token - for ingredient-less tokens, a higher number of
+    // tokens are minted.
+    uint256 tokensToMint = (totalSteps == 0) ? 100 : 1;
+    _craftable.mint(player, tokensToMint);
   }
 
   // Admin API

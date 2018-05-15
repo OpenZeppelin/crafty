@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nventuro/crafty.git"
+    "url": "git+https://github.com/zeppelinos/crafty.git"
   },
   "author": "Nicolás Venturo",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nventuro/crafty/issues"
+    "url": "https://github.com/zeppelinos/crafty/issues"
   },
-  "homepage": "https://github.com/nventuro/crafty#readme",
+  "homepage": "https://github.com/zeppelinos/crafty#readme",
   "dependencies": {
     "dotenv": "^5.0.1",
     "ganache-cli": "^6.1.0",

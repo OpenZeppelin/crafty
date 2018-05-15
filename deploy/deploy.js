@@ -1,5 +1,5 @@
 const Crafty = artifacts.require('Crafty');
-const DetailedStandardToken = artifacts.require('DetailedStandardToken');
+const DetailedMintableToken = artifacts.require('DetailedMintableToken');
 
 const axios = require('axios');
 const capitalize = require('capitalize');
@@ -51,7 +51,7 @@ async function deployCanonicals() {
   console.log('- Deploying canonicals');
 
   await Promise.all(canonicals.map(async canonical => {
-    const token = await DetailedStandardToken.new(canonical.name, canonical.symbol, canonical.decimals);
+    const token = await DetailedMintableToken.new(canonical.name, canonical.symbol, canonical.decimals);
     console.log(`${canonical.name} (${canonical.symbol}): ${token.address}`);
   }));
 }

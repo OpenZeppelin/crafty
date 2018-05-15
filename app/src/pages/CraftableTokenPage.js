@@ -179,8 +179,7 @@ class CraftableTokenPage extends React.Component {
     // }
     const balance = pendingBalance.current()
 
-    // console.log('not busy')
-    return (<div><h6 className="token-symbol">{this.token.symbol.current()}</h6><h5 className="balance">YOUR BALANCE: {(balance / (10 ** this.token.decimals.current())).toString(10)}</h5></div>)
+    return (<div><h6 className="token-symbol">{this.token.symbol.current()}</h6><h5 className="balance">YOUR BALANCE: {this.token.valueFormatter(balance)}</h5></div>)
   }
 
   @computed get ingredientsByAddress () {
@@ -249,11 +248,9 @@ class CraftableTokenPage extends React.Component {
       .balanceOf(RootStore.web3Context.currentAddress)
       .current()
 
-    const decimals = token.decimals.current()
-
     const image = token.image
 
-    return { token, amount, balance, decimals, image}
+    return { token, amount, balance, image}
   }
 
   doTheCraft = async () => {
