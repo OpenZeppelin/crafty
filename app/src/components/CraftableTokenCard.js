@@ -25,7 +25,7 @@ class CraftableTokenCard extends React.Component {
 
     return (
       <div
-        className={`${this.props.className} grid-y craftable-card with-border`}
+        className={`${this.props.className} grid-y craftable-card`}
         onClick={() => this.setState({ clicked: true })}
       >
         {this.state.clicked &&
@@ -39,7 +39,7 @@ class CraftableTokenCard extends React.Component {
           />
         </div>
         <div className='cell small-4 craftable-text-container'>
-          <div className='craftable-text with-border'>
+          <div className='craftable-text'>
             <h3>{token.shortName}</h3>
             <p>{token.shortDescription}</p>
             {withBalanceOfAddress &&

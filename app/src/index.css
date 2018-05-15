@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat');
-
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
 
 body {
+    background:  white;
     overflow-x: hidden;
-    font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, a, p, span {
-    font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
     /* replace this with a settings when using scss for foundation */
 }
 
@@ -152,4 +153,182 @@ input:checked~.switch-paddle {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.craft-btn {
+  border-radius: 25px;
+  background-color: #00cec9;
+  color: white;
+  padding: 13px 32px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-family: 'Open Sans';
+  outline: none;
+  cursor: pointer;
+  border: solid 3px;
+}
+.craft-btn:hover {
+  background: white;
+  color: #00cec9;
+}
+.token-container {
+    height: 323px;
+    display: flex;
+    background-color: #f7f7f7;
+    align-items: center;
+    justify-content: center;
+}
+.relative {
+    position: relative;
+}
+.token-info-container {
+    border-radius: 4px;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+    padding: 18px 10px !important;
+    position: absolute;
+    width: auto;
+    min-width: 400px;
+    bottom: -40px;
+    right: -295px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.token-container div {
+    padding: 0 10px;
+}
+.token-info-container h3 {
+  font-family: 'Open Sans';
+  font-size: 34px;
+  line-height: 32px;
+  font-weight: bold;
+  letter-spacing: 0.2px;
+  color: #000000;
+  margin: 0;
+}
+.token-info-container p {
+  font-family: 'Open Sans';
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  color: #141414;
+  margin: 0;
+}
+.token-info-container .description {
+  font-family: 'Open Sans';
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  color: #141414;
+}
+.token-info-container h6 {
+  font-family: 'Open Sans';
+  font-size: 21px;
+  line-height: 36px;
+  font-weight: 300;
+  letter-spacing: 0.2px;
+  text-align: right;
+  color: #000000;
+  margin: 0;
+}
+.token-info-container h5 {
+  opacity: 0.6;
+  font-family: 'Open Sans';
+  font-size: 13px;
+  letter-spacing: 0.1px;
+  color: #505050;
+  text-align: right;
+  margin: 0;
+}
+.ingredient-row {
+    border-radius: 4px;
+    background-color: #ffffff;
+    -webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+    padding: 10px !important;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+.ingredient-row .token-img {
+    height: 66px !important;
+    width: 66px !important;
+}
+.craftable-ingredient-info {
+  width: calc(100% - 80px);
+}
+.craftable-ingredient-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.ingredient-row .input-container {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 4px;
+  right: 56px;
+}
+.craftable-ingredient-info h1 {
+  font-family: 'Open Sans';
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+  color: #000000;
+}
+.craftable-ingredient-required {
+  width: 120px;
+}
+.craftable-ingredient-balance {
+  opacity: 0.6;
+}
+.craftable-ingredient-info h6 {
+  font-family: 'Open Sans';
+  font-size: 11px;
+  font-weight: 600;
+  color: #505050;
+  margin-bottom: 2px;
+}
+.craftable-ingredient-info p {
+  font-family: 'Open Sans';
+  font-size: 18px;
+  letter-spacing: 0.1px;
+  color: #505050;
+  margin-bottom: 2px;
+}
+.grey-background {
+  background-color: #f7f7f7;
+}
+.recipe-background {
+  margin-top: -10px;
+  padding: 15px 0;
+  margin-bottom: 40px;
+  background: -moz-linear-gradient(top, #ffffff 0%, #ffffff 40%, #f7f7f7 40%, #f7f7f7 100%)!important;
+  background: -webkit-linear-gradient(top, #ffffff 0%,#ffffff 40%,#f7f7f7 40%,#f7f7f7 100%)!important;
+  background: linear-gradient(to top, #ffffff 0%,#ffffff 40%,#f7f7f7 40%,#f7f7f7 100%)!important;
+}
+.craftable-token-page h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: #000000;
+  border-bottom: solid 0;
+}
+.craft-text {
+  font-family: 'Open Sans';
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  color: #141414;
+}
+.craft-row {
+  margin: 70px 0;
+  text-align: center;
+}
+.approved-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
 }

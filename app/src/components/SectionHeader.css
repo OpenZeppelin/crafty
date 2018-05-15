@@ -1,11 +1,13 @@
 .section-header {
-    background-color: #000000;
-    color: #ffffff;
-    padding-left: 1rem;
-    padding-right: 3rem;
-
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: 0.1px;
+    color: #505050;
+    padding: 0 10px 5px 10px;
+    font-size: 16px;
+    border-bottom: solid 2px;
 }
 
 .section-header code {

@@ -14,7 +14,7 @@ const CraftableTokenFeed = observer(({
       {tokens && tokens.map(t =>
         <CraftableTokenCard
           key={t.address}
-          className='cell medium-6 large-4'
+          className='cell medium-6 large-3'
           token={t}
           withBalanceOfAddress={withBalanceOfAddress}
         />
