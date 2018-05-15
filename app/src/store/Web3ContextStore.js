@@ -30,11 +30,11 @@ export default class Web3ContextStore {
   }
 
   @computed get hasWeb3 () {
-    return !!this.root.web3Context.web3
+    return !!this.web3
   }
 
   @computed get hasNetwork () {
-    return !!this.root.web3Context.network.id
+    return !!this.network.id
   }
 
   @computed get isLocked () {
@@ -42,7 +42,7 @@ export default class Web3ContextStore {
   }
 
   @computed get isUnlocked () {
-    return !!this.root.web3Context.currentAddress
+    return !!this.currentAddress
   }
 
   @computed get canRead () {
@@ -70,10 +70,7 @@ export default class Web3ContextStore {
       this.web3 = new Web3(window.web3.currentProvider)
     }
 
-    if (this.web3.currentProvider.isMetaMask) {
-      this.root.ui.isMetaMask = true
-    }
-
+    this.root.ui.isMetaMask = !!this.web3.currentProvider.isMetaMask
     this._getAndSetInfo(5000)
   })
 
