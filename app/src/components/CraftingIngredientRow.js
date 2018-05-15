@@ -18,13 +18,13 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
       </div>
       <div className="craftable-ingredient-info">
         <div className="craftable-ingredient-row">
-          <h1>{token.shortName} ({token.shortSymbol})</h1>
+          <h1>{token.shortName}</h1>
           <button className="approved-btn"><img src="./images/approved.svg" alt={field.$('pending').values() ? 'Pending approval' : ''}/></button>
         </div>
         <div className="craftable-ingredient-row">
           <div className="craftable-ingredient-required">
             <h6>REQUIRED</h6>
-            <p>x{valueFormatter(amount)}</p>
+            <p>{valueFormatter(amount)} {token.shortSymbol}</p>
           </div>
           <div className="craftable-ingredient-balance">
             <h6>BALANCE</h6>
