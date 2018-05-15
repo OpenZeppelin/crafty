@@ -77,6 +77,8 @@ class BuildRecipePage extends React.Component {
     this.deploying = true
 
     try {
+      this.playing = true
+
       const crafty = this.props.store.domain.crafty
       const values = this.form.values()
       const ingredients = values.inputs.map(i => i.address)
@@ -93,7 +95,6 @@ class BuildRecipePage extends React.Component {
       )
       runInAction(() => {
         this.tokenAddress = tokenAddress
-        this.totallyDone = true
       })
     } catch (error) {
       console.error(error)
