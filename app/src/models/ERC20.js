@@ -67,9 +67,20 @@ export default class ERC20 {
       if (!decimals) { throw new Error() }
       return new BN(decimals)
     } catch (error) {
-      return new BN(0)
+      return null
     }
   })
+
+  @computed get valueFormatter() {
+    return (value) => {
+      const decimals = this.decimals.current()
+      if (decimals === null) {
+        return '...'
+      } else {
+        return (value / (10 ** decimals)).toString(10)
+      }
+    }
+  }
 
   balanceOf = createTransformer(
     (address) => createFromEthereumBlock(
