@@ -286,7 +286,7 @@ class CraftableTokenPage extends React.Component {
 
   render () {
     return (
-      <div>
+      <div className="craftable-token-page">
         <Header>Craft a Token</Header>
         {!this.token &&
           <div className='grid-container'>
@@ -324,58 +324,47 @@ class CraftableTokenPage extends React.Component {
 
           </div>
         )} />
-
-        <SectionHeader>
-          Recipe for &#34;{
-            this.token
-              ? this.token.shortName
-              : 'Loading...'
-          }&#34;
-        </SectionHeader>
+        <div className="grey-background">
+          <div className="grid-container medium">
+            <h2>{this.token ? 'Recipe' : 'Loading...'}</h2>
+          </div>
+        </div>
 
         <WithWeb3Context read write render={() => (
-          <SectionLoader
-            loading={!this.form}
-            render={() =>
-              <div>
-                <Subtitle>
-                  These are the ingredients and amounts necessary to craft {this.token.name.current()}:
-                </Subtitle>
-                <div className='grid-container'>
-                  <div className='grid-x grid-margin-x align-center'>
-                    {this.form.$('approvals').map(f =>
-                      <div key={f.id} className='cell small-12 medium-6 large-4'>
-                        <CraftingIngredientRow
-                          {...this.displayInfoForIngredient(f.$('address').values())}
-                          field={f}
-                        />
-                      </div>
-                    )}
+          <div className="recipe-background">
+            <SectionLoader
+              loading={!this.form}
+              render={() =>
+                <div>
+                  <div className='grid-container'>
+                    <div className='grid-x grid-margin-x'>
+                      {this.form.$('approvals').map(f =>
+                        <div key={f.id} className='small-12 medium-6 large-4'>
+                          <CraftingIngredientRow
+                            {...this.displayInfoForIngredient(f.$('address').values())}
+                            field={f}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          />
+              }
+            />
+          </div>
         )} />
-
-        <SectionHeader>
-          Craft &#34;{
-            this.token
-              ? this.token.shortName
-              : 'Loading...'
-          }&#34;
-        </SectionHeader>
+        <div className="grid-container medium">
+          <h2>{ this.token ? 'Craft ' + this.token.shortName : 'Loading...'}</h2>
+        </div>
 
         <WithWeb3Context read write render={() => (
           <SectionLoader
             loading={!this.form}
             render={() =>
               <div>
-                <Subtitle>
-                  {this._approvalText()}
-                </Subtitle>
-                <div className='align-center'>
-                  <div className='hella-spacing align-center'>
+                <p className="craft-text">{this._approvalText()}</p>
+                <div>
+                  <div className='craft-row'>
                     {this.allGoodInTheHood &&
                       <button
                         className='craft-btn'
