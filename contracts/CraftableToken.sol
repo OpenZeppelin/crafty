@@ -1,9 +1,9 @@
 pragma solidity ^0.4.21;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
-import 'openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 
-import './ExtendedERC20.sol';
+import "./ExtendedERC20.sol";
 
 
 /**
@@ -32,7 +32,16 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
    * @param _ingredients An array with the ERC20s required to craft this token.
    * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
    */
-  function CraftableToken(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) ExtendedERC20(_name, _symbol, 0, _tokenURI) public {
+  function CraftableToken(
+    string _name,
+    string _symbol,
+    string _tokenURI,
+    ERC20[] _ingredients,
+    uint256[] _ingredientAmounts
+  )
+    ExtendedERC20(_name, _symbol, 0, _tokenURI)
+    public
+  {
     require(_ingredients.length == _ingredientAmounts.length);
 
     for (uint i = 0; i < _ingredients.length; ++i) {
@@ -65,8 +74,13 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
    * @dev Returns the ERC20 required to comply with a recipe step, along with the amount of tokens needed.
    * @return A tuple containing the token and the amount.
    */
-  function getRecipeStep(uint256 _recipeStepNumber) public view returns (ERC20, uint256) {
+  function getRecipeStep(uint256 _recipeStepNumber)
+    public view returns (ERC20, uint256)
+  {
     require(_recipeStepNumber < recipe.length);
-    return (recipe[_recipeStepNumber].ingredient, recipe[_recipeStepNumber].amountNeeded);
+    return (
+      recipe[_recipeStepNumber].ingredient,
+      recipe[_recipeStepNumber].amountNeeded
+    );
   }
 }
