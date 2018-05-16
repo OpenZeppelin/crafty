@@ -29,16 +29,15 @@ contract('Crafty', accounts => {
   }
 
   async function addPrecreatedCraftable(ingredients, ingredientAmounts, fromAddress) {
-    // We don't care about name, symbol or URI
-    const token = await CraftableToken.new('', '', '', ingredients, ingredientAmounts, {from: fromAddress});
+    const token = await CraftableToken.new({from: fromAddress});
+    // Ownership is given to the crafty contract. We don't care about name, symbol or URI.
+    token.initialize(crafty.address, '', '', '', ingredients, ingredientAmounts, {from: fromAddress});
 
     const receipt = await crafty.addPrecreatedCraftable(token.address, {from: fromAddress});
 
     receipt.logs.length.should.equal(1);
     receipt.logs[0].event.should.equal('CraftableAdded');
     receipt.logs[0].args.addr.should.equal(token.address);
-
-    await token.transferOwnership(crafty.address, {from: fromAddress});
 
     return token;
   }

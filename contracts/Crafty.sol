@@ -2,7 +2,7 @@ pragma solidity ^0.4.21;
 
 import './CraftableToken.sol';
 import 'openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
+import 'openzeppelin-zos/contracts/token/ERC20/ERC20.sol';
 
 import 'zos-lib/contracts/migrations/Initializable.sol';
 
@@ -61,7 +61,9 @@ contract Crafty is RBAC, Initializable {
     require(_ingredients.length == _ingredientAmounts.length);
     require(_ingredients.length > 0);
 
-    CraftableToken newCraftable = new CraftableToken(_name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
+    CraftableToken newCraftable = new CraftableToken();
+    newCraftable.initialize(address(this), _name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
+
     craftables.push(newCraftable);
 
     emit CraftableAdded(newCraftable);

@@ -10,8 +10,11 @@ contract('CraftableToken', accounts => {
   const symbol = 'CRFT';
   const tokenURI = 'http://hosting.com/CraftableToken.json';
 
-  function newCraftable(ingredients = [], ingredientAmounts = []) {
-    return CraftableToken.new(name, symbol, tokenURI, ingredients, ingredientAmounts, {from: deployer});
+  async function newCraftable(ingredients = [], ingredientAmounts = []) {
+    const token = await CraftableToken.new({from: deployer});
+    await token.initialize(deployer, name, symbol, tokenURI, ingredients, ingredientAmounts, {from: deployer});
+
+    return token;
   }
 
   it('metadata is stored', async () => {

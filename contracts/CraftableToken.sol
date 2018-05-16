@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
-import 'openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
+import 'openzeppelin-zos/contracts/token/ERC20/ERC20.sol';
+import 'openzeppelin-zos/contracts/token/ERC20/MintableToken.sol';
 
 import './ExtendedERC20.sol';
 
@@ -25,15 +25,19 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
   RecipeStep[] private recipe;
 
   /**
-   * @dev Constructor. The recipe is created here, and cannot be modified afterwards.
+   * @dev Initailization. The recipe is created here, and cannot be modified afterwards.
+   * @param _owner The owner of the token, who will be able to mint it.
    * @param _name The name of the token.
    * @param _symbol The symbol of the token.
    * @param _tokenURI A URI pointing to token metadata (i.e. a thumbnail).
    * @param _ingredients An array with the ERC20s required to craft this token.
    * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
    */
-  function CraftableToken(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) ExtendedERC20(_name, _symbol, 0, _tokenURI) public {
+  function initialize(address _owner, string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) isInitializer('CraftableToken', '0') public {
     require(_ingredients.length == _ingredientAmounts.length);
+
+    Ownable.initialize(_owner); // MintableToken does not implement initialize, so we call its Ownable's method directly
+    ExtendedERC20.initialize(_owner, _name, _symbol, 0, _tokenURI);
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);
