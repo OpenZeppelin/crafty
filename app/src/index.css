@@ -443,8 +443,12 @@ input:checked~.switch-paddle {
   outline: none;
   cursor: pointer;
 }
+.new-recipe-grid-col {
+  margin: 0 15px;
+}
 .one-more-token-button {
-  height: 100px;
+  margin: 10px 0;
+  height: 113px;
   width: 100%;
   color: #00cec9;
   border-radius: 8px;
