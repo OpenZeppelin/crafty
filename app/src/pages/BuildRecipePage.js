@@ -151,6 +151,7 @@ class BuildRecipePage extends React.Component {
     this.form && this.form.validate()
     return (
       <div>
+        <Header/>
         {this.totallyDone &&
           <Redirect to={`/craft/${this.tokenAddress}`} />
         }
@@ -159,33 +160,29 @@ class BuildRecipePage extends React.Component {
           open={this.playing}
           canClose={!this.deploying}
           finishText='Done deploying! You can continue playing or return to the Crafting Game'
-          requestClose={this.closeLoader}
-        />
-        <Header>Build a Craftable Token</Header>
-        <Subtitle>
-          Here you can <b>create your own craftable token</b>.
-          Choose the ingredient ERC20 tokens and then describe your creation.
-        </Subtitle>
-        <WithWeb3Context read write render={() => (
-          <div>
-            <SectionHeader>
-              <code>01.</code> Describe Your New Craftable Token
-            </SectionHeader>
+          requestClose={this.closeLoader} />
 
+        <WithWeb3Context read write render={() => (
+          <div className="recipe-background">
             <SectionLoader
               loading={!this.form}
               render={() =>
-                <div>
+                <div className="craftable-token-form">
                   <Input field={this.form.$('image')} />
-                  <div className='grid-x grid-margin-x'>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('name')} />
-                    </div>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('symbol')} />
+                  <div>
+                    <p>Token information</p>
+                    <div className="craft-form-card">
+                      <div className='grid-x grid-margin-x'>
+                        <div className='cell small-12 medium-6'>
+                          <Input field={this.form.$('name')} />
+                        </div>
+                        <div className='cell small-12 medium-6'>
+                          <Input field={this.form.$('symbol')} />
+                        </div>
+                      </div>
+                      <Input field={this.form.$('description')} />
                     </div>
                   </div>
-                  <Input field={this.form.$('description')} />
                 </div>
               }
             />
@@ -215,10 +212,6 @@ class BuildRecipePage extends React.Component {
               }
             />
 
-            <SectionHeader>
-              <code>03.</code> Deploy
-            </SectionHeader>
-
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -226,11 +219,11 @@ class BuildRecipePage extends React.Component {
                   <div className='cell shrink grid-y align-center'>
                     {!this.form.isValid && this.form.error}
                     <button
-                      className='cell button inverted'
+                      className='btn'
                       onClick={this.deploy}
                       disabled={!this.form.isValid || !this._canDeploy()}
                     >
-                      Deploy em&#39;
+                      SUBMIT RECIPE
                     </button>
                     {!this._canDeploy() &&
                       <p className='cell help-text'>

@@ -284,7 +284,7 @@ class CraftableTokenPage extends React.Component {
   render () {
     return (
       <div className="craftable-token-page">
-        <Header>Craft a Token</Header>
+        <Header/>
         {!this.token &&
           <div className='grid-container'>
             <div className='grid-x grid-margin-x'>
@@ -334,7 +334,7 @@ class CraftableTokenPage extends React.Component {
               render={() =>
                 <div>
                   <div className='grid-container'>
-                    <div className='grid-x grid-margin-x'>
+                    <div className='grid-x grid-margin-x space-between'>
                       {this.form.$('approvals').map(f =>
                         <div key={f.id} className='small-12 medium-6 large-4'>
                           <CraftingIngredientRow
@@ -346,8 +346,7 @@ class CraftableTokenPage extends React.Component {
                     </div>
                   </div>
                 </div>
-              }
-            />
+              } />
           </div>
         )} />
         <div className="grid-container medium">
@@ -364,7 +363,7 @@ class CraftableTokenPage extends React.Component {
                   <div className='craft-row'>
                     {this.allGoodInTheHood &&
                       <button
-                        className='craft-btn'
+                        className='btn'
                         onClick={this.doTheCraft}
                       >
                         Craft {this.token.shortName}
