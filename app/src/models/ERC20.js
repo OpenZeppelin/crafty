@@ -61,7 +61,7 @@ export default class ERC20 {
     return `${this.shortName} (${this.shortSymbol})`
   }
 
-  decimals = asyncComputed('...', async () => {
+  decimals = asyncComputed(null, async () => {
     try {
       const decimals = await this.contract.methods.decimals().call()
       if (!decimals) { throw new Error() }

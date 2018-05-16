@@ -1,8 +1,8 @@
 pragma solidity ^0.4.21;
 
-import './CraftableToken.sol';
-import 'openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
+import "./CraftableToken.sol";
+import "openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 /**
@@ -25,15 +25,15 @@ contract Crafty is RBAC {
 
   string public constant ROLE_ADMIN = "admin";
 
+  function Crafty() public {
+    // Make the deployer the initial admin.
+    addRole(msg.sender, ROLE_ADMIN);
+  }
+
   // Admins can add new admins.
 
   function addAdminRole(address _user) onlyRole(ROLE_ADMIN) public {
     addRole(_user, ROLE_ADMIN);
-  }
-
-  function Crafty() public {
-    // Make the deployer the initial admin.
-    addRole(msg.sender, ROLE_ADMIN);
   }
 
   // Player API
@@ -63,7 +63,16 @@ contract Crafty is RBAC {
    * @param _ingredientAmounts The amount of required tokens for each ERC20.
    * @return The address of the newly created token.
    */
-  function addCraftable(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+  function addCraftable(
+    string _name,
+    string _symbol,
+    string _tokenURI,
+    ERC20[] _ingredients,
+    uint256[] _ingredientAmounts
+  )
+    public
+    returns (CraftableToken)
+  {
     require(_ingredients.length == _ingredientAmounts.length);
 
     // Only admins can create craftables with no ingredients
@@ -71,7 +80,8 @@ contract Crafty is RBAC {
       require(_ingredients.length > 0);
     }
 
-    CraftableToken newCraftable = new CraftableToken(_name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
+    CraftableToken newCraftable = new CraftableToken(
+      _name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
     craftables.push(newCraftable);
 
     emit CraftableAdded(newCraftable);
@@ -108,7 +118,9 @@ contract Crafty is RBAC {
    * @dev Deletes a craftable from the game.
    * @param _craftable The craftable token to delete.
    */
-  function deleteCraftable(CraftableToken _craftable) public onlyRole(ROLE_ADMIN) {
+  function deleteCraftable(CraftableToken _craftable)
+    public onlyRole(ROLE_ADMIN)
+  {
     delete craftables[getCraftableIndex(_craftable)];
     emit CraftableDeleted(_craftable);
   }
@@ -118,7 +130,9 @@ contract Crafty is RBAC {
   /**
    * @dev Returns the index of a craftable stored in the game.
    */
-  function getCraftableIndex(CraftableToken _craftable) internal view returns (uint256) {
+  function getCraftableIndex(CraftableToken _craftable)
+    internal view returns (uint256)
+  {
     for (uint i = 0; i < craftables.length; ++i) {
       if (craftables[i] == _craftable) {
         return i;

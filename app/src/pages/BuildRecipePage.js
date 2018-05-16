@@ -16,6 +16,8 @@ import InputTokenField from '../components/InputTokenField'
 
 import RootStore from '../store/RootStore'
 
+import ERC20 from '../models/ERC20'
+
 import buildRecipeForm from '../forms/BuildRecipe'
 
 import { uid } from '../util'
@@ -77,10 +79,28 @@ class BuildRecipePage extends React.Component {
     this.deploying = true
 
     try {
+      this.playing = true
+
       const crafty = this.props.store.domain.crafty
       const values = this.form.values()
       const ingredients = values.inputs.map(i => i.address)
-      const amounts = values.inputs.map(i => i.amount)
+
+      // A bit hacky - we need to fetch the decimals for each token in order to calculate
+      // the actual number of required tokens for each ingredient
+      values.inputs.forEach(i => i.token = new ERC20(i.address))
+      await when(() => values.inputs.every(i => {
+        const decimals = i.token.decimals.current()
+        if (decimals === null) {
+          return false
+        }
+
+        // Due to a mobx restriction, we can't call current() in deploy, so we store this value
+        i.decimals = decimals.toNumber()
+        return true
+      }))
+
+      // The inputed amounts are then converted to token units using the decimals
+      const amounts = values.inputs.map(i => Math.ceil(Number(i.amount) * (10 ** i.decimals)))
 
       const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image, RootStore.web3Context.currentAddress)
 
@@ -93,7 +113,6 @@ class BuildRecipePage extends React.Component {
       )
       runInAction(() => {
         this.tokenAddress = tokenAddress
-        this.totallyDone = true
       })
     } catch (error) {
       console.error(error)
