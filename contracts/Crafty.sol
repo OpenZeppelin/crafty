@@ -4,6 +4,7 @@ import './CraftableToken.sol';
 import 'openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
 import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
 
+import 'zos-lib/contracts/migrations/Initializable.sol';
 
 /**
  * @title Crafting token game
@@ -13,7 +14,7 @@ import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
  * consumed in the crafting process. New craftables (with their ingredients) can be
  * added by all players.
  */
-contract Crafty is RBAC {
+contract Crafty is RBAC, Initializable {
   // Storage for craftables. Some of them may have been zeroed-out (by a deleteCraftable
   // call), so validation of each CraftableToken should be performed by readers.
   CraftableToken[] private craftables;
@@ -22,18 +23,11 @@ contract Crafty is RBAC {
   event CraftableDeleted(address addr);
 
   // Role Based Access Control (RBAC)
-
   string public constant ROLE_ADMIN = "admin";
 
-  // Admins can add new admins.
-
-  function addAdminRole(address _user) onlyRole(ROLE_ADMIN) public {
-    addRole(_user, ROLE_ADMIN);
-  }
-
-  function Crafty() public {
-    // Make the deployer the initial admin.
-    addRole(msg.sender, ROLE_ADMIN);
+  // Initializer for integration with ZeppelinOS
+  function initialize(address _initialAdmin) isInitializer public {
+    addRole(_initialAdmin, ROLE_ADMIN);
   }
 
   // Player API
@@ -103,6 +97,14 @@ contract Crafty is RBAC {
   }
 
   // Admin API
+
+  /**
+   * @dev Adds a new admin.
+   * @param _user The address of the new admin.
+   */
+  function addAdminRole(address _user) onlyRole(ROLE_ADMIN) public {
+    addRole(_user, ROLE_ADMIN);
+  }
 
   /**
    * @dev Deletes a craftable from the game.

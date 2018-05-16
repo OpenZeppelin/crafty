@@ -1,3 +1,6 @@
+const argv = require('minimist')(process.argv.slice(2));
+const network = argv['network'];
+
 const Crafty = artifacts.require('Crafty');
 const DetailedStandardToken = artifacts.require('DetailedStandardToken');
 
@@ -6,7 +9,13 @@ const capitalize = require('capitalize');
 const fs = require('fs');
 const unvowel = require('unvowel');
 
+global.artifacts = artifacts;
+const zosPush = require('zos/lib/scripts/push').default;
+const zosCreateProxy = require('zos/lib/scripts/create-proxy').default;
+
 const API = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty';
+
+const adminAddress = web3.eth.accounts[0];
 
 const canonicals = [
   {
@@ -29,6 +38,11 @@ const canonicals = [
 ];
 
 async function deploy() {
+  console.log(`Deploying to network '${network}'`);
+
+  console.log('- Deploying new contract implementations');
+  await zosPush({network: network});
+
   const crafty = await deployCrafty();
 
   await deployCanonicals();
@@ -39,10 +53,24 @@ async function deploy() {
 }
 
 async function deployCrafty() {
-  console.log('- Deploying crafty');
+  console.log('- Deploying Crafty');
 
-  const crafty = await Crafty.new();
+  // We need a proxy to the deployed crafty implementation
+  await zosCreateProxy({
+    contractAlias: 'Crafty',
+    initMethod: 'initialize',
+    initArgs: [adminAddress],
+    network: network
+  });
+
+  // zosCreteProxy doesn't yet return the created proxy, so we need to retrieve
+  // its address from the package.zos.[network].json
+  const packageData = JSON.parse(fs.readFileSync(`package.zos.${network}.json`, 'utf8'));
+  const craftyProxies = packageData.proxies.Crafty;
+  const crafty = Crafty.at(craftyProxies[craftyProxies.length - 1].address);
+
   console.log(`Crafty: ${crafty.address}`);
+  console.log(`Admin: ${adminAddress}`);
 
   return crafty;
 }
