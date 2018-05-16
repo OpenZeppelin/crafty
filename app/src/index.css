@@ -11,6 +11,10 @@ h1, h2, h3, h4, h5, h6, a, p, span {
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', sans-serif;
 }
 
+input, button, a {
+  outline: none !important;
+}
+
 .btn {
   border-radius: 25px;
   background-color: #00cec9;
@@ -104,10 +108,10 @@ button.button {
 }
 .help-text {
   margin-top: -.8rem;
-  font-size: 11px;
+  font-size: 11px!important;
   font-style: italic;
-  color: #ff0000b5;
-  margin-bottom: 0
+  color: #ff0000b5!important;
+  margin-bottom: 0!important;
 }
 .craftable-token-form {
   display: flex;
@@ -129,13 +133,14 @@ button.button {
   height: 200px;
   border-radius: 3px;
 }
-.dropzone .button {
+.dropzone .button, .dropzone p {
   background: transparent;
   text-transform: uppercase;
   color: white;
   font-weight: 800;
   letter-spacing: 1px;
   border: solid 0;
+  outline: none;
 }
 
 .dropzone.active {
@@ -216,9 +221,7 @@ input:checked~.switch-paddle {
   left: 0;
   right: 0;
   bottom: 0;
-
   line-height: 1rem;
-
   background-color: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
@@ -346,6 +349,32 @@ input:checked~.switch-paddle {
   top: 4px;
   right: 56px;
 }
+.new-recipe-row {
+  padding-bottom: 0!important;
+}
+.new-recipe-row .token-field input{
+  width: 216px;
+}
+.new-recipe-ingredient {
+  display: flex;
+  flex-direction: column;
+}
+.ingredient-row .ammount-field .input-container {
+  width: auto;
+  height: auto;
+  position: relative;
+  top: inherit;
+  right: inherit;
+}
+.ammount-field label {
+  display: inline-flex;
+  align-items: center;
+  color: #505050;
+}
+.ammount-field input {
+  width: 70px;
+  margin-left: 13px;
+}
 .craftable-ingredient-info h1 {
   font-family: 'Open Sans';
   font-size: 18px;
@@ -377,14 +406,14 @@ input:checked~.switch-paddle {
   background-color: #f7f7f7;
 }
 .recipe-background {
-  margin-top: -10px;
-  padding: 15px 0;
+  margin-top: -16px;
+  padding: 21px 0;
   margin-bottom: 40px;
   background: -moz-linear-gradient(top, #ffffff 0%, #ffffff 40%, #f7f7f7 40%, #f7f7f7 100%)!important;
   background: -webkit-linear-gradient(top, #ffffff 0%,#ffffff 40%,#f7f7f7 40%,#f7f7f7 100%)!important;
   background: linear-gradient(to top, #ffffff 0%,#ffffff 40%,#f7f7f7 40%,#f7f7f7 100%)!important;
 }
-.craftable-token-page h2 {
+.craftable-token-page h2, .black-bold-text {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 0.1px;
@@ -405,4 +434,30 @@ input:checked~.switch-paddle {
   position: absolute;
   top: 10px;
   right: 10px;
+  outline: none;
+}
+.remove-btn {
+  position: absolute;
+  top: -14px;
+  right: 10px;
+  outline: none;
+  cursor: pointer;
+}
+.one-more-token-button {
+  height: 100px;
+  width: 100%;
+  color: #00cec9;
+  border-radius: 8px;
+  background-color: #ffffff;
+  border: dashed 1.5px;
+  font-family: 'Open Sans';
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.29;
+  letter-spacing: 0.1px;
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  outline: none;
+  cursor: pointer;
 }

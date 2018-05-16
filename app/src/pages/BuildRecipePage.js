@@ -170,7 +170,7 @@ class BuildRecipePage extends React.Component {
                 <div className="craftable-token-form">
                   <Input field={this.form.$('image')} />
                   <div>
-                    <p>Token information</p>
+                    <p className="black-bold-text">Token information</p>
                     <div className="craft-form-card">
                       <div className='grid-x grid-margin-x'>
                         <div className='cell small-12 medium-6'>
@@ -184,34 +184,36 @@ class BuildRecipePage extends React.Component {
                     </div>
                   </div>
                 </div>
-              }
-            />
-
-            <SectionHeader>
-              <code>02.</code> Ingredient Tokens
-            </SectionHeader>
-
-            <SectionLoader
-              loading={!this.form}
-              render={() =>
-                <div>
-                  {this.form.$('inputs').map((field, index) =>
-                    <InputTokenField
-                      key={index}
-                      field={field}
-                      editing
-                    />
-                  )}
-                  <button
-                    className='button'
-                    onClick={this._addInput}
-                  >
-                  + Add Token
-                  </button>
-                </div>
-              }
-            />
-
+              }/>
+            <div className="grey-background">
+              <div className="grid-container medium">
+                <p className="black-bold-text">Add Ingredients</p>
+              </div>
+            </div>
+            <div className="recipe-background">
+              <SectionLoader
+                loading={!this.form}
+                render={() =>
+                  <div className='grid-container'>
+                    <div className='grid-x grid-margin-x space-between'>
+                      {this.form.$('inputs').map((field, index) =>
+                        <div key={index} className='small-12 medium-6 large-4'>
+                          <InputTokenField
+                            key={index}
+                            field={field}
+                            editing />
+                        </div>
+                      )}
+                      <div className='small-12 medium-6 large-4'>
+                        <button
+                          className='one-more-token-button'
+                          onClick={this._addInput}
+                        > + ADD ONE MORE </button>
+                      </div>  
+                    </div>
+                  </div>
+                } />
+            </div>
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -232,8 +234,7 @@ class BuildRecipePage extends React.Component {
                     }
                   </div>
                 </div>
-              }
-            />
+              } />
           </div>
         )} />
         <Footer />
