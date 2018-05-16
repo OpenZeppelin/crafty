@@ -1,6 +1,15 @@
 const _ = require('underscore');
+const fs = require('fs');
 const BigNumber = web3.BigNumber;
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
+
+const ProjectDeployer = require('zos/lib/models/ProjectDeployer').default;
+
+// There's no way yet to mute zos-lib's logs, so we mute them to preserve
+// Mocha's output
+const Logger = require('zos-lib/lib/utils/Logger').default;
+Logger.prototype.info = () => {};
+Logger.prototype.error = () => {};
 
 require('chai')
   .use(require('chai-bignumber')(BigNumber))
@@ -30,8 +39,12 @@ contract('Crafty', accounts => {
   }
 
   beforeEach(async () => {
-    crafty = await Crafty.new({from: deployer});
-    await crafty.initialize(admin);
+    // Instead of simply deploying a new Crafty contract, we use ProjectDeployer to
+    // deploy an app and an implementetion for all contracts(equivalent to zos push),
+    // and then use the app to create a Crafty proxy (equivalent to zos create Crafty)
+    const packageData = JSON.parse(fs.readFileSync('package.zos.json', 'utf8'));
+    const app = await ProjectDeployer.call(packageData, {from: deployer});
+    crafty = await app.createProxy(Crafty, 'Crafty', 'initialize', [admin]);
   });
 
   describe('Crafting', () => {

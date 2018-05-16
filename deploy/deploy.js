@@ -11,7 +11,7 @@ const unvowel = require('unvowel');
 
 global.artifacts = artifacts;
 const zosPush = require('zos/lib/scripts/push').default;
-const zosCreateProxy = require('zos/lib/scripts/create-proxy').default;
+const zosCreate = require('zos/lib/scripts/create-proxy').default;
 
 const API = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty';
 
@@ -56,7 +56,7 @@ async function deployCrafty() {
   console.log('- Deploying Crafty');
 
   // We need a proxy to the deployed crafty implementation
-  await zosCreateProxy({
+  await zosCreate({
     contractAlias: 'Crafty',
     initMethod: 'initialize',
     initArgs: [adminAddress],
