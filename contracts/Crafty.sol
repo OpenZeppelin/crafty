@@ -53,17 +53,13 @@ contract Crafty is RBAC, Initializable {
    * @param _name The name of the craftable.
    * @param _symbol The symbol of the craftable.
    * @param _tokenURI A URI ponting to craftable metadata (i.e. a thumbnail).
-   * @param _ingredients An array with the different ERC20s required to craft the new token.
+   * @param _ingredients A non-empty array with the different ERC20s required to craft the new token.
    * @param _ingredientAmounts The amount of required tokens for each ERC20.
    * @return The address of the newly created token.
    */
   function addCraftable(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
     require(_ingredients.length == _ingredientAmounts.length);
-
-    // Only admins can create craftables with no ingredients
-    if (!hasRole(msg.sender, ROLE_ADMIN)) {
-      require(_ingredients.length > 0);
-    }
+    require(_ingredients.length > 0);
 
     CraftableToken newCraftable = new CraftableToken(_name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
     craftables.push(newCraftable);
@@ -71,6 +67,18 @@ contract Crafty is RBAC, Initializable {
     emit CraftableAdded(newCraftable);
 
     return newCraftable;
+  }
+
+  /**
+   * @dev Adds a pre-created craftable token to the game. No tests are
+   * performed on the craftable to make sure its valid. Only admin
+   * users can do this. After this call, ownsership of the token must be
+   * transferred to the Crafty contract, to allow it to mint tokens.
+   * @param _craftable The address of the craftable token to add.
+   */
+  function addPrecreatedCraftable(CraftableToken _craftable) onlyRole(ROLE_ADMIN) public {
+    craftables.push(_craftable);
+    emit CraftableAdded(_craftable);
   }
 
   /**

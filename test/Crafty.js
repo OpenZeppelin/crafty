@@ -12,21 +12,35 @@ const CraftableToken = artifacts.require('CraftableToken');
 
 contract('Crafty', accounts => {
   let crafty = null;
-  const deployer = accounts[0];
-  const admin = accounts[1];
-  const player = accounts[2];
+  const deployer = accounts[1];
+  const admin = accounts[2];
+  const player = accounts[3];
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
   const basicMintedTokens = 100; // Multiple basic tokens are minted on each craft call
 
-  async function getNewCraftable(ingredients, ingredientAmounts, fromAccount) {
+  async function addNewCraftable(ingredients, ingredientAmounts, fromAddress) {
     // We don't care about name, symbol or URI
-
-    const receipt = await crafty.addCraftable('', '', '', ingredients, ingredientAmounts, {from: fromAccount});
+    const receipt = await crafty.addCraftable('', '', '', ingredients, ingredientAmounts, {from: fromAddress});
 
     receipt.logs.length.should.equal(1);
     receipt.logs[0].event.should.equal('CraftableAdded');
 
     return CraftableToken.at(receipt.logs[0].args.addr);
+  }
+
+  async function addPrecreatedCraftable(ingredients, ingredientAmounts, fromAddress) {
+    // We don't care about name, symbol or URI
+    const token = await CraftableToken.new('', '', '', ingredients, ingredientAmounts, {from: fromAddress});
+
+    const receipt = await crafty.addPrecreatedCraftable(token.address, {from: fromAddress});
+
+    receipt.logs.length.should.equal(1);
+    receipt.logs[0].event.should.equal('CraftableAdded');
+    receipt.logs[0].args.addr.should.equal(token.address);
+
+    await token.transferOwnership(crafty.address, {from: fromAddress});
+
+    return token;
   }
 
   beforeEach(async () => {
@@ -40,15 +54,15 @@ contract('Crafty', accounts => {
     });
 
     it('craftables with ingredients can be added by players', async () => {
-      const basicCraftable = await getNewCraftable([], [], admin);
+      const basicCraftable = await addPrecreatedCraftable([], [], admin);
 
-      await getNewCraftable([basicCraftable.address], [1], player);
+      await addNewCraftable([basicCraftable.address], [1], player);
 
       await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(2);
     });
 
     it('players can always craft ingredient-less craftables', async () => {
-      const basicCraftable = await getNewCraftable([], [], admin);
+      const basicCraftable = await addPrecreatedCraftable([], [], admin);
 
       await basicCraftable.balanceOf(player).should.eventually.be.bignumber.equal(0);
 
@@ -58,11 +72,11 @@ contract('Crafty', accounts => {
     });
 
     it('players cannot craft using ingredients without calling approve', async () => {
-      const ingredient = await getNewCraftable([], [], admin);
+      const ingredient = await addPrecreatedCraftable([], [], admin);
       await crafty.craft(ingredient.address, {from: player});
       await ingredient.balanceOf(player).should.eventually.be.bignumber.equal(basicMintedTokens);
 
-      const craftable = await getNewCraftable([ingredient.address], [1], player);
+      const craftable = await addNewCraftable([ingredient.address], [1], player);
 
       // craftable requires just one ingredient, so the crafting requirement has been met.
       // However since ingredient has not been approved for crafty to use as an ingredient,
@@ -73,8 +87,8 @@ contract('Crafty', accounts => {
     it('players can craft using ingredients if approve is called', async () => {
       // First, build a craftable that requires two ingredients
       const ingredients = await Promise.all([
-        getNewCraftable([], [], admin),
-        getNewCraftable([], [], admin)
+        addPrecreatedCraftable([], [], admin),
+        addPrecreatedCraftable([], [], admin)
       ]);
       const ingredientAmounts = [2, 3];
       ingredients.length.should.equal(ingredientAmounts.length);
@@ -102,7 +116,7 @@ contract('Crafty', accounts => {
         ingredient.approve(crafty.address, 100, {from: player})
       ));
 
-      const craftable = await getNewCraftable(ingredients.map(ingredient => ingredient.address), ingredientAmounts, player);
+      const craftable = await addNewCraftable(ingredients.map(ingredient => ingredient.address), ingredientAmounts, player);
       await crafty.craft(craftable.address, {from: player});
 
       await craftable.balanceOf(player).should.eventually.be.bignumber.equal(1);
@@ -141,7 +155,7 @@ contract('Crafty', accounts => {
 
     describe('Permissions', () => {
       it('admins can create craftables with no ingredients', async () => {
-        const craftable = await getNewCraftable([], [], admin);
+        const craftable = await addPrecreatedCraftable([], [], admin);
 
         // The craftable will be stored at index 0 (because it is the first craftable)
         await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
@@ -149,11 +163,11 @@ contract('Crafty', accounts => {
       });
 
       it('non-admins cannnot create craftables with no ingredients', async () => {
-        await expectPromiseThrow(getNewCraftable([], [], player));
+        await expectPromiseThrow(addPrecreatedCraftable([], [], player));
       });
 
       it('admins can delete craftables', async () => {
-        const craftable = await getNewCraftable([], [], admin);
+        const craftable = await addPrecreatedCraftable([], [], admin);
 
         // The craftable will be stored at index 0 (because it is the first craftable)
         await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
@@ -167,7 +181,7 @@ contract('Crafty', accounts => {
       });
 
       it('non-admins cannnot delete craftables', async () => {
-        const craftable = await getNewCraftable([], [], admin);
+        const craftable = await addPrecreatedCraftable([], [], admin);
         await expectPromiseThrow(crafty.deleteCraftable(craftable.address, {from: player}));
       });
     });
