@@ -1,7 +1,7 @@
 import { reaction, observable, runInAction } from 'mobx'
 import { fromResource } from 'mobx-utils'
 
-import pMap from 'p-map'
+import pMap from 'promise.map'
 import range from 'lodash/range'
 import { asyncComputed as originalAsyncComputed, promisedComputed as originalPromiseComputed } from 'computed-async-mobx'
 
@@ -62,14 +62,14 @@ export const promiseComputed = (initial, fn) => {
 export const collect = async (times, mapper) => pMap(
   range(times),
   mapper,
-  { concurrency: 10 }
+  10
 )
 
 export const pFilter = async (iterable, mapper) => {
   const all = await pMap(iterable, async (thing) => ({
     thing,
     shouldKeep: await mapper(thing),
-  }), { concurrency: 10 })
+  }), 10)
 
   return all.filter((ts) => ts.shouldKeep).map((ts) => ts.thing)
 }
