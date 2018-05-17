@@ -420,6 +420,9 @@ input:checked~.switch-paddle {
   color: #000000;
   border-bottom: solid 0;
 }
+.big-text {
+  font-size: 25px;
+}
 .craft-text {
   font-family: 'Open Sans';
   font-size: 14px;
@@ -464,4 +467,33 @@ input:checked~.switch-paddle {
   justify-content: center;
   outline: none;
   cursor: pointer;
+}
+.modal {
+  background: white;
+  padding: 20px;
+  -webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(50% - 350px);
+  max-height: 700px;
+  width: 55%;
+  margin: auto;
+  overflow-y: auto;
+  border-radius: 2px;
+  z-index: 1003;
+  text-align: center;
+}
+.modal-layer {
+  position: fixed;
+  z-index: 1002;
+  top: -25%;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 125%;
+  width: 100%;
+  background: #00000057;
+  display: block;
 }
