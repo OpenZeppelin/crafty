@@ -4,7 +4,7 @@ import { observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import Input from './Input'
-import ExtendedERC20 from '../models/ExtendedERC20'
+import extendedERC20WithStore from '../models/ExtendedERC20'
 import Autocomplete from 'react-autocomplete'
 
 import RootStore from '../store/RootStore'
@@ -15,7 +15,6 @@ import './InputTokenField.css'
 @observer
 class InputTokenField extends React.Component {
   @observable deleting = false
-
   static defaultProps = {
     editing: false,
   }
@@ -23,6 +22,7 @@ class InputTokenField extends React.Component {
   @computed get inferredToken () {
     const web3 = this.props.store.web3Context.web3
     const tokenAddress = this.props.field.$('address').values()
+    const ExtendedERC20 = extendedERC20WithStore(this.props.store)
 
     if (!web3.utils.isAddress(tokenAddress)) { return null }
 

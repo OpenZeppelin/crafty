@@ -47,8 +47,8 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
     require(_ingredients.length == _ingredientAmounts.length);
 
     // Setting the creator this way instead of receiving it as a parameter prevents
-    // people from attributing creation to a different user.
-    creator = tx.origin;
+    // people from attributing creation to a different user
+    creator = tx.origin; // solium-disable-line security/no-tx-origin
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);
