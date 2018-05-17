@@ -18,12 +18,36 @@ const canonicals = [
     symbol: 'REP',
     decimals: 18
   }, {
-    name: '0x',
-    symbol: 'ZRX',
-    decimals: 18
-  }, {
     name: 'Decentraland',
     symbol: 'MANA',
+    decimals: 18
+  }, {
+    name: 'Tether',
+    symbol: 'USDT',
+    decimals: 18
+  }, {
+    name: 'OmiseGO',
+    symbol: 'OMG',
+    decimals: 18
+  }, {
+    name: 'Golem',
+    symbol: 'GNT',
+    decimals: 18
+  }, {
+    name: 'Loom Network',
+    symbol: 'LOOM',
+    decimals: 18
+  }, {
+    name: 'Mithril',
+    symbol: 'MITH',
+    decimals: 18
+  }, {
+    name: 'Power Ledger',
+    symbol: 'POWR',
+    decimals: 18
+  }, {
+    name: 'Gnosis',
+    symbol: 'GNO',
     decimals: 18
   }
 ];
@@ -70,7 +94,7 @@ async function deployEmojis(crafty) {
 
     const rawName = emoji.picture.split(/\./)[0]; // Filename, minus extension
     const name = capitalize(rawName);
-    const symbol = `EMJ-${unvowel.parse(rawName).toUpperCase()}`;
+    const symbol = `${unvowel.parse(rawName).toUpperCase()}`;
 
     const metadataResponse = await axios.post(`${API}/metadata`, {
       'name': name,
