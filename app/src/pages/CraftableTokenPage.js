@@ -7,6 +7,7 @@ import BN from 'bn.js'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import BlockingLoader from '../components/BlockingLoader'
 import WithWeb3Context from '../components/WithWeb3Context'
 import EmptyState from '../components/EmptyState'
 import SectionLoader from '../components/SectionLoader'
@@ -251,13 +252,25 @@ class CraftableTokenPage extends React.Component {
     return { token, amount, balance, image }
   }
 
+  @action
+  closeLoader = () => {
+    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
+    this.crafting = false
+  }
+
   doTheCraft = async () => {
     if (!this.allGoodInTheHood) { return }
-    this.deploying = true
+    runInAction(() => {
+      this.deploying = true
+    })
 
     try {
       const crafty = this.props.store.domain.crafty
       const craftableTokenAddress = this.token.address
+
+      runInAction(() => {
+        this.crafting = true
+      })
 
       await crafty.craft(
         craftableTokenAddress
@@ -292,6 +305,13 @@ class CraftableTokenPage extends React.Component {
             </div>
           </div>
         }
+
+        <BlockingLoader
+          title='Crafting your token'
+          open={this.crafting}
+          canClose={!this.deploying}
+          finishText='Done crafting! You can continue crafting or return to the Crafting Game'
+          requestClose={this.closeLoader} />
 
         <WithWeb3Context read render={() => (
           <div className='token-container'>
