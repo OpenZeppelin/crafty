@@ -28,6 +28,7 @@ class ShowcasePage extends React.Component {
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
             tokens={domain.myCraftedTokens.current()}
+            isLoading={domain.myCraftedTokens.busy()}
             withBalanceOfAddress={match.params.address}
           />
         )} />
@@ -40,6 +41,7 @@ class ShowcasePage extends React.Component {
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
             tokens={domain.myRecipes.current()}
+            isLoading={domain.myRecipes.busy()}
           />
         )} />
 

@@ -28,6 +28,7 @@ class IndexPage extends React.Component {
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
             tokens={domain.featuredCraftableTokens}
+            isLoading={domain.crafty.craftableTokenAddresses.busy()}
           />
         )} />
         <Footer />

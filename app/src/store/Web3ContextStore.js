@@ -1,4 +1,4 @@
-import { observable, flow, action, transaction, computed } from 'mobx'
+import { observable, flow, action, computed } from 'mobx'
 import Web3 from 'web3'
 
 const networkDescById = {
@@ -23,9 +23,7 @@ export default class Web3ContextStore {
     this.root = root
 
     setImmediate(() => {
-      transaction(() => {
-        this._getAndSetWeb3()
-      })
+      this._getAndSetWeb3()
     })
   }
 

@@ -1,31 +1,35 @@
 import { computed } from 'mobx'
-import { asyncComputed } from '../util'
+import { promiseComputed, pFilter } from '../util'
 import some from 'lodash/some'
-import pMap from 'p-map'
+import BN from 'bn.js'
 
 import featured from '../featured.json'
-import ExtendedERC20 from '../models/ExtendedERC20'
+import extendedERC20WithStore from '../models/ExtendedERC20'
+
+import craftyWithStore from '../models/Crafty'
 
 export default class DomainStore {
   constructor (root) {
     this.root = root
+    this.Crafty = craftyWithStore(root)
+    this.ExtendedERC20 = extendedERC20WithStore(root)
   }
 
   @computed get crafty () {
+    // why is this specific memoization necessary??
+    if (this._crafty) { return this._crafty }
+    // this fn is dependend on hasWeb3 and the web3 object
+    // the web3 object is memoized, so this function is as well
     if (!this.root.web3Context.hasWeb3) {
       return null
     }
-
-    if (!this.Crafty) {
-      this.Crafty = require('../models/Crafty').default
-    }
+    const web3 = this.root.web3Context.web3
 
     try {
-      return new this.Crafty(
-        this.root.web3Context.web3,
-        this.root.web3Context.network.id
-      )
+      this._crafty = new this.Crafty(web3)
+      return this._crafty
     } catch (error) {
+      console.error(error)
       return null
     }
   }
@@ -58,39 +62,36 @@ export default class DomainStore {
       this.hasCrafty
   }
 
-  myCraftedTokens = asyncComputed([], async () => {
+  myCraftedTokens = promiseComputed([], async () => {
     const me = this.root.web3Context.currentAddress
-    const allCraftabletokens = this.craftableTokens
+    const allCraftableTokens = this.craftableTokens
 
-    const allTokens = await pMap(allCraftabletokens, async (token) => {
-      const balance = await token.balanceOf(me)
-      return {
-        token,
-        balance,
+    return pFilter(allCraftableTokens, async (token) => {
+      try {
+        const res = await token.contract.methods.balanceOf(me).call()
+        const balance = new BN(res)
+        return balance.gt(new BN(0))
+      } catch (error) {
+        console.error(error)
+        return false
       }
-    }, { concurrency: 10 })
-    // const myTokens = allTokens.filter(tc => tc.balance.gt(0))
-
-    return allTokens.map(tc => tc.token)
-    // return myTokens.map(tc => tc.token)
+    })
   })
 
-  myRecipes = asyncComputed([], async () => {
+  myRecipes = promiseComputed([], async () => {
     const me = this.root.web3Context.currentAddress
-    const allCraftabletokens = this.craftableTokens
+    const allCraftableTokens = this.craftableTokens
 
-    const allTokens = await pMap(allCraftabletokens, async (token) => {
-      // const creator = await token.creator()
-      const creator = me
-      return {
-        token,
-        creator,
+    return pFilter(allCraftableTokens, async (token) => {
+      try {
+        return true
+        // const creator = await token.contract.methods.creator().call()
+        // return creator === me
+      } catch (error) {
+        console.error(error)
+        return false
       }
-    }, { concurrency: 10 })
-
-    return allTokens
-      .filter(tc => tc.creator === me)
-      .map(tc => tc.token)
+    })
   })
 
   get canonicalTokens () {
@@ -102,7 +103,7 @@ export default class DomainStore {
     if (!networkId) { return [] }
 
     this._canonicalTokens = this.root.config.canonicalAddressesAndImages.map(ct =>
-      new ExtendedERC20(ct.address)
+      new this.ExtendedERC20(ct.address)
     )
 
     return this._canonicalTokens

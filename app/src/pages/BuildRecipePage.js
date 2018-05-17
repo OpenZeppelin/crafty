@@ -14,9 +14,7 @@ import BlockingLoader from '../components/BlockingLoader'
 import SectionLoader from '../components/SectionLoader'
 import InputTokenField from '../components/InputTokenField'
 
-import RootStore from '../store/RootStore'
-
-import ERC20 from '../models/ERC20'
+import makeERC20 from '../models/ERC20'
 
 import buildRecipeForm from '../forms/BuildRecipe'
 
@@ -85,6 +83,8 @@ class BuildRecipePage extends React.Component {
       const values = this.form.values()
       const ingredients = values.inputs.map(i => i.address)
 
+      const ERC20 = makeERC20(this.props.store)
+
       // A bit hacky - we need to fetch the decimals for each token in order to calculate
       // the actual number of required tokens for each ingredient
       values.inputs.forEach(i => i.token = new ERC20(i.address))
@@ -102,7 +102,7 @@ class BuildRecipePage extends React.Component {
       // The inputed amounts are then converted to token units using the decimals
       const amounts = values.inputs.map(i => Math.ceil(Number(i.amount) * (10 ** i.decimals)))
 
-      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image, RootStore.web3Context.currentAddress)
+      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image, this.props.store.web3Context.currentAddress)
 
       const tokenAddress = await crafty.addCraftable(
         values.name,
@@ -124,7 +124,7 @@ class BuildRecipePage extends React.Component {
   }
 
   async uploadMetadata (name, description, image, author) {
-    const API = RootStore.config.api
+    const API = this.props.store.config.api
 
     // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
     const imageResponse = await axios.post(`${API}/thumbnail`, { 'image-base64': image.split(/,/)[1] })

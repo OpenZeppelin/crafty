@@ -7,14 +7,13 @@ import BN from 'bn.js'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Subtitle from '../components/Subtitle'
-import SectionHeader from '../components/SectionHeader'
+// import Subtitle from '../components/Subtitle'
+// import SectionHeader from '../components/SectionHeader'
 import WithWeb3Context from '../components/WithWeb3Context'
 import EmptyState from '../components/EmptyState'
 import SectionLoader from '../components/SectionLoader'
 
-import CraftableToken from '../models/CraftableToken'
-import RootStore from '../store/RootStore'
+import craftableTokenWithStore from '../models/CraftableToken'
 
 import craftCraftableForm from '../forms/CraftCraftable'
 import CraftingIngredientRow from '../components/CraftingIngredientRow'
@@ -110,7 +109,7 @@ class CraftableTokenPage extends React.Component {
     const token = this.ingredientsByAddress[address]
     try {
       await token.approve(
-        RootStore.domain.crafty.address,
+        this.props.store.domain.crafty.address,
         new BN(change.newValue
           ? 100
           : 0
@@ -150,7 +149,7 @@ class CraftableTokenPage extends React.Component {
     })
 
     // check that crafty is up before checking approvals against it
-    await when(() => RootStore.domain.crafty)
+    await when(() => this.props.store.domain.crafty)
 
     // load all of the approvals first
     await when(() => !this.isLoadingAnyApprovals)
@@ -161,14 +160,14 @@ class CraftableTokenPage extends React.Component {
 
   pendingBalanceFor (address) {
     if (!this.token) { return null }
-    if (!RootStore.web3Context.canRead) { return null }
-    if (!RootStore.web3Context.currentAddress) { return null }
+    if (!this.props.store.web3Context.canRead) { return null }
+    if (!this.props.store.web3Context.currentAddress) { return null }
 
     return this.token.balanceOf(address)
   }
 
   @computed get myBalance () {
-    const pendingBalance = this.pendingBalanceFor(RootStore.web3Context.currentAddress)
+    const pendingBalance = this.pendingBalanceFor(this.props.store.web3Context.currentAddress)
     if (!pendingBalance) { return null }
 
     // @TODO(shrugs) - I can't check busy here, because it causes
@@ -208,8 +207,8 @@ class CraftableTokenPage extends React.Component {
 
     return this.token.ingredientsAndAmounts.map(i => ({
       allowance: i.token.allowance({
-        owner: RootStore.web3Context.currentAddress,
-        spender: RootStore.domain.crafty.address,
+        owner: this.props.store.web3Context.currentAddress,
+        spender: this.props.store.domain.crafty.address,
       }),
       address: i.token.address,
     }))
@@ -223,6 +222,7 @@ class CraftableTokenPage extends React.Component {
     if (!web3) { return null }
     if (!web3.utils.isAddress(address)) { return null }
 
+    const CraftableToken = craftableTokenWithStore(this.props.store)
     this._token = new CraftableToken(address)
 
     return this._token
@@ -245,7 +245,7 @@ class CraftableTokenPage extends React.Component {
     const amount = this.amountsByAddress[address].amount
 
     const balance = token
-      .balanceOf(RootStore.web3Context.currentAddress)
+      .balanceOf(this.props.store.web3Context.currentAddress)
       .current()
 
     const image = token.image
