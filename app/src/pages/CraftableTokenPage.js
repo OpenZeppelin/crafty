@@ -1,5 +1,6 @@
 import React from 'react'
-import { observable, computed, when, reaction, runInAction, action } from 'mobx'
+
+import { observable, computed, when, reaction, action, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { asyncComputed } from '../util'
 import keyBy from 'lodash/keyBy'
@@ -311,7 +312,7 @@ class CraftableTokenPage extends React.Component {
           open={this.crafting}
           canClose={!this.deploying}
           finishText='Done crafting! You can continue crafting or return to the Crafting Game'
-          requestClose={this.closeLoader} />
+          requestClose={this.closeLoader.bind(this)} />
 
         <WithWeb3Context read render={() => (
           <div className='token-container'>
