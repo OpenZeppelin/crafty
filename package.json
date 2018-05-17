@@ -7,6 +7,7 @@
     "test": "npx truffle test",
     "build": "bash scripts/build.sh",
     "deploy": "bash scripts/deploy.sh",
+    "build-app": "bash scripts/build-app.sh",
     "lint:sol": "solium -d contracts",
     "lint:sol:fix": "solium -d contracts --fix",
     "copy-artifacts": "bash scripts/copy-artifacts.sh",

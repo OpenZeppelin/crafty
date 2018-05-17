@@ -3,4 +3,5 @@
 npm run build
 npm run copy-artifacts
 cd app
-npm run start
+npm install
+npm run build

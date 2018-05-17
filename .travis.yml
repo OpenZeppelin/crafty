@@ -5,4 +5,14 @@ node_js:
 script:
   - npm run lint:sol
   - npm run build
+  - npm run build-app
   - npm test
+
+deploy:
+  provider: pages
+  local-dir: app/build
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  on:
+    branch: master
