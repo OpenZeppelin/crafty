@@ -6,8 +6,6 @@ import axios from 'axios'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Subtitle from '../components/Subtitle'
-import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
@@ -67,6 +65,7 @@ class BuildRecipePage extends React.Component {
 
   @action
   closeLoader = () => {
+    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
     this.playing = false
     this.totallyDone = true
   }
@@ -151,6 +150,7 @@ class BuildRecipePage extends React.Component {
     this.form && this.form.validate()
     return (
       <div>
+        <Header/>
         {this.totallyDone &&
           <Redirect to={`/craft/${this.tokenAddress}`} />
         }
@@ -159,66 +159,58 @@ class BuildRecipePage extends React.Component {
           open={this.playing}
           canClose={!this.deploying}
           finishText='Done deploying! You can continue playing or return to the Crafting Game'
-          requestClose={this.closeLoader}
-        />
-        <Header>Build a Craftable Token</Header>
-        <Subtitle>
-          Here you can <b>create your own craftable token</b>.
-          Choose the ingredient ERC20 tokens and then describe your creation.
-        </Subtitle>
-        <WithWeb3Context read write render={() => (
-          <div>
-            <SectionHeader>
-              <code>01.</code> Describe Your New Craftable Token
-            </SectionHeader>
+          requestClose={this.closeLoader} />
 
+        <WithWeb3Context read write render={() => (
+          <div className="recipe-background">
             <SectionLoader
               loading={!this.form}
               render={() =>
-                <div>
+                <div className="craftable-token-form">
                   <Input field={this.form.$('image')} />
-                  <div className='grid-x grid-margin-x'>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('name')} />
-                    </div>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('symbol')} />
+                  <div>
+                    <p className="black-bold-text">Token information</p>
+                    <div className="craft-form-card">
+                      <div className='grid-x grid-margin-x'>
+                        <div className='cell small-12 medium-6'>
+                          <Input field={this.form.$('name')} />
+                        </div>
+                        <div className='cell small-12 medium-6'>
+                          <Input field={this.form.$('symbol')} />
+                        </div>
+                      </div>
+                      <Input field={this.form.$('description')} />
                     </div>
                   </div>
-                  <Input field={this.form.$('description')} />
                 </div>
-              }
-            />
-
-            <SectionHeader>
-              <code>02.</code> Ingredient Tokens
-            </SectionHeader>
-
-            <SectionLoader
-              loading={!this.form}
-              render={() =>
-                <div>
-                  {this.form.$('inputs').map((field, index) =>
-                    <InputTokenField
-                      key={index}
-                      field={field}
-                      editing
-                    />
-                  )}
-                  <button
-                    className='button'
-                    onClick={this._addInput}
-                  >
-                  + Add Token
-                  </button>
-                </div>
-              }
-            />
-
-            <SectionHeader>
-              <code>03.</code> Deploy
-            </SectionHeader>
-
+              }/>
+            <div className="grey-background">
+              <div className="grid-container medium">
+                <p className="black-bold-text">Add Ingredients</p>
+              </div>
+            </div>
+            <div className="recipe-background">
+              <SectionLoader
+                loading={!this.form}
+                render={() =>
+                  <div className='grid-container'>
+                    <div className='grid-x grid-margin-x'>
+                      {this.form.$('inputs').map((field, index) =>
+                        <InputTokenField
+                          key={index}
+                          field={field}
+                          editing />
+                      )}
+                      <div className='small-12 medium-6 large-4'>
+                        <button
+                          className='one-more-token-button'
+                          onClick={this._addInput}
+                        > + ADD ONE MORE </button>
+                      </div>
+                    </div>
+                  </div>
+                } />
+            </div>
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -226,11 +218,11 @@ class BuildRecipePage extends React.Component {
                   <div className='cell shrink grid-y align-center'>
                     {!this.form.isValid && this.form.error}
                     <button
-                      className='cell button inverted'
+                      className='btn'
                       onClick={this.deploy}
                       disabled={!this.form.isValid || !this._canDeploy()}
                     >
-                      Deploy em&#39;
+                      SUBMIT RECIPE
                     </button>
                     {!this._canDeploy() &&
                       <p className='cell help-text'>
@@ -239,8 +231,7 @@ class BuildRecipePage extends React.Component {
                     }
                   </div>
                 </div>
-              }
-            />
+              } />
           </div>
         )} />
         <Footer />

@@ -39,30 +39,37 @@ class InputTokenField extends React.Component {
 
   render () {
     return (
-      <div className={`grid-x grid-margin-x align-middle input-token-field ${this.deleting ? 'deleting' : ''}`}>
-        <div className='cell small-2'>
-          <img
-            className='cell shrink craftable-image'
-            alt='the token'
-            src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
-          />
-        </div>
-        <div className='cell small-6'>
-          {this._renderTokenSelector()}
-        </div>
-        <div className='cell auto'>
-          <Input field={this.props.field.$('amount')} />
-        </div>
-        {this.props.editing &&
-          <div className='cell shrink'>
-            <button
-              className='button inverted'
-              onClick={this._remove}
-            >
-              remove
-            </button>
+      <div className={`small-12 medium-6 large-4 new-recipe-grid-col ${this.deleting ? 'deleting' : ''}`}>
+        <div className="ingredient-row new-recipe-row align-middle input-token-field">
+          <div>
+            <img
+              className='token-img'
+              alt='the token'
+              src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
+            />
           </div>
-        }
+          <div className="craftable-ingredient-info new-recipe-ingredient">
+            <div>
+              {this._renderTokenSelector()}
+            </div>
+            <div className="ammount-field">
+              <Input field={this.props.field.$('amount')} />
+            </div>
+            {this.props.editing &&
+              <div>
+                <button
+                  className='remove-btn'
+                  onClick={this._remove}
+                >
+                  <img
+                    src="./images/delete.svg"
+                    alt='Remove'
+                  />
+                </button>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     )
   }
@@ -72,8 +79,8 @@ class InputTokenField extends React.Component {
 
     return (
       <div className='grid-x grid-margin-x'>
-        <div className='cell auto'>
-          <p>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</p>
+        <div className='cell auto token-field'>
+          <label>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</label>
           <Autocomplete
             items={tokens.map(token => {
               return { id: token.address, label: token.label }
@@ -83,7 +90,7 @@ class InputTokenField extends React.Component {
             renderItem={(item, highlighted) =>
               <div
                 key={item.id}
-                style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
+                style={{ backgroundColor: highlighted ? '#eee' : '#fff'}}
               >
                 {item.label}
               </div>

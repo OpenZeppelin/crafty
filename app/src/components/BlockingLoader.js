@@ -10,11 +10,12 @@ import './BlockingLoader.css'
 class BlockingLoader extends React.Component {
   render () {
     if (this.props.open) {
+      document.getElementsByTagName("BODY")[0].style.overflow = 'hidden';
       return (
         <Portal>
-          <div className='blocking-loader'>
-            <div>
-              <h2>{this.props.title}</h2>
+          <div className='blocking-loader modal-layer'>
+            <div className="modal">
+              <h2 className="black-bold-text big-text">{this.props.title}</h2>
               <p>Why not play a nice game of Tetris?</p>
               <Tetris>
                 {({
@@ -30,8 +31,9 @@ class BlockingLoader extends React.Component {
               {this.props.canClose &&
                 <div>
                   {this.props.finishText}
+                  <br/>
                   <button
-                    className='button inverted'
+                    className='btn'
                     onClick={this.props.requestClose}
                   >
                     Done Playing
@@ -44,6 +46,7 @@ class BlockingLoader extends React.Component {
       )
     }
 
+    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
     return null
   }
 }

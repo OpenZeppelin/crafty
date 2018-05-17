@@ -7,8 +7,6 @@ import BN from 'bn.js'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-// import Subtitle from '../components/Subtitle'
-// import SectionHeader from '../components/SectionHeader'
 import WithWeb3Context from '../components/WithWeb3Context'
 import EmptyState from '../components/EmptyState'
 import SectionLoader from '../components/SectionLoader'
@@ -283,8 +281,8 @@ class CraftableTokenPage extends React.Component {
 
   render () {
     return (
-      <div className='craftable-token-page'>
-        <Header>Craft a Token</Header>
+      <div className="craftable-token-page">
+        <Header/>
         {!this.token &&
           <div className='grid-container'>
             <div className='grid-x grid-margin-x'>
@@ -334,7 +332,7 @@ class CraftableTokenPage extends React.Component {
               render={() =>
                 <div>
                   <div className='grid-container'>
-                    <div className='grid-x grid-margin-x'>
+                    <div className='grid-x grid-margin-x space-between'>
                       {this.form.$('approvals').map(f =>
                         <div key={f.id} className='small-12 medium-6 large-4'>
                           <CraftingIngredientRow
@@ -346,8 +344,7 @@ class CraftableTokenPage extends React.Component {
                     </div>
                   </div>
                 </div>
-              }
-            />
+              } />
           </div>
         )} />
         <div className='grid-container medium'>
@@ -364,7 +361,7 @@ class CraftableTokenPage extends React.Component {
                   <div className='craft-row'>
                     {this.allGoodInTheHood &&
                       <button
-                        className='craft-btn'
+                        className='btn'
                         onClick={this.doTheCraft}
                       >
                         Craft {this.token.shortName}

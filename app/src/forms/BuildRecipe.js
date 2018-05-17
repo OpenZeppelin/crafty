@@ -35,7 +35,7 @@ const labels = {
   image: 'Your Craftable Token\'s Image',
   inputs: 'Sacrificial Tokens',
   'inputs[].address': 'Token',
-  'inputs[].amount': 'How many are required?',
+  'inputs[].amount': 'Ammount required:',
 }
 
 const placeholders = {
