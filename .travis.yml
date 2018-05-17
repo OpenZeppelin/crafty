@@ -9,10 +9,11 @@ script:
   - npm test
 
 deploy:
-  provider: pages
+  provider: s3
+  bucket: "crafty.zeppelin.solutions"
   local-dir: app/build
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
   skip-cleanup: true
-  github-token: $GITHUB_API_KEY
-  keep-history: true
   on:
     branch: master
