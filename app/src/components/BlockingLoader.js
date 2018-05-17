@@ -34,7 +34,7 @@ class BlockingLoader extends React.Component {
                   <br/>
                   <button
                     className='btn'
-                    onClick={this.props.requestClose}
+                    onClick={() => this.props.requestClose()}
                   >
                     Done Playing
                   </button>
