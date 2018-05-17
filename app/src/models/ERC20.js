@@ -71,7 +71,7 @@ export default class ERC20 {
     }
   })
 
-  @computed get valueFormatter() {
+  @computed get valueFormatter () {
     return (value) => {
       const decimals = this.decimals.current()
       if (decimals === null) {

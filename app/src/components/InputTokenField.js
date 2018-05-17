@@ -76,14 +76,14 @@ class InputTokenField extends React.Component {
           <p>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</p>
           <Autocomplete
             items={tokens.map(token => {
-              return {id: token.address, label: token.label}
+              return { id: token.address, label: token.label }
             })}
             shouldItemRender={(item, value) => item.label.toLowerCase().includes(value.toLowerCase())}
             getItemValue={item => item.id}
             renderItem={(item, highlighted) =>
               <div
                 key={item.id}
-                style={{ backgroundColor: highlighted ? '#eee' : 'transparent'}}
+                style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}
               >
                 {item.label}
               </div>

@@ -23,7 +23,7 @@ export default class CraftableToken extends ExtendedERC20 {
   ingredientAddressesAndAmounts = asyncComputed(
     null,
     async () => {
-      const totalRecipeSteps = new BN(await this.contract.methods.getTotalRecipeSteps().call());
+      const totalRecipeSteps = new BN(await this.contract.methods.getTotalRecipeSteps().call())
       return collect(totalRecipeSteps.toNumber(), async (i) => {
         const res = await this.contract.methods.getRecipeStep(i).call()
         return {
@@ -40,7 +40,7 @@ export default class CraftableToken extends ExtendedERC20 {
     }
 
     if (this.ingredientAddressesAndAmounts.busy()) {
-      return null;
+      return null
     }
 
     this._ingredientsAndAmounts = this.ingredientAddressesAndAmounts

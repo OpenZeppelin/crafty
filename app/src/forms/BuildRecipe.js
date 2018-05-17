@@ -49,7 +49,7 @@ const rules = {
   name: 'required|string|between:4,42',
   symbol: 'required|string|between:2,10',
   description: 'required|string|between:10,400',
-  //image: 'required|string',
+  // image: 'required|string',
   'inputs': 'required|array|min:1',
   'inputs[].address': 'required|string|alpha_num|size:42',
   'inputs[].amount': 'required|numeric|min:0.01',

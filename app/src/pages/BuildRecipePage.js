@@ -123,11 +123,11 @@ class BuildRecipePage extends React.Component {
     }
   }
 
-  async uploadMetadata(name, description, image, author) {
+  async uploadMetadata (name, description, image, author) {
     const API = RootStore.config.api
 
     // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
-    const imageResponse = await axios.post(`${API}/thumbnail`, {'image-base64': image.split(/,/)[1]})
+    const imageResponse = await axios.post(`${API}/thumbnail`, { 'image-base64': image.split(/,/)[1] })
     if (imageResponse.status !== 200) {
       throw new Error(`Unexpected API response: ${imageResponse.status}`)
     }
@@ -137,7 +137,7 @@ class BuildRecipePage extends React.Component {
       'name': name,
       'description': description,
       'image': imageResponse.data,
-      'author': author
+      'author': author,
     })
 
     if (metadataResponse.status !== 200) {

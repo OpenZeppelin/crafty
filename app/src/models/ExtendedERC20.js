@@ -5,7 +5,7 @@ import RootStore from '../store/RootStore'
 import ERC20 from './ERC20'
 
 import {
-  asyncComputed
+  asyncComputed,
 } from '../util'
 
 const fallbackImage = 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'

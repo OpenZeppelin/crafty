@@ -179,7 +179,7 @@ class CraftableTokenPage extends React.Component {
     // }
     const balance = pendingBalance.current()
 
-    return (<div><h6 className="token-symbol">{this.token.symbol.current()}</h6><h5 className="balance">YOUR BALANCE: {this.token.valueFormatter(balance)}</h5></div>)
+    return (<div><h6 className='token-symbol'>{this.token.symbol.current()}</h6><h5 className='balance'>YOUR BALANCE: {this.token.valueFormatter(balance)}</h5></div>)
   }
 
   @computed get ingredientsByAddress () {
@@ -250,7 +250,7 @@ class CraftableTokenPage extends React.Component {
 
     const image = token.image
 
-    return { token, amount, balance, image}
+    return { token, amount, balance, image }
   }
 
   doTheCraft = async () => {
@@ -283,7 +283,7 @@ class CraftableTokenPage extends React.Component {
 
   render () {
     return (
-      <div className="craftable-token-page">
+      <div className='craftable-token-page'>
         <Header>Craft a Token</Header>
         {!this.token &&
           <div className='grid-container'>
@@ -321,14 +321,14 @@ class CraftableTokenPage extends React.Component {
 
           </div>
         )} />
-        <div className="grey-background">
-          <div className="grid-container medium">
+        <div className='grey-background'>
+          <div className='grid-container medium'>
             <h2>{this.token ? 'Recipe' : 'Loading...'}</h2>
           </div>
         </div>
 
         <WithWeb3Context read write render={() => (
-          <div className="recipe-background">
+          <div className='recipe-background'>
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -350,7 +350,7 @@ class CraftableTokenPage extends React.Component {
             />
           </div>
         )} />
-        <div className="grid-container medium">
+        <div className='grid-container medium'>
           <h2>{ this.token ? 'Craft ' + this.token.shortName : 'Loading...'}</h2>
         </div>
 
@@ -359,7 +359,7 @@ class CraftableTokenPage extends React.Component {
             loading={!this.form}
             render={() =>
               <div>
-                <p className="craft-text">{this._approvalText()}</p>
+                <p className='craft-text'>{this._approvalText()}</p>
                 <div>
                   <div className='craft-row'>
                     {this.allGoodInTheHood &&
