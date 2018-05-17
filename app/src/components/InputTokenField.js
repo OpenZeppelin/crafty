@@ -39,31 +39,33 @@ class InputTokenField extends React.Component {
 
   render () {
     return (
-      <div className={`ingredient-row new-recipe-row align-middle input-token-field ${this.deleting ? 'deleting' : ''}`}>
-        <div>
-          <img
-            className='token-img'
-            alt='the token'
-            src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
-          />
-        </div>
-        <div className="craftable-ingredient-info new-recipe-ingredient">
+      <div className={`small-12 medium-6 large-4 new-recipe-grid-col ${this.deleting ? 'deleting' : ''}`}>
+        <div className="ingredient-row new-recipe-row align-middle input-token-field">
           <div>
-            {this._renderTokenSelector()}
+            <img
+              className='token-img'
+              alt='the token'
+              src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
+            />
           </div>
-          <div className="ammount-field">
-            <Input field={this.props.field.$('amount')} />
-          </div>
-          {this.props.editing &&
+          <div className="craftable-ingredient-info new-recipe-ingredient">
             <div>
-              <button
-                className='remove-btn'
-                onClick={this._remove}
-              >
-                <img src="./images/delete.svg"/>
-              </button>
+              {this._renderTokenSelector()}
             </div>
-          }
+            <div className="ammount-field">
+              <Input field={this.props.field.$('amount')} />
+            </div>
+            {this.props.editing &&
+              <div>
+                <button
+                  className='remove-btn'
+                  onClick={this._remove}
+                >
+                  <img src="./images/delete.svg"/>
+                </button>
+              </div>
+            }
+          </div>
         </div>
       </div>
     )

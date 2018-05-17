@@ -197,12 +197,10 @@ class BuildRecipePage extends React.Component {
                   <div className='grid-container'>
                     <div className='grid-x grid-margin-x'>
                       {this.form.$('inputs').map((field, index) =>
-                        <div key={index} className='small-12 medium-6 large-4 new-recipe-grid-col'>
-                          <InputTokenField
-                            key={index}
-                            field={field}
-                            editing />
-                        </div>
+                        <InputTokenField
+                          key={index}
+                          field={field}
+                          editing />
                       )}
                       <div className='small-12 medium-6 large-4'>
                         <button
