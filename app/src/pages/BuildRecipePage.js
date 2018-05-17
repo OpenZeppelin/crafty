@@ -69,6 +69,7 @@ class BuildRecipePage extends React.Component {
 
   @action
   closeLoader = () => {
+    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
     this.playing = false
     this.totallyDone = true
   }
