@@ -1,8 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 
-import Input from './Input'
-
 // <Input pending={field.$('pending').values()} field={field.$('approved')} />
 const CraftingIngredientRow = observer(({ token, amount, balance, image, field }) => {
   const valueFormatter = token.valueFormatter

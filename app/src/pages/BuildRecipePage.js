@@ -6,8 +6,6 @@ import axios from 'axios'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Subtitle from '../components/Subtitle'
-import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
@@ -208,7 +206,7 @@ class BuildRecipePage extends React.Component {
                           className='one-more-token-button'
                           onClick={this._addInput}
                         > + ADD ONE MORE </button>
-                      </div>  
+                      </div>
                     </div>
                   </div>
                 } />

@@ -7,8 +7,6 @@ import BN from 'bn.js'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Subtitle from '../components/Subtitle'
-import SectionHeader from '../components/SectionHeader'
 import WithWeb3Context from '../components/WithWeb3Context'
 import EmptyState from '../components/EmptyState'
 import SectionLoader from '../components/SectionLoader'
