@@ -24,6 +24,8 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
 
   RecipeStep[] private recipe;
 
+  address public creator;
+
   /**
    * @dev Constructor. The recipe is created here, and cannot be modified afterwards.
    * @param _name The name of the token.
@@ -43,6 +45,10 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
     public
   {
     require(_ingredients.length == _ingredientAmounts.length);
+
+    // Setting the creator this way instead of receiving it as a parameter prevents
+    // people from attributing creation to a different user.
+    creator = tx.origin;
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);

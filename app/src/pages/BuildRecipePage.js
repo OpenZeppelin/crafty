@@ -101,7 +101,7 @@ class BuildRecipePage extends React.Component {
       // The inputed amounts are then converted to token units using the decimals
       const amounts = values.inputs.map(i => Math.ceil(Number(i.amount) * (10 ** i.decimals)))
 
-      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image, this.props.store.web3Context.currentAddress)
+      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image)
 
       const tokenAddress = await crafty.addCraftable(
         values.name,
@@ -122,7 +122,7 @@ class BuildRecipePage extends React.Component {
     }
   }
 
-  async uploadMetadata (name, description, image, author) {
+  async uploadMetadata (name, description, image) {
     const API = this.props.store.config.api
 
     // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
@@ -135,8 +135,7 @@ class BuildRecipePage extends React.Component {
     const metadataResponse = await axios.post(`${API}/metadata`, {
       'name': name,
       'description': description,
-      'image': imageResponse.data,
-      'author': author,
+      'image': imageResponse.data
     })
 
     if (metadataResponse.status !== 200) {

@@ -84,9 +84,8 @@ export default class DomainStore {
 
     return pFilter(allCraftableTokens, async (token) => {
       try {
-        return true
-        // const creator = await token.contract.methods.creator().call()
-        // return creator === me
+        const creator = await token.contract.methods.creator().call()
+        return creator === me
       } catch (error) {
         console.error(error)
         return false
