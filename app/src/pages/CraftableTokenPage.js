@@ -1,5 +1,5 @@
 import React from 'react'
-import { observable, computed, when, reaction, runInAction } from 'mobx'
+import { observable, computed, when, reaction, runInAction, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { asyncComputed } from '../util'
 import keyBy from 'lodash/keyBy'
@@ -232,7 +232,7 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get allApproved () {
-    return this.approvalsInfo.every(ai => !ai.approved)
+    return this.approvalsInfo.every(ai => ai.approved)
   }
 
   @computed get allGoodInTheHood () {
