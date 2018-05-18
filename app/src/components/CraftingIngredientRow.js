@@ -4,6 +4,13 @@ import { observer } from 'mobx-react'
 const CraftingIngredientRow = observer(({ token, amount, balance, image, field }) => {
   const valueFormatter = token.valueFormatter
 
+  let imgSrc = './images/unapproved.svg'
+  if (field.$('approved').values()) {
+    imgSrc = './images/approved.svg'
+  } else if (field.$('pending').values()) {
+    imgSrc = './images/pending.svg'
+  }
+
   return (
     <div className='ingredient-row align-middle'>
       <div className='grid-y'>
@@ -14,11 +21,15 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
         />
       </div>
       <div className='craftable-ingredient-info'>
-        <div className='craftable-ingredient-row'>
+        <div className='craftable-ingredient-row craftable-ingredient-title-row'>
           <h1>{token.shortName}</h1>
-          <button className='approved-btn' onClick={() => {field.$('approved').set(true)}} disabled={field.$('pending').values()}>
+          <button
+            className='approved-btn'
+            onClick={() => { field.$('approved').set(true) }}
+            disabled={field.$('pending').values()}
+          >
             <img
-              src={field.$('approved').values() ? './images/approved.svg' : (field.$('pending').values() ? './images/pending.svg' : './images/unapproved.svg')}
+              src={imgSrc}
               alt={field.$('pending').values() ? 'Pending approval' : ''}
             />
           </button>

@@ -2,7 +2,7 @@ import React from 'react'
 
 import { observable, computed, when, reaction, action, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { asyncComputed } from '../util'
+import { promiseComputed } from '../util'
 import keyBy from 'lodash/keyBy'
 import BN from 'bn.js'
 
@@ -75,7 +75,7 @@ class CraftableTokenPage extends React.Component {
               return change
             }
 
-            // @TODO(shrugs) - allow disables
+            // don't allow anyone to disable approvals
             if (!change.newValue) {
               return null
             }
@@ -96,8 +96,6 @@ class CraftableTokenPage extends React.Component {
             } catch (error) {
               field.$('approved').set(change.oldValue)
               return null
-            } finally {
-              field.$('pending').set(false)
             }
           },
         })
@@ -110,7 +108,10 @@ class CraftableTokenPage extends React.Component {
     try {
       await token.approve(
         this.props.store.domain.crafty.address,
-        new BN(change.newValue ? '57896044618658097711785492504343953926634992332820282019728792003956564819968' : '0', 10) // 2*255
+        (new BN(2))
+          .pow(new BN(256))
+          .sub(new BN(1))
+        // ^ 2^256 - 1
       )
 
       runInAction(() => {
@@ -118,11 +119,14 @@ class CraftableTokenPage extends React.Component {
       })
       // set local pending
     } catch (error) {
+      // @TODO(shrugs) - notify user of error
+      console.error(error)
+    } finally {
+      await when(() => field.$('approved').values())
       runInAction(() => {
         this.expectingChange.set(address, false)
       })
-      // cancel local pending
-      console.error(error)
+      field.$('pending').set(false)
     }
   }
 
@@ -150,6 +154,7 @@ class CraftableTokenPage extends React.Component {
     await when(() => this.props.store.domain.crafty)
 
     // load all of the approvals first
+    await when(() => this.approvalsInfo.length)
     await when(() => !this.isLoadingAnyApprovals)
 
     // now sync them to the form
@@ -176,7 +181,12 @@ class CraftableTokenPage extends React.Component {
     // }
     const balance = pendingBalance.current()
 
-    return (<div><h6 className='token-symbol'>{this.token.symbol.current()}</h6><h5 className='balance'>YOUR BALANCE: {this.token.valueFormatter(balance)}</h5></div>)
+    return (
+      <div>
+        <h6 className='token-symbol'>{this.token.symbol.current()}</h6>
+        <h5 className='balance'>YOUR BALANCE: {this.token.valueFormatter(balance)}</h5>
+      </div>
+    )
   }
 
   @computed get ingredientsByAddress () {
@@ -200,7 +210,7 @@ class CraftableTokenPage extends React.Component {
     }))
   }
 
-  allowances = asyncComputed([], async () => {
+  allowances = promiseComputed([], async () => {
     if (!this.token) { return [] }
 
     return this.token.ingredientsAndAmounts.map(i => ({
@@ -253,7 +263,7 @@ class CraftableTokenPage extends React.Component {
 
   @action
   closeLoader = () => {
-    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
+    document.getElementsByTagName('BODY')[0].style.overflow = 'auto'
     this.crafting = false
   }
 
@@ -293,7 +303,7 @@ class CraftableTokenPage extends React.Component {
 
   render () {
     return (
-      <div className="craftable-token-page">
+      <div className='craftable-token-page'>
         <Header/>
         {!this.token &&
           <div className='grid-container'>

@@ -122,6 +122,7 @@ button.button {
   padding: 60px 0;
 }
 .craftable-token-form .file-input {
+  cursor: pointer;
   margin: -19px 34px;
 }
 .dropzone {
@@ -344,6 +345,9 @@ input:checked~.switch-paddle {
   align-items: center;
   justify-content: flex-start;
 }
+.craftable-ingredient-title-row {
+  justify-content: space-between;
+}
 .ingredient-row .input-container {
   width: 30px;
   height: 30px;
@@ -435,11 +439,9 @@ input:checked~.switch-paddle {
   margin: 70px 0;
   text-align: center;
 }
+
 .approved-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  outline: none;
+
 }
 .remove-btn {
   position: absolute;
@@ -465,7 +467,7 @@ input:checked~.switch-paddle {
   line-height: 1.29;
   letter-spacing: 0.1px;
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
   outline: none;
   cursor: pointer;

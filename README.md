@@ -44,7 +44,7 @@ First, a game contract needs to be deployed to an Ethereum network for the dApp 
 ### Local
 We use [Ganache CLI](https://github.com/trufflesuite/ganache-cli) to run the local blockchain, by executing (on a separate terminal):
 
-`$ npx ganache-cli`
+`$ npx ganache-cli --network-id 1337 -l 8000000`
 
 Ganache will print the mnemonic used to generate the first 10 addresses on the network, all of which will start with a hefty amount of Ether. Make sure to store this mnemonic, since it will be later needed by your Ethereum browser to use these addresses.
 
@@ -59,9 +59,13 @@ Once both steps are complete, a `.env` file needs to be created on the root dire
 ### Contracts deployment
 Once the connection to a node has been setup, the contracts can be deployed using:
 
-`$ npm run deploy --network ropsten`
+`$ npm run deploy -- local`
 
-During deployment, the addresses of all deployed contracts will be printed. These should be used to create the configuration file for the app, which is stored in `app/src/store/config.json`. Do not commit this file, since it contains configuration info specific to a deployment. A sample config file exists in [`app/src/store/config.example.json`](https://github.com/zeppelinos/crafty/tree/master/app/src/store/config.example.json).
+or
+
+`$ npm run deploy -- ropsten`
+
+During deployment, the addresses of all deployed contracts will be printed. These should be used to create the configuration file for the app, which is stored in `app/src/store/config.json`. A sample config file exists in [`app/src/store/config.example.json`](https://github.com/zeppelinos/crafty/tree/master/app/src/store/config.example.json).
 
 ### Back-end
 

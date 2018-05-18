@@ -1,10 +1,11 @@
 import React from 'react'
 
+import './Loader.css'
 import './PacmanLoader.css'
 import './BallBeatLoader.css'
 
 const PacmanLoader = () => (
-  <div className='cell grid-x align-middle align-center with-border'>
+  <div className='cell grid-x align-middle align-center with-border with-background'>
     <div className='pacman hella-spacing'>
       <div></div>
       <div></div>
