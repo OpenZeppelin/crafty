@@ -4,11 +4,23 @@ import { observer } from 'mobx-react'
 const CraftingIngredientRow = observer(({ token, amount, balance, image, field }) => {
   const valueFormatter = token.valueFormatter
 
-  let imgSrc = './images/unapproved.svg'
-  if (field.$('approved').values()) {
-    imgSrc = './images/approved.svg'
-  } else if (field.$('pending').values()) {
-    imgSrc = './images/pending.svg'
+  const approved = field.$('approved').values()
+  const pending = field.$('pending').values()
+  const hasEnough = balance.gte(amount)
+  let status = ''
+  if (!approved) {
+    status = 'Not Approved ➡'
+  } else if (pending) {
+    status = '...'
+  } else if (!hasEnough) {
+    status = 'Balance Too Low'
+  }
+
+  let imgSrc = '/images/unapproved.svg'
+  if (approved) {
+    imgSrc = '/images/approved.svg'
+  } else if (pending) {
+    imgSrc = '/images/pending.svg'
   }
 
   return (
@@ -23,6 +35,7 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
       <div className='craftable-ingredient-info'>
         <div className='craftable-ingredient-row craftable-ingredient-title-row'>
           <h1>{token.shortName}</h1>
+          <p className='help-text status'>{status}</p>
           <button
             className='approved-btn'
             onClick={() => { field.$('approved').set(true) }}
@@ -41,7 +54,11 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
           </div>
           <div className='craftable-ingredient-balance'>
             <h6>BALANCE</h6>
-            <p>
+            <p
+              style={{
+                color: hasEnough ? '' : 'red',
+              }}
+            >
               {valueFormatter(balance)} {token.shortSymbol}
             </p>
           </div>

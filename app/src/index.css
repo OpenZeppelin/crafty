@@ -347,7 +347,19 @@ input:checked~.switch-paddle {
 }
 .craftable-ingredient-title-row {
   justify-content: space-between;
+  margin-bottom: 0.2rem;
 }
+.craftable-ingredient-title-row h1 {
+  margin: 0;
+}
+
+.craftable-ingredient-title-row .status {
+  flex: 1;
+  text-align: right;
+  margin-right: 0.5rem;
+  margin-top: -1px;
+}
+
 .ingredient-row .input-container {
   width: 30px;
   height: 30px;
