@@ -16,10 +16,9 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
       <div className='craftable-ingredient-info'>
         <div className='craftable-ingredient-row'>
           <h1>{token.shortName}</h1>
-          <p>{field.$('approved').values() ? 'approved' : (field.$('pending').values() ? 'pending' : 'unapproved')}</p>
           <button className='approved-btn' onClick={() => {field.$('approved').set(true)}} disabled={field.$('pending').values()}>
             <img
-              src={field.$('approved').values() ? './images/approved.svg' : (field.$('pending').values() ? './images/approved.svg' : './images/approved.svg')}
+              src={field.$('approved').values() ? './images/approved.svg' : (field.$('pending').values() ? './images/pending.svg' : './images/unapproved.svg')}
               alt={field.$('pending').values() ? 'Pending approval' : ''}
             />
           </button>
