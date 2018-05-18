@@ -44,12 +44,12 @@ class CraftableTokenCard extends React.Component {
               <h3>{token.shortName}</h3>
               <p>{token.shortDescription}</p>
             </div>
-            <div className="right-aligned">
+            <div className='right-aligned'>
               {withBalanceOfAddress &&
-                <p className="balance-text">Balance: {balance.toString(10)}</p>
+                <p className='balance-text'>Balance: {balance.toString(10)}</p>
               }
               {token.basicCraftable &&
-                <img className="basic-img" src="./images/ethereum.svg" />
+                <img className='basic-img' src='./images/ethereum.svg' title='Basic' alt='basic'/>
               }
             </div>
           </div>
