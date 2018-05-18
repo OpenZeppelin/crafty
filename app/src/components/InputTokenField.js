@@ -82,6 +82,7 @@ class InputTokenField extends React.Component {
         <div className='cell auto token-field'>
           <label>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</label>
           <Autocomplete
+            menuStyle = {{borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', background: 'white', padding: '2px 0', fontSize: '90%', position: 'fixed', overflow: 'auto', maxHeight: '50%', zIndex: '5000000'}}
             items={tokens.map(token => {
               return { id: token.address, label: token.label }
             })}

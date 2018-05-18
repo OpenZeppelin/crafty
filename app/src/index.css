@@ -14,7 +14,9 @@ h1, h2, h3, h4, h5, h6, a, p, span {
 input, button, a {
   outline: none !important;
 }
-
+.right-aligned {
+  text-align: right;
+}
 .btn {
   border-radius: 25px;
   background-color: #00cec9;
