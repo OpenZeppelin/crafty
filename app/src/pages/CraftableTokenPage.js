@@ -110,11 +110,9 @@ class CraftableTokenPage extends React.Component {
     try {
       await token.approve(
         this.props.store.domain.crafty.address,
-        new BN(change.newValue
-          ? 100
-          : 0
-        ), // @TODO - amount or maxint
+        new BN(change.newValue ? '57896044618658097711785492504343953926634992332820282019728792003956564819968' : '0', 10) // 2*255
       )
+
       runInAction(() => {
         this.expectingChange.set(address, true)
       })
