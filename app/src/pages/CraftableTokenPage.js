@@ -204,20 +204,28 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get approvalsInfo () {
-    return this.allowances.current().map(a => ({
+    return this.ingredientInfo.current().map(a => ({
       busy: a.allowance.busy() || !!this.expectingChange.get(a.address),
       approved: a.allowance.current().gt(new BN(0)),
+      hasBalance: a.hasBalance,
     }))
   }
 
-  allowances = promiseComputed([], async () => {
+  ingredientInfo = promiseComputed([], async () => {
     if (!this.token) { return [] }
+    const currentAddress = this.props.store.web3Context.currentAddress
+
+    if (!currentAddress) { return [] }
 
     return this.token.ingredientsAndAmounts.map(i => ({
       allowance: i.token.allowance({
         owner: this.props.store.web3Context.currentAddress,
         spender: this.props.store.domain.crafty.address,
       }),
+      hasBalance: i.token
+        .balanceOf(currentAddress)
+        .current()
+        .gte(i.amount),
       address: i.token.address,
     }))
   })
@@ -244,8 +252,12 @@ class CraftableTokenPage extends React.Component {
     return this.approvalsInfo.every(ai => ai.approved)
   }
 
+  @computed get allBalanceGood () {
+    return this.approvalsInfo.every(ai => ai.hasBalance)
+  }
+
   @computed get allGoodInTheHood () {
-    return !this.isLoadingAnyApprovals && this.allApproved
+    return !this.isLoadingAnyApprovals && this.allApproved && this.allBalanceGood
   }
 
   displayInfoForIngredient (address) {
@@ -295,10 +307,16 @@ class CraftableTokenPage extends React.Component {
     }
   }
 
-  _approvalText = () => {
-    return this.allApproved
-      ? 'You\'ve approved all of the relevant token contracts, nice!'
-      : 'You must approve the Crafting Game to spend tokens from your balance.'
+  _statusText = () => {
+    if (!this.allApproved) {
+      return 'You must approve Crafty to spend tokens from your balance.'
+    }
+
+    if (!this.allBalanceGood) {
+      return 'You don\'t have enough balance to craft!'
+    }
+
+    return 'You\'re ready to craft, nice!'
   }
 
   render () {
@@ -385,7 +403,7 @@ class CraftableTokenPage extends React.Component {
             loading={!this.form}
             render={() =>
               <div>
-                <p className='craft-text'>{this._approvalText()}</p>
+                <p className='craft-text'>{this._statusText()}</p>
                 <div>
                   <div className='craft-row'>
                     {this.allGoodInTheHood &&
