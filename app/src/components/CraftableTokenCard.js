@@ -49,7 +49,7 @@ class CraftableTokenCard extends React.Component {
                 <p className='balance-text'>Balance: {balance.toString(10)}</p>
               }
               {token.basicCraftable &&
-                <img className='basic-img' src='./images/ethereum.svg' title='Basic' alt='basic'/>
+                <img className='basic-img' src='/images/ethereum.svg' title='Basic' alt='basic'/>
               }
             </div>
           </div>

@@ -62,7 +62,7 @@ class InputTokenField extends React.Component {
                   onClick={this._remove}
                 >
                   <img
-                    src='./images/delete.svg'
+                    src='/images/delete.svg'
                     alt='Remove'
                   />
                 </button>
