@@ -25,6 +25,7 @@ class CraftableTokenPage extends React.Component {
   @observable weAreChangingItSoChill = true
   @observable expectingChange = new Map()
   @observable deploying = false
+  @observable crafting = false
 
   constructor (props) {
     super(props)
@@ -253,7 +254,6 @@ class CraftableTokenPage extends React.Component {
 
   @action
   closeLoader = () => {
-    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
     this.crafting = false
   }
 
@@ -293,7 +293,7 @@ class CraftableTokenPage extends React.Component {
 
   render () {
     return (
-      <div className="craftable-token-page">
+      <div className='craftable-token-page'>
         <Header/>
         {!this.token &&
           <div className='grid-container'>
@@ -310,7 +310,8 @@ class CraftableTokenPage extends React.Component {
           open={this.crafting}
           canClose={!this.deploying}
           finishText='Done crafting! You can continue crafting or return to the Crafting Game'
-          requestClose={this.closeLoader.bind(this)} />
+          requestClose={this.closeLoader}
+        />
 
         <WithWeb3Context read render={() => (
           <div className='token-container'>

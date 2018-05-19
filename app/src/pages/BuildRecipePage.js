@@ -65,7 +65,6 @@ class BuildRecipePage extends React.Component {
 
   @action
   closeLoader = () => {
-    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
     this.playing = false
     this.totallyDone = true
   }
@@ -135,7 +134,7 @@ class BuildRecipePage extends React.Component {
     const metadataResponse = await axios.post(`${API}/metadata`, {
       'name': name,
       'description': description,
-      'image': imageResponse.data
+      'image': imageResponse.data,
     })
 
     if (metadataResponse.status !== 200) {
@@ -158,18 +157,19 @@ class BuildRecipePage extends React.Component {
           open={this.playing}
           canClose={!this.deploying}
           finishText='Done deploying! You can continue playing or return to the Crafting Game'
-          requestClose={this.closeLoader} />
+          requestClose={this.closeLoader}
+        />
 
         <WithWeb3Context read write render={() => (
-          <div className="recipe-background">
+          <div className='recipe-background'>
             <SectionLoader
               loading={!this.form}
               render={() =>
-                <div className="craftable-token-form">
+                <div className='craftable-token-form'>
                   <Input field={this.form.$('image')} />
                   <div>
-                    <p className="black-bold-text">Token information</p>
-                    <div className="craft-form-card">
+                    <p className='black-bold-text'>Token information</p>
+                    <div className='craft-form-card'>
                       <div className='grid-x grid-margin-x'>
                         <div className='cell small-12 medium-6'>
                           <Input field={this.form.$('name')} />
@@ -183,12 +183,12 @@ class BuildRecipePage extends React.Component {
                   </div>
                 </div>
               }/>
-            <div className="grey-background">
-              <div className="grid-container medium">
-                <p className="black-bold-text">Add Ingredients</p>
+            <div className='grey-background'>
+              <div className='grid-container medium'>
+                <p className='black-bold-text'>Add Ingredients</p>
               </div>
             </div>
-            <div className="recipe-background">
+            <div className='recipe-background'>
               <SectionLoader
                 loading={!this.form}
                 render={() =>

@@ -8,27 +8,37 @@ import './BlockingLoader.css'
 
 @observer
 class BlockingLoader extends React.Component {
+  componentDidUpdate (prevProps) {
+    if (!prevProps.open && this.props.open) {
+      // opening
+      document.getElementsByTagName('BODY')[0].style.overflow = 'hidden'
+    } else if (prevProps.open && !this.props.open) {
+      // closing
+      document.getElementsByTagName('BODY')[0].style.overflow = 'auto'
+    }
+  }
+
   render () {
-    if (this.props.open) {
-      document.getElementsByTagName("BODY")[0].style.overflow = 'hidden';
-      return (
-        <Portal>
-          <div className='blocking-loader modal-layer'>
-            <div className="modal">
-              <h2 className="black-bold-text big-text">{this.props.title}</h2>
-              <p>Why not play a nice game of Tetris?</p>
-              <Tetris>
-                {({
-                  Gameboard,
-                }) => {
-                  return (
-                    <div className='game-board-container'>
-                      <Gameboard />
-                    </div>
-                  )
-                }}
-              </Tetris>
-              {this.props.canClose &&
+    if (!this.props.open) { return null }
+
+    return (
+      <Portal>
+        <div className='blocking-loader modal-layer'>
+          <div className='modal'>
+            <h2 className='black-bold-text big-text'>{this.props.title}</h2>
+            <p>Why not play a nice game of Tetris?</p>
+            <Tetris>
+              {({
+                Gameboard,
+              }) => {
+                return (
+                  <div className='game-board-container'>
+                    <Gameboard />
+                  </div>
+                )
+              }}
+            </Tetris>
+            {this.props.canClose &&
                 <div>
                   {this.props.finishText}
                   <br/>
@@ -39,15 +49,11 @@ class BlockingLoader extends React.Component {
                     Done Playing
                   </button>
                 </div>
-              }
-            </div>
+            }
           </div>
-        </Portal>
-      )
-    }
-
-    document.getElementsByTagName("BODY")[0].style.overflow = 'auto';
-    return null
+        </div>
+      </Portal>
+    )
   }
 }
 
