@@ -44,7 +44,7 @@ First, a game contract needs to be deployed to an Ethereum network for the dApp 
 ### Local
 We use [Ganache CLI](https://github.com/trufflesuite/ganache-cli) to run the local blockchain, by executing (on a separate terminal):
 
-`$ npx ganache-cli --network-id 1337 -l 8000000`
+`$ npx ganache-cli --deterministic --network-id 1337 --gas-limit 8000000`
 
 Ganache will print the mnemonic used to generate the first 10 addresses on the network, all of which will start with a hefty amount of Ether. Make sure to store this mnemonic, since it will be later needed by your Ethereum browser to use these addresses.
 
