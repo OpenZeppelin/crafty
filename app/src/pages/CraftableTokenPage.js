@@ -114,15 +114,15 @@ class CraftableTokenPage extends React.Component {
         // ^ 2^256 - 1
       )
 
+      // set local pending
       runInAction(() => {
         this.expectingChange.set(address, true)
       })
-      // set local pending
+      await when(() => field.$('approved').values())
     } catch (error) {
       // @TODO(shrugs) - notify user of error
-      console.error(error)
+      //console.error(error)
     } finally {
-      await when(() => field.$('approved').values())
       runInAction(() => {
         this.expectingChange.set(address, false)
       })

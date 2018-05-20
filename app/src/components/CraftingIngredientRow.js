@@ -8,10 +8,10 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
   const pending = field.$('pending').values()
   const hasEnough = balance.gte(amount)
   let status = ''
-  if (!approved) {
+  if (pending) {
+    status = 'Pending approval'
+  } else if (!approved) {
     status = 'Not Approved ➡'
-  } else if (pending) {
-    status = '...'
   } else if (!hasEnough) {
     status = 'Balance Too Low'
   }
