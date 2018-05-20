@@ -6,7 +6,13 @@ footer {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.7);
   min-height: 65px;
   margin-top: 30px;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
 }
 footer p {
 	text-align: right;
+}
+body {
+	margin-bottom: 65px !important;
 }
