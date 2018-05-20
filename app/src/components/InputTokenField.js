@@ -1,13 +1,10 @@
 import React from 'react'
-import { computed } from 'mobx'
-import { observable, action } from 'mobx'
+import { computed, observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import Input from './Input'
 import extendedERC20WithStore from '../models/ExtendedERC20'
 import Autocomplete from 'react-autocomplete'
-
-import RootStore from '../store/RootStore'
 
 import './InputTokenField.css'
 
@@ -40,19 +37,22 @@ class InputTokenField extends React.Component {
   render () {
     return (
       <div className={`small-12 medium-6 large-4 new-recipe-grid-col ${this.deleting ? 'deleting' : ''}`}>
-        <div className="ingredient-row new-recipe-row align-middle input-token-field">
+        <div className='ingredient-row new-recipe-row align-middle input-token-field'>
           <div>
             <img
               className='token-img'
               alt='the token'
-              src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
+              src={this.inferredToken
+                ? this.inferredToken.image
+                : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+              }
             />
           </div>
-          <div className="craftable-ingredient-info new-recipe-ingredient">
+          <div className='craftable-ingredient-info new-recipe-ingredient'>
             <div>
               {this._renderTokenSelector()}
             </div>
-            <div className="ammount-field">
+            <div className='ammount-field'>
               <Input field={this.props.field.$('amount')} />
             </div>
             {this.props.editing &&
@@ -62,7 +62,7 @@ class InputTokenField extends React.Component {
                   onClick={this._remove}
                 >
                   <img
-                    src="./images/delete.svg"
+                    src='./images/delete.svg'
                     alt='Remove'
                   />
                 </button>
@@ -75,14 +75,26 @@ class InputTokenField extends React.Component {
   }
 
   _renderTokenSelector = () => {
-    const tokens = RootStore.domain.craftableTokens.concat(RootStore.domain.canonicalTokens).sort((lhs, rhs) => lhs.label > rhs.label)
+    const tokens = this.props.store.domain.craftableTokens
+      .concat(this.props.store.domain.canonicalTokens)
+      .sort((lhs, rhs) => lhs.label > rhs.label)
 
     return (
       <div className='grid-x grid-margin-x'>
         <div className='cell auto token-field'>
           <label>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</label>
           <Autocomplete
-            menuStyle = {{borderRadius: '3px', boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)', background: 'white', padding: '2px 0', fontSize: '90%', position: 'fixed', overflow: 'auto', maxHeight: '50%', zIndex: '5000000'}}
+            menuStyle={{
+              borderRadius: '3px',
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+              background: 'white',
+              padding: '2px 0',
+              fontSize: '90%',
+              position: 'fixed',
+              overflow: 'auto',
+              maxHeight: '50%',
+              zIndex: '5000000',
+            }}
             items={tokens.map(token => {
               return { id: token.address, label: token.label }
             })}
@@ -91,13 +103,13 @@ class InputTokenField extends React.Component {
             renderItem={(item, highlighted) =>
               <div
                 key={item.id}
-                style={{ backgroundColor: highlighted ? '#eee' : '#fff'}}
+                style={{ backgroundColor: highlighted ? '#eee' : '#fff' }}
               >
                 {item.label}
               </div>
             }
             {...this.props.field.$('address').bind()}
-            onSelect={value => this.props.field.$('address').value = value}
+            onSelect={(value) => { this.props.field.$('address').value = value }}
           />
         </div>
       </div>

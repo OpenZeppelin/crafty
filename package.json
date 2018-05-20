@@ -5,13 +5,13 @@
   "main": "truffle.js",
   "scripts": {
     "test": "npx truffle test",
-    "build": "bash scripts/build.sh",
-    "deploy": "bash scripts/deploy.sh",
-    "build-app": "bash scripts/build-app.sh",
+    "build": "bash bin/build.sh",
+    "deploy": "bash bin/deploy.sh",
+    "build-app": "bash bin/build-app.sh",
     "lint:sol": "solium -d contracts",
     "lint:sol:fix": "solium -d contracts --fix",
-    "copy-artifacts": "bash scripts/copy-artifacts.sh",
-    "app": "bash scripts/app.sh"
+    "copy-artifacts": "bash bin/copy-artifacts.sh",
+    "app": "bash bin/app.sh"
   },
   "repository": {
     "type": "git",

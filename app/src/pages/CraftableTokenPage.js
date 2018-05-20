@@ -2,7 +2,7 @@ import React from 'react'
 
 import { observable, computed, when, reaction, action, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { asyncComputed } from '../util'
+import { promiseComputed } from '../util'
 import keyBy from 'lodash/keyBy'
 import BN from 'bn.js'
 
@@ -76,7 +76,7 @@ class CraftableTokenPage extends React.Component {
               return change
             }
 
-            // @TODO(shrugs) - allow disables
+            // don't allow anyone to disable approvals
             if (!change.newValue) {
               return null
             }
@@ -97,8 +97,6 @@ class CraftableTokenPage extends React.Component {
             } catch (error) {
               field.$('approved').set(change.oldValue)
               return null
-            } finally {
-              field.$('pending').set(false)
             }
           },
         })
@@ -111,19 +109,25 @@ class CraftableTokenPage extends React.Component {
     try {
       await token.approve(
         this.props.store.domain.crafty.address,
-        new BN(change.newValue ? '57896044618658097711785492504343953926634992332820282019728792003956564819968' : '0', 10) // 2*255
+        (new BN(2))
+          .pow(new BN(256))
+          .sub(new BN(1))
+        // ^ 2^256 - 1
       )
 
+      // set local pending
       runInAction(() => {
         this.expectingChange.set(address, true)
       })
-      // set local pending
+      await when(() => field.$('approved').values())
     } catch (error) {
+      // @TODO(shrugs) - notify user of error
+      //console.error(error)
+    } finally {
       runInAction(() => {
         this.expectingChange.set(address, false)
       })
-      // cancel local pending
-      console.error(error)
+      field.$('pending').set(false)
     }
   }
 
@@ -151,6 +155,7 @@ class CraftableTokenPage extends React.Component {
     await when(() => this.props.store.domain.crafty)
 
     // load all of the approvals first
+    await when(() => this.approvalsInfo.length)
     await when(() => !this.isLoadingAnyApprovals)
 
     // now sync them to the form
@@ -177,7 +182,12 @@ class CraftableTokenPage extends React.Component {
     // }
     const balance = pendingBalance.current()
 
-    return (<div><h6 className='token-symbol'>{this.token.symbol.current()}</h6><h5 className='balance'>YOUR BALANCE: {this.token.valueFormatter(balance)}</h5></div>)
+    return (
+      <div>
+        <h6 className='token-symbol'>{this.token.symbol.current()}</h6>
+        <h5 className='balance'>YOUR BALANCE: {this.token.valueFormatter(balance)}</h5>
+      </div>
+    )
   }
 
   @computed get ingredientsByAddress () {
@@ -195,20 +205,28 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get approvalsInfo () {
-    return this.allowances.current().map(a => ({
+    return this.ingredientInfo.current().map(a => ({
       busy: a.allowance.busy() || !!this.expectingChange.get(a.address),
       approved: a.allowance.current().gt(new BN(0)),
+      hasBalance: a.hasBalance,
     }))
   }
 
-  allowances = asyncComputed([], async () => {
+  ingredientInfo = promiseComputed([], async () => {
     if (!this.token) { return [] }
+    const currentAddress = this.props.store.web3Context.currentAddress
+
+    if (!currentAddress) { return [] }
 
     return this.token.ingredientsAndAmounts.map(i => ({
       allowance: i.token.allowance({
         owner: this.props.store.web3Context.currentAddress,
         spender: this.props.store.domain.crafty.address,
       }),
+      hasBalance: i.token
+        .balanceOf(currentAddress)
+        .current()
+        .gte(i.amount),
       address: i.token.address,
     }))
   })
@@ -235,8 +253,12 @@ class CraftableTokenPage extends React.Component {
     return this.approvalsInfo.every(ai => ai.approved)
   }
 
+  @computed get allBalanceGood () {
+    return this.approvalsInfo.every(ai => ai.hasBalance)
+  }
+
   @computed get allGoodInTheHood () {
-    return !this.isLoadingAnyApprovals && this.allApproved
+    return !this.isLoadingAnyApprovals && this.allApproved && this.allBalanceGood
   }
 
   displayInfoForIngredient (address) {
@@ -285,10 +307,16 @@ class CraftableTokenPage extends React.Component {
     }
   }
 
-  _approvalText = () => {
-    return this.allApproved
-      ? 'You\'ve approved all of the relevant token contracts, nice!'
-      : 'You must approve the Crafting Game to spend tokens from your balance.'
+  _statusText = () => {
+    if (!this.allApproved) {
+      return 'You must approve Crafty to spend tokens from your balance.'
+    }
+
+    if (!this.allBalanceGood) {
+      return 'You don\'t have enough balance to craft!'
+    }
+
+    return 'You\'re ready to craft, nice!'
   }
 
   render () {
@@ -376,7 +404,7 @@ class CraftableTokenPage extends React.Component {
             loading={!this.form}
             render={() =>
               <div>
-                <p className='craft-text'>{this._approvalText()}</p>
+                <p className='craft-text'>{this._statusText()}</p>
                 <div>
                   <div className='craft-row'>
                     {this.allGoodInTheHood &&
