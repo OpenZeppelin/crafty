@@ -157,8 +157,7 @@ class BuildRecipePage extends React.Component {
           open={this.playing}
           canClose={!this.deploying}
           finishText='Done deploying! You can continue playing or return to the Crafting Game'
-          requestClose={this.closeLoader}
-        />
+          requestClose={this.closeLoader} />
 
         <WithWeb3Context read write render={() => (
           <div className='recipe-background'>

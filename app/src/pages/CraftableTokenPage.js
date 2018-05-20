@@ -379,10 +379,10 @@ class CraftableTokenPage extends React.Component {
               loading={!this.form}
               render={() =>
                 <div>
-                  <div className='grid-container'>
-                    <div className='grid-x grid-margin-x space-between'>
+                  <div className='grid-container no-padding'>
+                    <div className='grid-x grid-margin-x'>
                       {this.form.$('approvals').map(f =>
-                        <div key={f.id} className='small-12 medium-6 large-4'>
+                        <div key={f.id} className='small-12 medium-6 large-4 new-recipe-grid-col'>
                           <CraftingIngredientRow
                             {...this.displayInfoForIngredient(f.$('address').values())}
                             field={f}
