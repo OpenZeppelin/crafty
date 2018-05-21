@@ -293,9 +293,16 @@ class CraftableTokenPage extends React.Component {
         this.crafting = true
       })
 
+      const initialBalance = await this.token.balanceOf(this.props.store.web3Context.currentAddress)
+
       await crafty.craft(
         craftableTokenAddress
       )
+
+      await when(async () => {
+        const currentBalance = await this.token.balanceOf(this.props.store.web3Context.currentAddress)
+        return currentBalance > initialBalance
+      })
 
       // notify the user that it was crafted or whatever
     } catch (error) {
