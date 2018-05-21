@@ -17,6 +17,9 @@ input, button, a {
 .right-aligned {
   text-align: right;
 }
+.no-padding {
+  padding: 0;
+}
 .btn {
   border-radius: 25px;
   background-color: #00cec9;
@@ -327,7 +330,7 @@ input:checked~.switch-paddle {
   -webkit-box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.2);
   padding: 10px !important;
-  margin: 10px 0;
+  margin: 40px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -466,7 +469,7 @@ input:checked~.switch-paddle {
   margin: 0 15px;
 }
 .one-more-token-button {
-  margin: 10px 0;
+  margin: 40px 0;
   height: 113px;
   width: 100%;
   color: #00cec9;
@@ -512,4 +515,92 @@ input:checked~.switch-paddle {
   width: 100%;
   background: #00000057;
   display: block;
+}
+.red-row {
+  border: solid 1.5px red;
+}
+.orange-row {
+  border: solid 1.5px #ff9419;
+}
+.turquoise-row {
+  border: solid 1.5px #00cec9;
+}
+.pending-approval-alert {
+  margin: 0;
+  font-family: 'Open Sans';
+  color: #ffffff;
+  background: #00cec9;
+  font-size: 11px;
+  position: absolute;
+  right: 0;
+  top: -35px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+.pending-approval-alert:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-top-color: #00cec9;
+  border-bottom: 0;
+  margin-left: -5px;
+  margin-bottom: -5px;
+}
+.approve-token-alert {
+  margin: 0;
+  font-family: 'Open Sans';
+  color: #ffffff;
+  background: #ff9419;
+  font-size: 11px;
+  position: absolute;
+  right: 0;
+  top: -35px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+.approve-token-alert:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-top-color: #ff9419;
+  border-bottom: 0;
+  margin-left: -5px;
+  margin-bottom: -5px;
+}
+.low-balance-alert {
+  margin: 0;
+  font-family: 'Open Sans';
+  color: #ffffff;
+  background: red;
+  font-size: 11px;
+  position: absolute;
+  right: 0;
+  bottom: -35px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.low-balance-alert:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-bottom-color: red;
+  border-top: 0;
+  margin-left: -5px;
+  margin-top: -5px;
 }

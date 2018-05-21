@@ -92,7 +92,7 @@ class InputTokenField extends React.Component {
               fontSize: '90%',
               position: 'fixed',
               overflow: 'auto',
-              maxHeight: '50%',
+              maxHeight: '35%',
               zIndex: '5000000',
             }}
             items={tokens.map(token => {
