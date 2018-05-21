@@ -17,12 +17,12 @@ class ShowcasePage extends React.Component {
     const { domain } = store
     return (
       <div>
-        <Header>My Craftable Tokens</Header>
+        <Header>Wallet</Header>
         <Subtitle>
-          Here are all of your Craftable Tokens and Recipes
+          Here you can find all the Craftable Tokens you own and Recipes you created
         </Subtitle>
         <SectionHeader>
-          My Craftable Tokens
+          My Crafted Tokens
         </SectionHeader>
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed

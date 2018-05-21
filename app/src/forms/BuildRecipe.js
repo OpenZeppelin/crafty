@@ -29,19 +29,19 @@ const values = {
 }
 
 const labels = {
-  name: 'Your Craftable Token\'s Name',
-  symbol: 'Your Craftable Token\'s Symbol',
+  name: 'Name',
+  symbol: 'Symbol',
   description: 'Describe Your Craftable Token',
-  image: 'Your Craftable Token\'s Image',
+  image: 'Image',
   inputs: 'Sacrificial Tokens',
-  'inputs[].address': 'Token',
+  'inputs[].address': 'Click here or paste an ERC20 token address',
   'inputs[].amount': 'Ammount required:',
 }
 
 const placeholders = {
-  name: 'A nice token.',
-  symbol: 'TKN',
-  description: 'This is a nice token.',
+  name: 'Party parrot.',
+  symbol: 'PRRT',
+  description: 'Party or die!',
   'inputs[].address': '0x0',
 }
 

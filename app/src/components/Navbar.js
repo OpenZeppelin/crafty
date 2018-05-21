@@ -28,7 +28,7 @@ const NavBar = withRouter(inject('store')(observer(({ className, store }) => (
         exact
         to={`/tokens/${store.web3Context.currentAddress}`}
       >
-        My Tokens
+        Wallet
       </NavLink>
     }
     <NavLink

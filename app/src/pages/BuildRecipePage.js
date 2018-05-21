@@ -167,7 +167,6 @@ class BuildRecipePage extends React.Component {
                 <div className='craftable-token-form'>
                   <Input field={this.form.$('image')} />
                   <div>
-                    <p className='black-bold-text'>Token information</p>
                     <div className='craft-form-card'>
                       <div className='grid-x grid-margin-x'>
                         <div className='cell small-12 medium-6'>
@@ -203,7 +202,7 @@ class BuildRecipePage extends React.Component {
                         <button
                           className='one-more-token-button'
                           onClick={this._addInput}
-                        > + ADD ONE MORE </button>
+                        > + ADD ANOTHER INGREDIENT </button>
                       </div>
                     </div>
                   </div>
@@ -221,7 +220,7 @@ class BuildRecipePage extends React.Component {
                       onClick={this.deploy}
                       disabled={!this.form.isValid || !this._canDeploy()}
                     >
-                      SUBMIT RECIPE
+                      CREATE RECIPE
                     </button>
                     {!this._canDeploy() &&
                       <p className='cell help-text'>
