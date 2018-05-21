@@ -523,7 +523,7 @@ input:checked~.switch-paddle {
   border: solid 1.5px #ff9419;
 }
 .turquoise-row {
-  border: solid 1.5px  #00cec9;
+  border: solid 1.5px #00cec9;
 }
 .pending-approval-alert {
   margin: 0;
@@ -532,8 +532,8 @@ input:checked~.switch-paddle {
   background: #00cec9;
   font-size: 11px;
   position: absolute;
-  left: 0;
-  bottom: -35px;
+  right: 0;
+  top: -35px;
   padding: 3px 10px;
   border-radius: 20px;
   font-weight: 700;
@@ -541,15 +541,15 @@ input:checked~.switch-paddle {
 .pending-approval-alert:after {
   content: '';
   position: absolute;
-  top: 0;
+  bottom: 0;
   left: 50%;
   width: 0;
   height: 0;
   border: 5px solid transparent;
-  border-bottom-color: #00cec9;
-  border-top: 0;
+  border-top-color: #00cec9;
+  border-bottom: 0;
   margin-left: -5px;
-  margin-top: -5px;
+  margin-bottom: -5px;
 }
 .approve-token-alert {
   margin: 0;

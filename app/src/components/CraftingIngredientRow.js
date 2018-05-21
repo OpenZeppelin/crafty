@@ -10,26 +10,21 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
 
 
   let borderColor = ''
-  if (pending) {
-    borderColor = 'turquise-row'
-  }
   if (!approved) {
     borderColor = 'orange-row'
+  } else if (!hasEnough) {
+    borderColor = 'red-row'
   }
-  if (!hasEnough) {
-    borderColor = ' red-row'
-  }  else 
 
-  var imgSrc = '/images/approved.svg';
-  if (!approved && !pending) {
-    imgSrc = '/images/unapproved.svg';
-  } else if (pending) {
+  let imgSrc = '/images/unapproved.svg';
+  if (pending) {
     imgSrc = '/images/pending.svg';
+  } else if (approved) {
+    imgSrc = '/images/unapproved.svg';
   }
-
 
   return (
-    <div className={'ingredient-row align-middle' + borderColor}>
+    <div className={`ingredient-row align-middle ${borderColor}`}>
       <div className='grid-y'>
         <img
           className='token-img'
@@ -65,8 +60,8 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
         </div>
       </div>
       {!hasEnough && <p className="low-balance-alert">YOU DONT HAVE ENOUGH FOUNDS</p>}
-      {!approved && !pending && <p className="approve-token-alert">PLEASE APROVE THIS TOKEN</p>}
-      {pending && <p className="pending-approval-alert">BEING CRAFTED</p>}
+      {!approved && !pending && <p className="approve-token-alert">PLEASE APPROVE THIS TOKEN</p>}
+      {pending && <p className="pending-approval-alert">APPROVAL PENDING</p>}
     </div>
   )
 })
