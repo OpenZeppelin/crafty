@@ -20,7 +20,7 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
   if (pending) {
     imgSrc = '/images/pending.svg';
   } else if (approved) {
-    imgSrc = '/images/unapproved.svg';
+    imgSrc = '/images/approved.svg';
   }
 
   return (
