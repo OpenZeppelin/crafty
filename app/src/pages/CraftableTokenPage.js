@@ -337,7 +337,6 @@ class CraftableTokenPage extends React.Component {
           title='Crafting your token'
           open={this.crafting}
           canClose={!this.deploying}
-          finishText='Done crafting! You can continue crafting or return to the Crafting Game'
           requestClose={this.closeLoader}
         />
 
