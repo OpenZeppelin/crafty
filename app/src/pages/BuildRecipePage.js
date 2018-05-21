@@ -156,8 +156,8 @@ class BuildRecipePage extends React.Component {
           title='Deploying your Craftable Token'
           open={this.playing}
           canClose={!this.deploying}
-          finishText='Done deploying! You can continue playing or return to the Crafting Game'
-          requestClose={this.closeLoader} />
+          requestClose={this.closeLoader}
+        />
 
         <WithWeb3Context read write render={() => (
           <div className='mosaic-background'>
@@ -218,7 +218,7 @@ class BuildRecipePage extends React.Component {
                     <button
                       className='btn'
                       onClick={this.deploy}
-                      disabled={!this.form.isValid || !this._canDeploy()}
+                      disabled={this.playing || !this.form.isValid || !this._canDeploy()}
                     >
                       CREATE RECIPE
                     </button>

@@ -21,6 +21,11 @@ class BlockingLoader extends React.Component {
   render () {
     if (!this.props.open) { return null }
 
+    if (this.props.canClose) {
+      this.props.requestClose()
+      return null
+    }
+
     return (
       <Portal>
         <div className='blocking-loader modal-layer'>
@@ -38,18 +43,6 @@ class BlockingLoader extends React.Component {
                 )
               }}
             </Tetris>
-            {this.props.canClose &&
-                <div>
-                  {this.props.finishText}
-                  <br/>
-                  <button
-                    className='btn'
-                    onClick={() => this.props.requestClose()}
-                  >
-                    Done Playing
-                  </button>
-                </div>
-            }
           </div>
         </div>
       </Portal>

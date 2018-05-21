@@ -293,9 +293,16 @@ class CraftableTokenPage extends React.Component {
         this.crafting = true
       })
 
+      const initialBalance = await this.token.balanceOf(this.props.store.web3Context.currentAddress)
+
       await crafty.craft(
         craftableTokenAddress
       )
+
+      await when(async () => {
+        const currentBalance = await this.token.balanceOf(this.props.store.web3Context.currentAddress)
+        return currentBalance > initialBalance
+      })
 
       // notify the user that it was crafted or whatever
     } catch (error) {
@@ -337,7 +344,6 @@ class CraftableTokenPage extends React.Component {
           title='Crafting your token'
           open={this.crafting}
           canClose={!this.deploying}
-          finishText='Done crafting! You can continue crafting or return to the Crafting Game'
           requestClose={this.closeLoader}
         />
 
@@ -411,6 +417,7 @@ class CraftableTokenPage extends React.Component {
                       <button
                         className='btn'
                         onClick={this.doTheCraft}
+                        disabled={this.crafting}
                       >
                         Craft {this.token.shortName}
                       </button>
