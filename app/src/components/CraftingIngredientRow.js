@@ -10,20 +10,23 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
 
 
   let borderColor = ''
-  if (!hasEnough) {
-    borderColor = ' red-row'
-  } else if (pending) {
+  if (pending) {
     borderColor = 'turquise-row'
-  } else if (!approved) {
+  }
+  if (!approved) {
     borderColor = 'orange-row'
   }
+  if (!hasEnough) {
+    borderColor = ' red-row'
+  }  else 
 
-  let imgSrc = '/images/unapproved.svg'
-  if (approved) {
-    imgSrc = '/images/approved.svg'
+  var imgSrc = '/images/approved.svg';
+  if (!approved && !pending) {
+    imgSrc = '/images/unapproved.svg';
   } else if (pending) {
-    imgSrc = '/images/pending.svg'
+    imgSrc = '/images/pending.svg';
   }
+
 
   return (
     <div className={'ingredient-row align-middle' + borderColor}>

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: Sketch 50 (54983) - http://www.bohemiancoding.com/sketch -->
-    <title>btn/ unapproved</title>
+    <title>Group 5</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="btn/-unapproved" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="unapproved">
-            <circle id="Oval-2" fill="#AFAFAF" cx="10" cy="10" r="10"></circle>
-            <path d="M15.8612714,7.8419866 L8.98531203,14.8594757 C8.80102176,15.0468414 8.50266472,15.0468414 8.31911755,14.8594757 L4.13766038,10.5637195 C3.95411321,10.3755953 3.95411321,10.0698934 4.13766038,9.88290699 L5.13676632,8.86377428 C5.3210566,8.67602933 5.61941364,8.67602933 5.80296081,8.86377428 L8.65574454,11.7952505 L14.1948563,6.14052425 C14.3784035,5.95315858 14.6767605,5.95315858 14.8617939,6.14052425 L15.8608998,7.16117409 C16.0463048,7.34891904 16.0463048,7.65462093 15.8612714,7.8419866 Z" id="Shape" fill="#FFFFFF" fill-rule="nonzero"></path>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-5" transform="translate(1.000000, 1.000000)">
+            <g id="Group-Copy-2">
+                <circle id="Oval-2" fill="#DCDCDC" cx="11" cy="11" r="11"></circle>
+                <path d="M17.0473985,9.02618526 L9.48384324,16.7454233 C9.28112393,16.9515256 8.95293119,16.9515256 8.7510293,16.7454233 L4.15142641,12.0200914 C3.94952453,11.8131548 3.94952453,11.4768827 4.15142641,11.2711977 L5.25044296,10.1501517 C5.45316226,9.94363226 5.781355,9.94363226 5.98325689,10.1501517 L9.121319,13.3747756 L15.2143419,7.15457668 C15.4162438,6.94847444 15.7444365,6.94847444 15.9479733,7.15457668 L17.0469898,8.2772915 C17.2509352,8.48381095 17.2509352,8.82008302 17.0473985,9.02618526 Z" id="Shape" fill="#FFFFFF" fill-rule="nonzero"></path>
+            </g>
+            <circle id="Oval-2-Copy" stroke="#FF9419" fill-opacity="0.3" fill="#FF9419" cx="11" cy="11" r="11.5"></circle>
         </g>
     </g>
 </svg>
