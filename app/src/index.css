@@ -370,6 +370,14 @@ input:checked~.switch-paddle {
   top: 4px;
   right: 56px;
 }
+.mosaic-background {
+  background-image: url('./assets/images/newrecipe_background.svg')!important;
+  background-repeat: repeat;
+}
+.recipe-submit-container {
+  padding: 40px 0;
+  background: white;
+}
 .new-recipe-row {
   padding-bottom: 0!important;
 }
@@ -427,6 +435,13 @@ input:checked~.switch-paddle {
   background-color: #f7f7f7;
 }
 .recipe-background {
+  margin-top: -16px;
+  padding: 21px 0;
+  background: -moz-linear-gradient(top, #ffffff 0%, #ffffff 40%, transparent 40%, transparent 100%)!important;
+  background: -webkit-linear-gradient(top, #ffffff 0%,#ffffff 40%,transparent 40%,transparent 100%)!important;
+  background: linear-gradient(to top, #ffffff 0%,#ffffff 40%,transparent 40%,transparent 100%)!important;
+}
+.craft-token-background {
   margin-top: -16px;
   padding: 21px 0;
   margin-bottom: 40px;

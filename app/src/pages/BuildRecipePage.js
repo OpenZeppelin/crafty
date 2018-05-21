@@ -160,7 +160,7 @@ class BuildRecipePage extends React.Component {
           requestClose={this.closeLoader} />
 
         <WithWeb3Context read write render={() => (
-          <div className='recipe-background'>
+          <div className='mosaic-background'>
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -182,7 +182,7 @@ class BuildRecipePage extends React.Component {
                   </div>
                 </div>
               }/>
-            <div className='grey-background'>
+            <div>
               <div className='grid-container medium'>
                 <p className='black-bold-text'>Add Ingredients</p>
               </div>
@@ -209,6 +209,7 @@ class BuildRecipePage extends React.Component {
                   </div>
                 } />
             </div>
+            <div className="recipe-submit-container">
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -230,6 +231,7 @@ class BuildRecipePage extends React.Component {
                   </div>
                 </div>
               } />
+            </div>
           </div>
         )} />
         <Footer />
