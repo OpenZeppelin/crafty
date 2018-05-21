@@ -218,7 +218,7 @@ class BuildRecipePage extends React.Component {
                     <button
                       className='btn'
                       onClick={this.deploy}
-                      disabled={!this.form.isValid || !this._canDeploy()}
+                      disabled={this.playing || !this.form.isValid || !this._canDeploy()}
                     >
                       CREATE RECIPE
                     </button>

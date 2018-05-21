@@ -411,6 +411,7 @@ class CraftableTokenPage extends React.Component {
                       <button
                         className='btn'
                         onClick={this.doTheCraft}
+                        disabled={this.crafting}
                       >
                         Craft {this.token.shortName}
                       </button>
