@@ -374,7 +374,7 @@ class CraftableTokenPage extends React.Component {
         </div>
 
         <WithWeb3Context read write render={() => (
-          <div className='recipe-background'>
+          <div className='craft-token-background'>
             <SectionLoader
               loading={!this.form}
               render={() =>
