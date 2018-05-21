@@ -307,18 +307,6 @@ class CraftableTokenPage extends React.Component {
     }
   }
 
-  _statusText = () => {
-    if (!this.allApproved) {
-      return 'You must approve Crafty to spend tokens from your balance.'
-    }
-
-    if (!this.allBalanceGood) {
-      return 'You don\'t have enough balance to craft!'
-    }
-
-    return 'You\'re ready to craft, nice!'
-  }
-
   render () {
     return (
       <div className='craftable-token-page'>
@@ -381,30 +369,29 @@ class CraftableTokenPage extends React.Component {
                 <div>
                   <div className='grid-container no-padding'>
                     <div className='grid-x grid-margin-x'>
-                      {this.form.$('approvals').map(f =>
+                      {
+                        (this.form.$('approvals').length > 0) ?
+                        this.form.$('approvals').map(f =>
                         <div key={f.id} className='small-12 medium-6 large-4 new-recipe-grid-col'>
                           <CraftingIngredientRow
                             {...this.displayInfoForIngredient(f.$('address').values())}
                             field={f}
                           />
-                        </div>
-                      )}
+                        </div>)
+                        : <p>This is a basic token, and therefore has no ingredients, craft away!</p>
+                      }
                     </div>
                   </div>
                 </div>
               } />
           </div>
         )} />
-        <div className='grid-container medium'>
-          <h2>{ this.token ? 'Craft ' + this.token.shortName : 'Loading...'}</h2>
-        </div>
 
         <WithWeb3Context read write render={() => (
           <SectionLoader
             loading={!this.form}
             render={() =>
               <div>
-                <p className='craft-text'>{this._statusText()}</p>
                 <div>
                   <div className='craft-row'>
                     {this.allGoodInTheHood &&
