@@ -2,20 +2,19 @@ const argv = require('minimist')(process.argv.slice(2));
 const network = argv['network'];
 
 const Crafty = artifacts.require('Crafty');
-const DetailedStandardToken = artifacts.require('DetailedStandardToken');
+const DetailedMintableToken = artifacts.require('DetailedMintableToken');
+
+const encodeCall = require('zos-lib/lib/helpers/encodeCall').default;
 
 const axios = require('axios');
 const capitalize = require('capitalize');
 const fs = require('fs');
+const shell = require('shelljs');
 const unvowel = require('unvowel');
-
-global.artifacts = artifacts;
-const zosPush = require('zos/lib/scripts/push').default;
-const zosCreateProxy = require('zos/lib/scripts/create-proxy').default;
 
 const API = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty';
 
-const adminAddress = web3.eth.accounts[0];
+const adminAddress = web3.eth.accounts[1];
 
 const canonicals = [
   {
@@ -41,31 +40,27 @@ async function deploy() {
   console.log(`Deploying to network '${network}'`);
 
   console.log('- Deploying new contract implementations');
-  await zosPush({network: network});
+  exec(`zos push --network ${network}`);
 
-  const crafty = await deployCrafty();
+  const crafty = deployCrafty();
 
-  await deployCanonicals();
+  if (network !== 'mainnet') {
+    await deployCanonicals();
+  }
 
   await deployEmojis(crafty);
 
   console.log('Deployment successful!');
 }
 
-async function deployCrafty() {
+function deployCrafty() {
   console.log('- Deploying Crafty');
 
-  // We need a proxy to the deployed crafty implementation
-  await zosCreateProxy({
-    contractAlias: 'Crafty',
-    initMethod: 'initialize',
-    initArgs: [adminAddress],
-    network: network
-  });
+  // We create a proxy to the deployed crafty implementation
+  exec(`zos create Crafty --init initialize --args "${adminAddress}" --network ${network}`);
 
-  // zosCreteProxy doesn't yet return the created proxy, so we need to retrieve
-  // its address from the package.zos.[network].json
-  const packageData = JSON.parse(fs.readFileSync(`package.zos.${network}.json`, 'utf8'));
+  // We need to retrieve the address of the created proxy from the zos.[network].json file
+  const packageData = JSON.parse(fs.readFileSync(`zos.${network}.json`, 'utf8'));
   const craftyProxies = packageData.proxies.Crafty;
   const crafty = Crafty.at(craftyProxies[craftyProxies.length - 1].address);
 
@@ -78,10 +73,12 @@ async function deployCrafty() {
 async function deployCanonicals() {
   console.log('- Deploying canonicals');
 
-  await Promise.all(canonicals.map(async canonical => {
-    const token = await DetailedStandardToken.new(canonical.name, canonical.symbol, canonical.decimals);
+  for (let canonical of canonicals) { // eslint-disable-line no-await-in-loop
+    const token = await DetailedMintableToken.new();
+    const callData = encodeCall('initialize', ['address', 'string', 'string', 'uint8'], [adminAddress, canonical.name, canonical.symbol, canonical.decimals]);
+    await token.sendTransaction({data: callData});
     console.log(`${canonical.name} (${canonical.symbol}): ${token.address}`);
-  }));
+  }
 }
 
 async function deployEmojis(crafty) {
@@ -110,12 +107,9 @@ async function deployEmojis(crafty) {
       throw new Error();
     }
 
-    const receipt = await crafty.addCraftable(name, symbol, metadataResponse.data, [], []);
-    if (receipt.logs[0].event !== 'CraftableAdded') {
-      throw new Error();
-    }
+    const address = exec(`zos create CraftableToken --init initialize --args ${crafty.address},\\"${name}\\",\\"${symbol}\\",\\"${metadataResponse.data}\\",[],[] --network ${network}`).trim();
 
-    console.log(`${name} (${symbol}): ${receipt.logs[0].args.addr}`);
+    console.log(`${name} (${symbol}): ${address}`);
 
     // The API is throttled, so we need to sleep to prevent the deployment from going over that limit
     await sleep(500);
@@ -124,6 +118,11 @@ async function deployEmojis(crafty) {
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function exec(cmd) {
+  console.log(`+ ${cmd}`);
+  return shell.exec(cmd, {silent: true}).stdout;
 }
 
 module.exports = function (cb) {

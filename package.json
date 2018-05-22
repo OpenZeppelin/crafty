@@ -38,6 +38,7 @@
     "ganache-cli": "^6.1.0",
     "minimist": "^1.2.0",
     "mocha-eslint": "^4.1.0",
+    "shelljs": "^0.8.2",
     "truffle": "^4.1.9",
     "truffle-hdwallet-provider": "0.0.5",
     "underscore": "^1.9.0",
