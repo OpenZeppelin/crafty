@@ -19,7 +19,8 @@ header {
     justify-content: flex-end;
     align-items: center;
     flex-wrap: wrap;
-
+    position: absolute;
+    right: 0;
     padding-right: 0.6875rem;
 }
 
