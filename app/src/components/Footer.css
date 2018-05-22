@@ -17,3 +17,22 @@ footer p {
 body {
 	margin-bottom: 65px !important;
 }
+
+footer .strong {
+  font-family: 'Open Sans';
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  color: #505050;
+}
+footer .light {
+  font-family: 'Open Sans';
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.1px;
+  text-align: right;
+  color: #505050;
+}
+footer span {
+  padding: 0 3px;
+}

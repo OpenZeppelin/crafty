@@ -267,6 +267,7 @@ input:checked~.switch-paddle {
   justify-content: space-between;
 }
 .flex-center {
+  display: flex;
   align-items: center;
 }
 .token-info-container {
