@@ -1,7 +1,5 @@
 import React from 'react'
 
-import Emoji from './Emoji'
-
 import './Footer.css'
 
 const Footer = () => (
