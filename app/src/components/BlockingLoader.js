@@ -31,7 +31,7 @@ class BlockingLoader extends React.Component {
         <div className='blocking-loader modal-layer'>
           <div className='modal'>
             <h2 className='black-bold-text big-text'>{this.props.title}</h2>
-            <p>Please accept the transaction on MetaMask when it appears. Why not play a nice game of Tetris meanwhile?</p>
+            <p>Please accept the transaction on your wallet when it appears. Why not play a nice game of Tetris meanwhile?</p>
             <Tetris>
               {({
                 Gameboard,
