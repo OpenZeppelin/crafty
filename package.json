@@ -21,15 +21,9 @@
   },
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
-    "dotenv": "^5.0.1",
-    "ganache-cli": "^6.1.0",
-    "minimist": "^1.2.0",
     "openzeppelin-solidity": "1.9.0",
     "openzeppelin-zos": "^1.9.0-beta",
-    "truffle": "^4.1.5",
-    "truffle-hdwallet-provider": "0.0.3",
-    "underscore": "^1.8.3",
-    "zos": "^0.4.0"
+    "zos-lib": "^0.1.27"
   },
   "devDependencies": {
     "axios": "^0.18.0",
@@ -38,10 +32,15 @@
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
+    "dotenv": "^5.0.1",
     "eslint-plugin-async-await": "0.0.0",
     "fs": "0.0.1-security",
-    "ganache-cli": "^6.0.3",
+    "ganache-cli": "^6.1.0",
+    "minimist": "^1.2.0",
     "mocha-eslint": "^4.1.0",
+    "truffle": "^4.1.9",
+    "truffle-hdwallet-provider": "0.0.5",
+    "underscore": "^1.9.0",
     "unvowel": "^1.1.0"
   }
 }
