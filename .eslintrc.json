@@ -43,7 +43,6 @@
     "object-curly-spacing": ["error"],
     "array-bracket-spacing": ["error"],
     "no-return-await": ["error"],
-    "no-await-in-loop": ["error"],
     "async-await/space-after-async": ["error", 1],
     "async-await/space-after-await": ["error", 1]
   }

@@ -1,6 +1,8 @@
 const _ = require('underscore');
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 
+const encodeCall = require('zos-lib/lib/helpers/encodeCall').default;
+
 const CraftableToken = artifacts.require('CraftableToken');
 
 contract('CraftableToken', accounts => {
@@ -10,14 +12,20 @@ contract('CraftableToken', accounts => {
   const symbol = 'CRFT';
   const tokenURI = 'http://hosting.com/CraftableToken.json';
 
-  function newCraftable(fromAddress, ingredients = [], ingredientAmounts = []) {
-    return CraftableToken.new(name, symbol, tokenURI, ingredients, ingredientAmounts, {from: fromAddress});
+  async function newCraftable(fromAddress, ingredients = [], ingredientAmounts = []) {
+    const token = await CraftableToken.new({from: deployer});
+
+    const callData = encodeCall('initialize', ['address', 'string', 'string', 'string', 'address[]', 'uint256[]'], [deployer, name, symbol, tokenURI, ingredients, ingredientAmounts]);
+    await token.sendTransaction({data: callData, from: fromAddress});
+
+    return token;
   }
 
   it('creator is stored', async () => {
     // Doing this using await Promise.all(accounts.map) fails: the same address is
-    // assigned to some contracts. We suspect this may be due to a bug in ganache-cli.
-    for (let address of accounts) { // eslint-disable-line no-await-in-loop
+    // assigned to some contracts. We suspect this may be due to a bug in truffle-contracts.
+
+    for (let address of accounts) {
       const craftable = await newCraftable(address);
       await craftable.creator().should.eventually.equal(address);
     }

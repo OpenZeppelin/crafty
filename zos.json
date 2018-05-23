@@ -1,0 +1,8 @@
+{
+  "name": "Crafty",
+  "version": "0.1.0",
+  "contracts": {
+    "Crafty": "Crafty",
+    "CraftableToken": "CraftableToken"
+  }
+}

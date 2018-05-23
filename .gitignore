@@ -8,8 +8,8 @@ build
 app/contracts/*
 !app/contracts/.gitkeep
 
-# Browserify output
-app/js/bundle.js
+# ZeppelinOS local artifacts
+zos.local.json
 
 # Deployment configuration
 .env
