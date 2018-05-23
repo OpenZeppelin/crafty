@@ -16,11 +16,10 @@ const InfoBar = inject('store')(observer(({ store, className }) => (
     }
     {store.web3Context.hasWeb3 && store.web3Context.isUnlocked && [
       <span className='info-item' key='network'>
-        {store.web3Context.network.description} 🌐
-        {store.ui.isMetaMask && <Emoji e='🐱' />}
+        @{store.web3Context.network.description}
       </span>,
       <span className='info-item' key='address'>
-        {store.web3Context.currentAddress.substr(0, 8)}… <Emoji e='👤' />
+        {store.web3Context.currentAddress.substr(0, 10)}…  <Emoji e='👤' />
       </span>,
       !store.domain.crafty &&
         <span className='info-item' key='crafty'>

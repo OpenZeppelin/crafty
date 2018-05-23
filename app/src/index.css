@@ -266,6 +266,10 @@ input:checked~.switch-paddle {
   display: flex;
   justify-content: space-between;
 }
+.flex-center {
+  display: flex;
+  align-items: center;
+}
 .token-info-container {
   border-radius: 4px;
   background-color: #ffffff;
@@ -618,4 +622,8 @@ input:checked~.switch-paddle {
   border-top: 0;
   margin-left: -5px;
   margin-top: -5px;
+}
+.github {
+  height: 30px;
+  padding: 0 15px;
 }
