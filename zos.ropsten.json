@@ -5,8 +5,8 @@
       "bytecodeHash": "7f1f52c5212da0280e2ecdd317d3dc091baf136e84a6d0c30789473afb040295"
     },
     "Crafty": {
-      "address": "0x7f23e66677addd6e1c1140a0f4535e0ca28a20f5",
-      "bytecodeHash": "b5f02550d3deb8451e95986c15f8ea5878bd0c4af8a4c2113369c2aa3de1132c"
+      "address": "0x2fcae66ce07bc9d8007dd01b6e26adc7aee5c938",
+      "bytecodeHash": "8552e10b6e98a42e2bfda219b3dc83af331b00f82fb684adef269975eacb693e"
     }
   },
   "proxies": {
@@ -14,7 +14,7 @@
       {
         "address": "0xe32805a30b854ab75bed350459377b783b7dbe7e",
         "version": "0.1.0",
-        "implementation": "0x7f23e66677addd6e1c1140a0f4535e0ca28a20f5"
+        "implementation": "0x2fcae66ce07bc9d8007dd01b6e26adc7aee5c938"
       }
     ],
     "CraftableToken": [
