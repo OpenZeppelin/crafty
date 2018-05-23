@@ -2,6 +2,8 @@ const _ = require('underscore');
 const BigNumber = web3.BigNumber;
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 
+const encodeCall = require('zos-lib/lib/helpers/encodeCall').default;
+
 require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .use(require('chai-as-promised'))
@@ -30,8 +32,10 @@ contract('Crafty', accounts => {
 
   async function addPrecreatedCraftable(ingredients, ingredientAmounts, fromAddress) {
     const token = await CraftableToken.new({from: fromAddress});
+
     // Ownership is given to the crafty contract. We don't care about name, symbol or URI.
-    token.initialize(crafty.address, '', '', '', ingredients, ingredientAmounts, {from: fromAddress});
+    const callData = encodeCall('initialize', ['address', 'string', 'string', 'string', 'address[]', 'uint256[]'], [crafty.address, '', '', '', ingredients, ingredientAmounts]);
+    await token.sendTransaction({data: callData, from: fromAddress});
 
     const receipt = await crafty.addPrecreatedCraftable(token.address, {from: fromAddress});
 
@@ -44,7 +48,9 @@ contract('Crafty', accounts => {
 
   beforeEach(async () => {
     crafty = await Crafty.new({from: deployer});
-    await crafty.initialize(admin);
+
+    const callData = encodeCall('initialize', ['address'], [admin]);
+    await crafty.sendTransaction({data: callData, from: deployer});
   });
 
   describe('Crafting', () => {

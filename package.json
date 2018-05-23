@@ -21,8 +21,7 @@
   },
   "homepage": "https://github.com/nventuro/crafty#readme",
   "dependencies": {
-    "openzeppelin-solidity": "1.9.0",
-    "openzeppelin-zos": "^1.9.0-beta",
+    "openzeppelin-zos": "^1.9.1",
     "zos-lib": "^0.1.27"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.21;
 
 import './CraftableToken.sol';
-import 'openzeppelin-solidity/contracts/ownership/rbac/RBAC.sol';
+import 'openzeppelin-zos/contracts/ownership/rbac/RBAC.sol';
 import 'openzeppelin-zos/contracts/token/ERC20/ERC20.sol';
 
 import 'zos-lib/contracts/migrations/Initializable.sol';

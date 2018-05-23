@@ -9,7 +9,7 @@ app/contracts/*
 !app/contracts/.gitkeep
 
 # ZeppelinOS local artifacts
-package.zos.local.json
+zos.local.json
 
 # Deployment configuration
 .env

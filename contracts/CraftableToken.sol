@@ -37,7 +37,7 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
     require(_ingredients.length == _ingredientAmounts.length);
 
     Ownable.initialize(_owner); // MintableToken does not implement initialize, so we call its Ownable's method directly
-    ExtendedERC20.initialize(_owner, _name, _symbol, 0, _tokenURI);
+    ExtendedERC20.initialize(_name, _symbol, 0, _tokenURI);
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);

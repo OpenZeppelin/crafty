@@ -1,6 +1,8 @@
 const _ = require('underscore');
 const expectPromiseThrow = require('./helpers/expectPromiseThrow');
 
+const encodeCall = require('zos-lib/lib/helpers/encodeCall').default;
+
 const CraftableToken = artifacts.require('CraftableToken');
 
 contract('CraftableToken', accounts => {
@@ -12,7 +14,9 @@ contract('CraftableToken', accounts => {
 
   async function newCraftable(ingredients = [], ingredientAmounts = []) {
     const token = await CraftableToken.new({from: deployer});
-    await token.initialize(deployer, name, symbol, tokenURI, ingredients, ingredientAmounts, {from: deployer});
+
+    const callData = encodeCall('initialize', ['address', 'string', 'string', 'string', 'address[]', 'uint256[]'], [deployer, name, symbol, tokenURI, ingredients, ingredientAmounts]);
+    await token.sendTransaction({data: callData, from: deployer});
 
     return token;
   }
