@@ -133,8 +133,7 @@ contract Crafty is RBAC, Initializable {
    * @dev Deletes a craftable from the game.
    * @param _index The index in the craftables array of the craftable to delete.
    */
-  function deleteCraftable(uint256 _index) public onlyRole(ROLE_ADMIN)
-  {
+  function deleteCraftable(uint256 _index) onlyRole(ROLE_ADMIN) public {
     require(_index < craftables.length);
 
     emit CraftableDeleted(craftables[_index]);
