@@ -11,7 +11,7 @@ module.exports = {
 
     ropsten: {
       network_id: 3,
-      gas: 4700000,
+      gas: 4900000,
       host: process.env.ROPSTEN_HOST,
       port: process.env.ROPSTEN_PORT,
       from: process.env.ROPSTEN_FROM_ADDRESS

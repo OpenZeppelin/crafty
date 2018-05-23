@@ -131,29 +131,13 @@ contract Crafty is RBAC, Initializable {
 
   /**
    * @dev Deletes a craftable from the game.
-   * @param _craftable The craftable token to delete.
+   * @param _index The index in the craftables array of the craftable to delete.
    */
-  function deleteCraftable(CraftableToken _craftable)
-    public onlyRole(ROLE_ADMIN)
+  function deleteCraftable(uint256 _index) public onlyRole(ROLE_ADMIN)
   {
-    delete craftables[getCraftableIndex(_craftable)];
-    emit CraftableDeleted(_craftable);
-  }
+    require(_index < craftables.length);
 
-  // Internals
-
-  /**
-   * @dev Returns the index of a craftable stored in the game.
-   */
-  function getCraftableIndex(CraftableToken _craftable)
-    internal view returns (uint256)
-  {
-    for (uint i = 0; i < craftables.length; ++i) {
-      if (craftables[i] == _craftable) {
-        return i;
-      }
-    }
-
-    revert();
+    emit CraftableDeleted(craftables[_index]);
+    delete craftables[_index];
   }
 }
