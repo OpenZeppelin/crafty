@@ -1,4 +1,5 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom'
 import { observer, inject } from 'mobx-react'
 
 import Header from '../components/Header'
@@ -26,7 +27,10 @@ class ShowcasePage extends React.Component {
         </SectionHeader>
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed
-            emptyChildren={() => <EmptyState />}
+            emptyChildren={() => <EmptyState
+              content={
+                <p>You don't have any tokens yet, <NavLink exact to={'/'}>go craft some!</NavLink></p>
+               }/>}
             tokens={domain.myCraftedTokens.current()}
             isLoading={domain.myCraftedTokens.busy()}
             withBalanceOfAddress={match.params.address}
@@ -39,7 +43,10 @@ class ShowcasePage extends React.Component {
 
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed
-            emptyChildren={() => <EmptyState />}
+            emptyChildren={() => <EmptyState
+              content={
+                <p>No recipes here, <NavLink exact to={'/craft'}>go create a new one!</NavLink></p>
+               }/>}
             tokens={domain.myRecipes.current()}
             isLoading={domain.myRecipes.busy()}
           />

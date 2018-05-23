@@ -1,10 +1,10 @@
 import React from 'react'
 
-const EmptyState = () => (
+const EmptyState = ({ content }) => (
   <div className='grid-container'>
     <div className='grid-x grid-margin-x hella-spacing'>
       <div className='cell auto'>
-        Nothing here! ¯\_(ツ)_/¯
+        {content}
       </div>
     </div>
   </div>
