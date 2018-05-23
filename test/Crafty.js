@@ -178,16 +178,25 @@ contract('Crafty', accounts => {
         await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
         await crafty.getCraftable(0).should.eventually.equal(craftable.address);
 
-        await crafty.deleteCraftable(craftable.address, {from: admin});
+        await crafty.deleteCraftable(0, {from: admin});
 
         // The craftable itself is not deleted, but its entry is zeroed-out in the game's storage
         await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
         await crafty.getCraftable(0).should.eventually.equal(ZERO_ADDRESS);
       });
 
+      it('admins cannot delete non-existent craftables', async () => {
+        await addPrecreatedCraftable([], [], admin);
+
+        await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
+        await expectPromiseThrow(crafty.deleteCraftable(2, {from: admin}));
+      });
+
       it('non-admins cannnot delete craftables', async () => {
-        const craftable = await addPrecreatedCraftable([], [], admin);
-        await expectPromiseThrow(crafty.deleteCraftable(craftable.address, {from: player}));
+        await addPrecreatedCraftable([], [], admin);
+
+        await crafty.getTotalCraftables().should.eventually.be.bignumber.equal(1);
+        await expectPromiseThrow(crafty.deleteCraftable(0, {from: player}));
       });
     });
   });
