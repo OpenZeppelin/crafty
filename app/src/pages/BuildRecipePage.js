@@ -150,7 +150,7 @@ class BuildRecipePage extends React.Component {
       <div>
         <Header/>
         {this.totallyDone &&
-          <Redirect to={`/craft/${this.tokenAddress}`} />
+          <Redirect push to={`/craft/${this.tokenAddress}`} />
         }
         <BlockingLoader
           title='Deploying your Craftable Token'
