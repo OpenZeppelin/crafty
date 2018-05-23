@@ -30,7 +30,7 @@ class ShowcasePage extends React.Component {
             emptyChildren={() => <EmptyState
               content={
                 <p>You don't have any tokens yet, <NavLink exact to={'/'}>go craft some!</NavLink></p>
-               }/>}
+              }/>}
             tokens={domain.myCraftedTokens.current()}
             isLoading={domain.myCraftedTokens.busy()}
             withBalanceOfAddress={match.params.address}
@@ -46,7 +46,7 @@ class ShowcasePage extends React.Component {
             emptyChildren={() => <EmptyState
               content={
                 <p>No recipes here, <NavLink exact to={'/craft'}>go create a new one!</NavLink></p>
-               }/>}
+              }/>}
             tokens={domain.myRecipes.current()}
             isLoading={domain.myRecipes.busy()}
           />

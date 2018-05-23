@@ -6,15 +6,15 @@ import './NavBar.css'
 
 const NavBar = withRouter(inject('store')(observer(({ className, store }) => (
   <div className={`${className} nav-bar`}>
-{
- //    <NavLink
- //     className='nav-item'
- //     exact
- //     to={'/'}
- //   >
- //     Featured
- //   </NavLink>
-}
+    {
+      //    <NavLink
+      //     className='nav-item'
+      //     exact
+      //     to={'/'}
+      //   >
+      //     Featured
+      //   </NavLink>
+    }
     <NavLink
       className='nav-item'
       exact

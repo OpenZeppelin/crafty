@@ -122,7 +122,7 @@ class CraftableTokenPage extends React.Component {
       await when(() => field.$('approved').values())
     } catch (error) {
       // @TODO(shrugs) - notify user of error
-      //console.error(error)
+      // console.error(error)
     } finally {
       runInAction(() => {
         this.expectingChange.set(address, false)
@@ -376,15 +376,15 @@ class CraftableTokenPage extends React.Component {
                   <div className='grid-container no-padding'>
                     <div className='grid-x grid-margin-x'>
                       {
-                        (this.form.$('approvals').values().length > 0) ?
-                        this.form.$('approvals').map(f =>
-                        <div key={f.id} className='small-12 medium-6 large-4 new-recipe-grid-col'>
-                          <CraftingIngredientRow
-                            {...this.displayInfoForIngredient(f.$('address').values())}
-                            field={f}
-                          />
-                        </div>)
-                        : <p>This is a basic token, and therefore has no ingredients, craft away!</p>
+                        (this.form.$('approvals').values().length > 0)
+                          ? this.form.$('approvals').map(f =>
+                            <div key={f.id} className='small-12 medium-6 large-4 new-recipe-grid-col'>
+                              <CraftingIngredientRow
+                                {...this.displayInfoForIngredient(f.$('address').values())}
+                                field={f}
+                              />
+                            </div>)
+                          : <p>This is a basic token, and therefore has no ingredients, craft away!</p>
                       }
                     </div>
                   </div>
