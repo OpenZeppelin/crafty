@@ -8,6 +8,7 @@ const encodeCall = require('zos-lib/lib/helpers/encodeCall').default;
 
 const axios = require('axios');
 const capitalize = require('capitalize');
+const colors = require('colors/safe');
 const fs = require('fs');
 const shell = require('shelljs');
 const unvowel = require('unvowel');
@@ -108,6 +109,7 @@ async function deployEmojis(crafty) {
     }
 
     const address = exec(`zos create CraftableToken --init initialize --args ${crafty.address},\\"${name}\\",\\"${symbol}\\",\\"${metadataResponse.data}\\",[],[] --network ${network}`).trim();
+    await crafty.addPrecreatedCraftable(address, {from: adminAddress});
 
     console.log(`${name} (${symbol}): ${address}`);
 
@@ -121,7 +123,7 @@ function sleep(ms) {
 }
 
 function exec(cmd) {
-  console.log(`+ ${cmd}`);
+  console.log(colors.green(`${cmd}`));
   return shell.exec(cmd, {silent: true}).stdout;
 }
 
