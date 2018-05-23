@@ -1,0 +1,103 @@
+{
+  "contracts": {
+    "CraftableToken": {
+      "address": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a",
+      "bytecodeHash": "7f1f52c5212da0280e2ecdd317d3dc091baf136e84a6d0c30789473afb040295"
+    },
+    "Crafty": {
+      "address": "0x7f23e66677addd6e1c1140a0f4535e0ca28a20f5",
+      "bytecodeHash": "b5f02550d3deb8451e95986c15f8ea5878bd0c4af8a4c2113369c2aa3de1132c"
+    }
+  },
+  "proxies": {
+    "Crafty": [
+      {
+        "address": "0xe32805a30b854ab75bed350459377b783b7dbe7e",
+        "version": "0.1.0",
+        "implementation": "0x7f23e66677addd6e1c1140a0f4535e0ca28a20f5"
+      }
+    ],
+    "CraftableToken": [
+      {
+        "address": "0xae29883ed0db831f7d4fa752ff92ed0af67d43c6",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xafe122ca59bc6bb28147393ab8d92079dd1529eb",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xbd1326517a9ddcf61ef7419b30d59cc16501ce7d",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xd359e6337bd57486968727b19d56cd2c147797cf",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x3634181feeb01399f831e7e3a8f0b489abd2843d",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x6e4f910a4c3cf673e3aa88551c8dc7748cbb651f",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xc328cd082200e439d2697bc414da01303309a97c",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x840054f17afa0566abfce892f4006f5f91d00e41",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x4ffed788df5bc79c4d4d3dc9b962f860ed4ba915",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xb09b641e14ac1aa80b0805015bddbbfeebdad18d",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x03436f28683a74d01d5457a75643551b0059df15",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x83d230daef95e45e47b7042080b54ae9e2b1d22b",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xffa4f209963bcfd094cec4e3392284478cef8201",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x69c71105ac057c825b32edd39d37354e08bcf6f8",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      }
+    ]
+  },
+  "app": {
+    "address": "0xac54fe306e9e05f80253161fa1195f7c7a547423"
+  },
+  "version": "0.1.0",
+  "package": {
+    "address": "0x1b48113c4127f73cf17eda4579b410d29079bbd8"
+  },
+  "provider": {
+    "address": "0x3ed1fc1ef85298fe2369194b42a56bb03c39fe50"
+  }
+}
