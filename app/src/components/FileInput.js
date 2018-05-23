@@ -63,7 +63,7 @@ export default observer(({ field }) => (
           >
             Choose Image
           </button>,
-          <p key='p' className='help-text'>Or drop one here.</p>,
+          <p key='p'>Or drop one here.</p>,
         ]
       }
     </Dropzone>

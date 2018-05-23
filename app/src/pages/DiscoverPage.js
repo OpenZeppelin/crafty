@@ -18,7 +18,7 @@ class DiscoverPage extends React.Component {
       <div>
         <Header>Discover Craftable Tokens</Header>
         <Subtitle>
-          {'Here\'s literally all of the craftable tokens we can find, have fun.'}
+          {'Here\'s a list of all the craftable tokens, have fun!'}
         </Subtitle>
         <SectionHeader>
           All Craftable Tokens
@@ -26,7 +26,7 @@ class DiscoverPage extends React.Component {
         <WithWeb3Context read render={() => (
           <CraftableTokenFeed
             emptyChildren={() => <EmptyState />}
-            tokens={domain.crafty.craftableTokens}
+            tokens={domain.craftableTokens}
             isLoading={domain.crafty.craftableTokenAddresses.busy()}
           />
         )} />

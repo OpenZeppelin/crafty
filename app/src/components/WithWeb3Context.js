@@ -48,7 +48,7 @@ class WithWeb3Context extends React.Component {
       if (!web3Context.hasNetwork) {
         return this.renderNotice(
           <p className='text-center'>
-            We have a web3 connection, but it&#39;s not connected to a network! Something has gone horribly wrong.
+            We have a web3 connection, but it&#39;s not connected to a network! Check your internet connection?
           </p>
         )
       }

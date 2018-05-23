@@ -3,5 +3,18 @@ node_js:
   - "8.9.4"
 
 script:
+  - npm run lint:sol
   - npm run build
+  - npm run build-app
   - npm test
+
+deploy:
+  provider: s3
+  bucket: "crafty.zeppelin.solutions"
+  acl: public_read
+  local-dir: app/build
+  access_key_id: $AWS_ACCESS_KEY_ID
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  skip-cleanup: true
+  on:
+    branch: master

@@ -1,9 +1,8 @@
 pragma solidity ^0.4.21;
 
-import 'openzeppelin-zos/contracts/token/ERC20/ERC20.sol';
-import 'openzeppelin-zos/contracts/token/ERC20/MintableToken.sol';
-
-import './ExtendedERC20.sol';
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+import "openzeppelin-zos/contracts/token/ERC20/MintableToken.sol";
+import "./ExtendedERC20.sol";
 
 
 /**
@@ -24,6 +23,8 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
 
   RecipeStep[] private recipe;
 
+  address public creator;
+
   /**
    * @dev Initailization. The recipe is created here, and cannot be modified afterwards.
    * @param _owner The owner of the token, who will be able to mint it.
@@ -33,11 +34,25 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
    * @param _ingredients An array with the ERC20s required to craft this token.
    * @param _ingredientAmounts The amount of tokens required for crafting, for each ERC20.
    */
-  function initialize(address _owner, string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) isInitializer('CraftableToken', '0') public {
+  function initialize(
+    address _owner,
+    string _name,
+    string _symbol,
+    string _tokenURI,
+    ERC20[] _ingredients,
+    uint256[] _ingredientAmounts
+  )
+    isInitializer("CraftableToken", "0")
+    public
+  {
     require(_ingredients.length == _ingredientAmounts.length);
 
-    Ownable.initialize(_owner); // MintableToken does not implement initialize, so we call its Ownable's method directly
+    MintableToken.initialize(_owner);
     ExtendedERC20.initialize(_name, _symbol, 0, _tokenURI);
+
+    // Setting the creator this way instead of receiving it as a parameter prevents
+    // people from attributing creation to a different user
+    creator = tx.origin; // solium-disable-line security/no-tx-origin
 
     for (uint i = 0; i < _ingredients.length; ++i) {
       require(_ingredientAmounts[i] > 0);
@@ -69,8 +84,13 @@ contract CraftableToken is MintableToken, ExtendedERC20 {
    * @dev Returns the ERC20 required to comply with a recipe step, along with the amount of tokens needed.
    * @return A tuple containing the token and the amount.
    */
-  function getRecipeStep(uint256 _recipeStepNumber) public view returns (ERC20, uint256) {
+  function getRecipeStep(uint256 _recipeStepNumber)
+    public view returns (ERC20, uint256)
+  {
     require(_recipeStepNumber < recipe.length);
-    return (recipe[_recipeStepNumber].ingredient, recipe[_recipeStepNumber].amountNeeded);
+    return (
+      recipe[_recipeStepNumber].ingredient,
+      recipe[_recipeStepNumber].amountNeeded
+    );
   }
 }

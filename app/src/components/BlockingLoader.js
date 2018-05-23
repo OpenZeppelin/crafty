@@ -8,43 +8,45 @@ import './BlockingLoader.css'
 
 @observer
 class BlockingLoader extends React.Component {
+  componentDidUpdate (prevProps) {
+    if (!prevProps.open && this.props.open) {
+      // opening
+      document.getElementsByTagName('BODY')[0].style.overflow = 'hidden'
+    } else if (prevProps.open && !this.props.open) {
+      // closing
+      document.getElementsByTagName('BODY')[0].style.overflow = 'auto'
+    }
+  }
+
   render () {
-    if (this.props.open) {
-      return (
-        <Portal>
-          <div className='blocking-loader'>
-            <div>
-              <h2>{this.props.title}</h2>
-              <p>Why not play a nice game of Tetris?</p>
-              <Tetris>
-                {({
-                  Gameboard,
-                }) => {
-                  return (
-                    <div className='game-board-container'>
-                      <Gameboard />
-                    </div>
-                  )
-                }}
-              </Tetris>
-              {this.props.canClose &&
-                <div>
-                  {this.props.finishText}
-                  <button
-                    className='button inverted'
-                    onClick={this.props.requestClose}
-                  >
-                    Done Playing
-                  </button>
-                </div>
-              }
-            </div>
-          </div>
-        </Portal>
-      )
+    if (!this.props.open) { return null }
+
+    if (this.props.canClose) {
+      this.props.requestClose()
+      return null
     }
 
-    return null
+    return (
+      <Portal>
+        <div className='blocking-loader modal-layer'>
+          <div className='modal'>
+            <h2 className='black-bold-text big-text'>{this.props.title}</h2>
+            <p>Please accept the transaction on MetaMask when it appears. Why not play a nice game of Tetris meanwhile?</p>
+            <Tetris>
+              {({
+                Gameboard,
+              }) => {
+                return (
+                  <div className='game-board-container'>
+                    <Gameboard />
+                  </div>
+                )
+              }}
+            </Tetris>
+          </div>
+        </div>
+      </Portal>
+    )
   }
 }
 

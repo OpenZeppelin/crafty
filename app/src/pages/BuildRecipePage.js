@@ -6,15 +6,13 @@ import axios from 'axios'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Subtitle from '../components/Subtitle'
-import SectionHeader from '../components/SectionHeader'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
 import SectionLoader from '../components/SectionLoader'
 import InputTokenField from '../components/InputTokenField'
 
-import RootStore from '../store/RootStore'
+import makeERC20 from '../models/ERC20'
 
 import buildRecipeForm from '../forms/BuildRecipe'
 
@@ -77,12 +75,32 @@ class BuildRecipePage extends React.Component {
     this.deploying = true
 
     try {
+      this.playing = true
+
       const crafty = this.props.store.domain.crafty
       const values = this.form.values()
       const ingredients = values.inputs.map(i => i.address)
-      const amounts = values.inputs.map(i => i.amount)
 
-      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image, RootStore.web3Context.currentAddress)
+      const ERC20 = makeERC20(this.props.store)
+
+      // A bit hacky - we need to fetch the decimals for each token in order to calculate
+      // the actual number of required tokens for each ingredient
+      values.inputs.forEach(i => i.token = new ERC20(i.address))
+      await when(() => values.inputs.every(i => {
+        const decimals = i.token.decimals.current()
+        if (decimals === null) {
+          return false
+        }
+
+        // Due to a mobx restriction, we can't call current() in deploy, so we store this value
+        i.decimals = decimals.toNumber()
+        return true
+      }))
+
+      // The inputed amounts are then converted to token units using the decimals
+      const amounts = values.inputs.map(i => Math.ceil(Number(i.amount) * (10 ** i.decimals)))
+
+      const tokenMetadataURI = await this.uploadMetadata(values.name, values.description, values.image)
 
       const tokenAddress = await crafty.addCraftable(
         values.name,
@@ -93,7 +111,6 @@ class BuildRecipePage extends React.Component {
       )
       runInAction(() => {
         this.tokenAddress = tokenAddress
-        this.totallyDone = true
       })
     } catch (error) {
       console.error(error)
@@ -104,11 +121,11 @@ class BuildRecipePage extends React.Component {
     }
   }
 
-  async uploadMetadata(name, description, image, author) {
-    const API = RootStore.config.api
+  async uploadMetadata (name, description, image) {
+    const API = this.props.store.config.api
 
     // The image is stored as a base64 string, we remove the preffix to only send the encoded binary file
-    const imageResponse = await axios.post(`${API}/thumbnail`, {'image-base64': image.split(/,/)[1]})
+    const imageResponse = await axios.post(`${API}/thumbnail`, { 'image-base64': image.split(/,/)[1] })
     if (imageResponse.status !== 200) {
       throw new Error(`Unexpected API response: ${imageResponse.status}`)
     }
@@ -118,7 +135,6 @@ class BuildRecipePage extends React.Component {
       'name': name,
       'description': description,
       'image': imageResponse.data,
-      'author': author
     })
 
     if (metadataResponse.status !== 200) {
@@ -132,6 +148,7 @@ class BuildRecipePage extends React.Component {
     this.form && this.form.validate()
     return (
       <div>
+        <Header/>
         {this.totallyDone &&
           <Redirect to={`/craft/${this.tokenAddress}`} />
         }
@@ -139,67 +156,59 @@ class BuildRecipePage extends React.Component {
           title='Deploying your Craftable Token'
           open={this.playing}
           canClose={!this.deploying}
-          finishText='Done deploying! You can continue playing or return to the Crafting Game'
           requestClose={this.closeLoader}
         />
-        <Header>Build a Craftable Token</Header>
-        <Subtitle>
-          Here you can <b>create your own craftable token</b>.
-          Choose the ingredient ERC20 tokens and then describe your creation.
-        </Subtitle>
-        <WithWeb3Context read write render={() => (
-          <div>
-            <SectionHeader>
-              <code>01.</code> Describe Your New Craftable Token
-            </SectionHeader>
 
+        <WithWeb3Context read write render={() => (
+          <div className='mosaic-background'>
             <SectionLoader
               loading={!this.form}
               render={() =>
-                <div>
+                <div className='craftable-token-form'>
                   <Input field={this.form.$('image')} />
-                  <div className='grid-x grid-margin-x'>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('name')} />
-                    </div>
-                    <div className='cell small-12 medium-6'>
-                      <Input field={this.form.$('symbol')} />
+                  <div>
+                    <div className='craft-form-card'>
+                      <div className='grid-x grid-margin-x'>
+                        <div className='cell small-12 medium-6'>
+                          <Input field={this.form.$('name')} />
+                        </div>
+                        <div className='cell small-12 medium-6'>
+                          <Input field={this.form.$('symbol')} />
+                        </div>
+                      </div>
+                      <Input field={this.form.$('description')} />
                     </div>
                   </div>
-                  <Input field={this.form.$('description')} />
                 </div>
-              }
-            />
-
-            <SectionHeader>
-              <code>02.</code> Ingredient Tokens
-            </SectionHeader>
-
-            <SectionLoader
-              loading={!this.form}
-              render={() =>
-                <div>
-                  {this.form.$('inputs').map((field, index) =>
-                    <InputTokenField
-                      key={index}
-                      field={field}
-                      editing
-                    />
-                  )}
-                  <button
-                    className='button'
-                    onClick={this._addInput}
-                  >
-                  + Add Token
-                  </button>
-                </div>
-              }
-            />
-
-            <SectionHeader>
-              <code>03.</code> Deploy
-            </SectionHeader>
-
+              }/>
+            <div>
+              <div className='grid-container medium'>
+                <p className='black-bold-text'>Add Ingredients</p>
+              </div>
+            </div>
+            <div className='recipe-background'>
+              <SectionLoader
+                loading={!this.form}
+                render={() =>
+                  <div className='grid-container'>
+                    <div className='grid-x grid-margin-x'>
+                      {this.form.$('inputs').map((field, index) =>
+                        <InputTokenField
+                          key={index}
+                          field={field}
+                          editing />
+                      )}
+                      <div className='small-12 medium-6 large-4'>
+                        <button
+                          className='one-more-token-button'
+                          onClick={this._addInput}
+                        > + ADD ANOTHER INGREDIENT </button>
+                      </div>
+                    </div>
+                  </div>
+                } />
+            </div>
+            <div className="recipe-submit-container">
             <SectionLoader
               loading={!this.form}
               render={() =>
@@ -207,11 +216,11 @@ class BuildRecipePage extends React.Component {
                   <div className='cell shrink grid-y align-center'>
                     {!this.form.isValid && this.form.error}
                     <button
-                      className='cell button inverted'
+                      className='btn'
                       onClick={this.deploy}
-                      disabled={!this.form.isValid || !this._canDeploy()}
+                      disabled={this.playing || !this.form.isValid || !this._canDeploy()}
                     >
-                      Deploy em&#39;
+                      CREATE RECIPE
                     </button>
                     {!this._canDeploy() &&
                       <p className='cell help-text'>
@@ -220,8 +229,8 @@ class BuildRecipePage extends React.Component {
                     }
                   </div>
                 </div>
-              }
-            />
+              } />
+            </div>
           </div>
         )} />
         <Footer />

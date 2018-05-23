@@ -1,20 +1,19 @@
 import React from 'react'
-import { observable, computed, when, reaction, runInAction } from 'mobx'
+
+import { observable, computed, when, reaction, action, runInAction } from 'mobx'
 import { observer, inject } from 'mobx-react'
-import { asyncComputed } from '../util'
+import { promiseComputed } from '../util'
 import keyBy from 'lodash/keyBy'
 import BN from 'bn.js'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import Subtitle from '../components/Subtitle'
-import SectionHeader from '../components/SectionHeader'
+import BlockingLoader from '../components/BlockingLoader'
 import WithWeb3Context from '../components/WithWeb3Context'
 import EmptyState from '../components/EmptyState'
 import SectionLoader from '../components/SectionLoader'
 
-import CraftableToken from '../models/CraftableToken'
-import RootStore from '../store/RootStore'
+import craftableTokenWithStore from '../models/CraftableToken'
 
 import craftCraftableForm from '../forms/CraftCraftable'
 import CraftingIngredientRow from '../components/CraftingIngredientRow'
@@ -26,6 +25,7 @@ class CraftableTokenPage extends React.Component {
   @observable weAreChangingItSoChill = true
   @observable expectingChange = new Map()
   @observable deploying = false
+  @observable crafting = false
 
   constructor (props) {
     super(props)
@@ -76,7 +76,7 @@ class CraftableTokenPage extends React.Component {
               return change
             }
 
-            // @TODO(shrugs) - allow disables
+            // don't allow anyone to disable approvals
             if (!change.newValue) {
               return null
             }
@@ -97,8 +97,6 @@ class CraftableTokenPage extends React.Component {
             } catch (error) {
               field.$('approved').set(change.oldValue)
               return null
-            } finally {
-              field.$('pending').set(false)
             }
           },
         })
@@ -110,22 +108,26 @@ class CraftableTokenPage extends React.Component {
     const token = this.ingredientsByAddress[address]
     try {
       await token.approve(
-        RootStore.domain.crafty.address,
-        new BN(change.newValue
-          ? 100
-          : 0
-        ), // @TODO - amount or maxint
+        this.props.store.domain.crafty.address,
+        (new BN(2))
+          .pow(new BN(256))
+          .sub(new BN(1))
+        // ^ 2^256 - 1
       )
+
+      // set local pending
       runInAction(() => {
         this.expectingChange.set(address, true)
       })
-      // set local pending
+      await when(() => field.$('approved').values())
     } catch (error) {
+      // @TODO(shrugs) - notify user of error
+      //console.error(error)
+    } finally {
       runInAction(() => {
         this.expectingChange.set(address, false)
       })
-      // cancel local pending
-      console.error(error)
+      field.$('pending').set(false)
     }
   }
 
@@ -150,9 +152,10 @@ class CraftableTokenPage extends React.Component {
     })
 
     // check that crafty is up before checking approvals against it
-    await when(() => RootStore.domain.crafty)
+    await when(() => this.props.store.domain.crafty)
 
     // load all of the approvals first
+    await when(() => this.approvalsInfo.length)
     await when(() => !this.isLoadingAnyApprovals)
 
     // now sync them to the form
@@ -161,14 +164,14 @@ class CraftableTokenPage extends React.Component {
 
   pendingBalanceFor (address) {
     if (!this.token) { return null }
-    if (!RootStore.web3Context.canRead) { return null }
-    if (!RootStore.web3Context.currentAddress) { return null }
+    if (!this.props.store.web3Context.canRead) { return null }
+    if (!this.props.store.web3Context.currentAddress) { return null }
 
     return this.token.balanceOf(address)
   }
 
   @computed get myBalance () {
-    const pendingBalance = this.pendingBalanceFor(RootStore.web3Context.currentAddress)
+    const pendingBalance = this.pendingBalanceFor(this.props.store.web3Context.currentAddress)
     if (!pendingBalance) { return null }
 
     // @TODO(shrugs) - I can't check busy here, because it causes
@@ -179,8 +182,12 @@ class CraftableTokenPage extends React.Component {
     // }
     const balance = pendingBalance.current()
 
-    // console.log('not busy')
-    return `${(balance / (10 ** this.token.decimals.current())).toString(10)} ${this.token.symbol.current()}`
+    return (
+      <div>
+        <h6 className='token-symbol'>{this.token.symbol.current()}</h6>
+        <h5 className='balance'>YOUR BALANCE: {this.token.valueFormatter(balance)}</h5>
+      </div>
+    )
   }
 
   @computed get ingredientsByAddress () {
@@ -198,20 +205,28 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get approvalsInfo () {
-    return this.allowances.current().map(a => ({
+    return this.ingredientInfo.current().map(a => ({
       busy: a.allowance.busy() || !!this.expectingChange.get(a.address),
       approved: a.allowance.current().gt(new BN(0)),
+      hasBalance: a.hasBalance,
     }))
   }
 
-  allowances = asyncComputed([], async () => {
+  ingredientInfo = promiseComputed([], async () => {
     if (!this.token) { return [] }
+    const currentAddress = this.props.store.web3Context.currentAddress
+
+    if (!currentAddress) { return [] }
 
     return this.token.ingredientsAndAmounts.map(i => ({
       allowance: i.token.allowance({
-        owner: RootStore.web3Context.currentAddress,
-        spender: RootStore.domain.crafty.address,
+        owner: this.props.store.web3Context.currentAddress,
+        spender: this.props.store.domain.crafty.address,
       }),
+      hasBalance: i.token
+        .balanceOf(currentAddress)
+        .current()
+        .gte(i.amount),
       address: i.token.address,
     }))
   })
@@ -224,6 +239,7 @@ class CraftableTokenPage extends React.Component {
     if (!web3) { return null }
     if (!web3.utils.isAddress(address)) { return null }
 
+    const CraftableToken = craftableTokenWithStore(this.props.store)
     this._token = new CraftableToken(address)
 
     return this._token
@@ -234,11 +250,15 @@ class CraftableTokenPage extends React.Component {
   }
 
   @computed get allApproved () {
-    return this.approvalsInfo.every(ai => !ai.approved)
+    return this.approvalsInfo.every(ai => ai.approved)
+  }
+
+  @computed get allBalanceGood () {
+    return this.approvalsInfo.every(ai => ai.hasBalance)
   }
 
   @computed get allGoodInTheHood () {
-    return !this.isLoadingAnyApprovals && this.allApproved
+    return !this.isLoadingAnyApprovals && this.allApproved && this.allBalanceGood
   }
 
   displayInfoForIngredient (address) {
@@ -246,27 +266,43 @@ class CraftableTokenPage extends React.Component {
     const amount = this.amountsByAddress[address].amount
 
     const balance = token
-      .balanceOf(RootStore.web3Context.currentAddress)
+      .balanceOf(this.props.store.web3Context.currentAddress)
       .current()
-
-    const decimals = token.decimals.current()
 
     const image = token.image
 
-    return { token, amount, balance, decimals, image}
+    return { token, amount, balance, image }
+  }
+
+  @action
+  closeLoader = () => {
+    this.crafting = false
   }
 
   doTheCraft = async () => {
     if (!this.allGoodInTheHood) { return }
-    this.deploying = true
+    runInAction(() => {
+      this.deploying = true
+    })
 
     try {
       const crafty = this.props.store.domain.crafty
       const craftableTokenAddress = this.token.address
 
+      runInAction(() => {
+        this.crafting = true
+      })
+
+      const initialBalance = await this.token.balanceOf(this.props.store.web3Context.currentAddress)
+
       await crafty.craft(
         craftableTokenAddress
       )
+
+      await when(async () => {
+        const currentBalance = await this.token.balanceOf(this.props.store.web3Context.currentAddress)
+        return currentBalance > initialBalance
+      })
 
       // notify the user that it was crafted or whatever
     } catch (error) {
@@ -278,16 +314,10 @@ class CraftableTokenPage extends React.Component {
     }
   }
 
-  _approvalText = () => {
-    return this.allApproved
-      ? 'You\'ve approved all of the relevant token contracts, nice!'
-      : 'You must approve the Crafting Game to spend tokens from your balance.'
-  }
-
   render () {
     return (
-      <div>
-        <Header>Craft a Token</Header>
+      <div className='craftable-token-page'>
+        <Header/>
         {!this.token &&
           <div className='grid-container'>
             <div className='grid-x grid-margin-x'>
@@ -298,25 +328,30 @@ class CraftableTokenPage extends React.Component {
           </div>
         }
 
+        <BlockingLoader
+          title='Crafting your token'
+          open={this.crafting}
+          canClose={!this.deploying}
+          requestClose={this.closeLoader}
+        />
+
         <WithWeb3Context read render={() => (
-          <div className='grid-container'>
-            <div className='grid-x grid-margin-x'>
+          <div className='token-container'>
+            <div className='grid-x grid-margin-x relative'>
               <div key='img' className='craftable-image cell small-12 medium-shrink'>
                 <img
                   src={this.token.image}
                   alt='the token'
                 />
               </div>
-              <div key='text' className='cell small-12 medium-auto grid-y'>
-                <div className='cell shrink'>
+              <div key='text' className='token-info-container'>
+                <div>
                   <h3>{this.token.name.current()}</h3>
-                </div>
-                <div className='cell auto grid-x align-middle'>
-                  <p className='cell'>{this.token.description}</p>
+                  <p className='description'>{this.token.description}</p>
                 </div>
                 {this.myBalance &&
-                  <div className='cell auto grid-x align-middle'>
-                    <p className='cell'>You have {this.myBalance}</p>
+                  <div>
+                    {this.myBalance}
                   </div>
                 }
               </div>
@@ -326,62 +361,50 @@ class CraftableTokenPage extends React.Component {
 
           </div>
         )} />
-
-        <SectionHeader>
-          Recipe for &#34;{
-            this.token
-              ? this.token.shortName
-              : 'Loading...'
-          }&#34;
-        </SectionHeader>
+        <div className='grey-background'>
+          <div className='grid-container medium'>
+            <h2>{this.token ? 'Recipe' : 'Loading...'}</h2>
+          </div>
+        </div>
 
         <WithWeb3Context read write render={() => (
-          <SectionLoader
-            loading={!this.form}
-            render={() =>
-              <div>
-                <Subtitle>
-                  These are the ingredients and amounts necessary to craft {this.token.name.current()}:
-                </Subtitle>
-                <div className='grid-container'>
-                  <div className='grid-x grid-margin-x align-center'>
-                    {this.form.$('approvals').map(f =>
-                      <div key={f.id} className='cell small-12 medium-10 large-8'>
-                        <CraftingIngredientRow
-                          {...this.displayInfoForIngredient(f.$('address').values())}
-                          field={f}
-                        />
-                      </div>
-                    )}
+          <div className='craft-token-background'>
+            <SectionLoader
+              loading={!this.form}
+              render={() =>
+                <div>
+                  <div className='grid-container no-padding'>
+                    <div className='grid-x grid-margin-x'>
+                      {
+                        (this.form.$('approvals').values().length > 0) ?
+                        this.form.$('approvals').map(f =>
+                        <div key={f.id} className='small-12 medium-6 large-4 new-recipe-grid-col'>
+                          <CraftingIngredientRow
+                            {...this.displayInfoForIngredient(f.$('address').values())}
+                            field={f}
+                          />
+                        </div>)
+                        : <p>This is a basic token, and therefore has no ingredients, craft away!</p>
+                      }
+                    </div>
                   </div>
                 </div>
-              </div>
-            }
-          />
+              } />
+          </div>
         )} />
-
-        <SectionHeader>
-          Craft &#34;{
-            this.token
-              ? this.token.shortName
-              : 'Loading...'
-          }&#34;
-        </SectionHeader>
 
         <WithWeb3Context read write render={() => (
           <SectionLoader
             loading={!this.form}
             render={() =>
               <div>
-                <Subtitle>
-                  {this._approvalText()}
-                </Subtitle>
-                <div className='grid-x align-center'>
-                  <div className='cell small-12 medium-10 large-8 hella-spacing'>
+                <div>
+                  <div className='craft-row'>
                     {this.allGoodInTheHood &&
                       <button
-                        className='cell auto button inverted'
+                        className='btn'
                         onClick={this.doTheCraft}
+                        disabled={this.crafting}
                       >
                         Craft {this.token.shortName}
                       </button>

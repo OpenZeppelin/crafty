@@ -1,10 +1,10 @@
 pragma solidity ^0.4.21;
 
-import './CraftableToken.sol';
-import 'openzeppelin-zos/contracts/ownership/rbac/RBAC.sol';
-import 'openzeppelin-zos/contracts/token/ERC20/ERC20.sol';
+import "openzeppelin-zos/contracts/ownership/rbac/RBAC.sol";
+import "openzeppelin-zos/contracts/token/ERC20/ERC20.sol";
+import "zos-lib/contracts/migrations/Initializable.sol";
+import "./CraftableToken.sol";
 
-import 'zos-lib/contracts/migrations/Initializable.sol';
 
 /**
  * @title Crafting token game
@@ -57,12 +57,22 @@ contract Crafty is RBAC, Initializable {
    * @param _ingredientAmounts The amount of required tokens for each ERC20.
    * @return The address of the newly created token.
    */
-  function addCraftable(string _name, string _symbol, string _tokenURI, ERC20[] _ingredients, uint256[] _ingredientAmounts) public returns (CraftableToken) {
+  function addCraftable(
+    string _name,
+    string _symbol,
+    string _tokenURI,
+    ERC20[] _ingredients,
+    uint256[] _ingredientAmounts
+  )
+    public
+    returns (CraftableToken)
+  {
     require(_ingredients.length == _ingredientAmounts.length);
     require(_ingredients.length > 0);
 
     CraftableToken newCraftable = new CraftableToken();
-    newCraftable.initialize(address(this), _name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
+    newCraftable.initialize(
+      address(this), _name, _symbol, _tokenURI, _ingredients, _ingredientAmounts);
 
     craftables.push(newCraftable);
 
@@ -78,7 +88,10 @@ contract Crafty is RBAC, Initializable {
    * transferred to the Crafty contract, to allow it to mint tokens.
    * @param _craftable The address of the craftable token to add.
    */
-  function addPrecreatedCraftable(CraftableToken _craftable) onlyRole(ROLE_ADMIN) public {
+  function addPrecreatedCraftable(CraftableToken _craftable)
+    onlyRole(ROLE_ADMIN)
+    public
+  {
     craftables.push(_craftable);
     emit CraftableAdded(_craftable);
   }
@@ -120,7 +133,9 @@ contract Crafty is RBAC, Initializable {
    * @dev Deletes a craftable from the game.
    * @param _craftable The craftable token to delete.
    */
-  function deleteCraftable(CraftableToken _craftable) public onlyRole(ROLE_ADMIN) {
+  function deleteCraftable(CraftableToken _craftable)
+    public onlyRole(ROLE_ADMIN)
+  {
     delete craftables[getCraftableIndex(_craftable)];
     emit CraftableDeleted(_craftable);
   }
@@ -130,7 +145,9 @@ contract Crafty is RBAC, Initializable {
   /**
    * @dev Returns the index of a craftable stored in the game.
    */
-  function getCraftableIndex(CraftableToken _craftable) internal view returns (uint256) {
+  function getCraftableIndex(CraftableToken _craftable)
+    internal view returns (uint256)
+  {
     for (uint i = 0; i < craftables.length; ++i) {
       if (craftables[i] == _craftable) {
         return i;

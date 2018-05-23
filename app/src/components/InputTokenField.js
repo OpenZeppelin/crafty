@@ -1,13 +1,10 @@
 import React from 'react'
-import { computed } from 'mobx'
-import { observable, action } from 'mobx'
+import { computed, observable, action } from 'mobx'
 import { observer, inject } from 'mobx-react'
 
 import Input from './Input'
-import ExtendedERC20 from '../models/ExtendedERC20'
+import extendedERC20WithStore from '../models/ExtendedERC20'
 import Autocomplete from 'react-autocomplete'
-
-import RootStore from '../store/RootStore'
 
 import './InputTokenField.css'
 
@@ -15,7 +12,6 @@ import './InputTokenField.css'
 @observer
 class InputTokenField extends React.Component {
   @observable deleting = false
-
   static defaultProps = {
     editing: false,
   }
@@ -23,6 +19,7 @@ class InputTokenField extends React.Component {
   @computed get inferredToken () {
     const web3 = this.props.store.web3Context.web3
     const tokenAddress = this.props.field.$('address').values()
+    const ExtendedERC20 = extendedERC20WithStore(this.props.store)
 
     if (!web3.utils.isAddress(tokenAddress)) { return null }
 
@@ -39,57 +36,80 @@ class InputTokenField extends React.Component {
 
   render () {
     return (
-      <div className={`grid-x grid-margin-x align-middle input-token-field ${this.deleting ? 'deleting' : ''}`}>
-        <div className='cell small-2'>
-          <img
-            className='cell shrink craftable-image'
-            alt='the token'
-            src={this.inferredToken ? this.inferredToken.image : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'}
-          />
-        </div>
-        <div className='cell small-6'>
-          {this._renderTokenSelector()}
-        </div>
-        <div className='cell auto'>
-          <Input field={this.props.field.$('amount')} />
-        </div>
-        {this.props.editing &&
-          <div className='cell shrink'>
-            <button
-              className='button inverted'
-              onClick={this._remove}
-            >
-              remove
-            </button>
+      <div className={`small-12 medium-6 large-4 new-recipe-grid-col ${this.deleting ? 'deleting' : ''}`}>
+        <div className='ingredient-row new-recipe-row align-middle input-token-field'>
+          <div>
+            <img
+              className='token-img'
+              alt='the token'
+              src={this.inferredToken
+                ? this.inferredToken.image
+                : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+              }
+            />
           </div>
-        }
+          <div className='craftable-ingredient-info new-recipe-ingredient'>
+            <div>
+              {this._renderTokenSelector()}
+            </div>
+            <div className='ammount-field'>
+              <Input field={this.props.field.$('amount')} />
+            </div>
+            {this.props.editing &&
+              <div>
+                <button
+                  className='remove-btn'
+                  onClick={this._remove}
+                >
+                  <img
+                    src='./images/delete.svg'
+                    alt='Remove'
+                  />
+                </button>
+              </div>
+            }
+          </div>
+        </div>
       </div>
     )
   }
 
   _renderTokenSelector = () => {
-    const tokens = RootStore.domain.craftableTokens.concat(RootStore.domain.canonicalTokens).sort((lhs, rhs) => lhs.label > rhs.label)
+    const tokens = this.props.store.domain.craftableTokens
+      .concat(this.props.store.domain.canonicalTokens)
+      .sort((lhs, rhs) => lhs.label > rhs.label)
 
     return (
       <div className='grid-x grid-margin-x'>
-        <div className='cell auto'>
-          <p>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</p>
+        <div className='cell auto token-field'>
+          <label>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</label>
           <Autocomplete
+            menuStyle={{
+              borderRadius: '3px',
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+              background: 'white',
+              padding: '2px 0',
+              fontSize: '90%',
+              position: 'fixed',
+              overflow: 'auto',
+              maxHeight: '35%',
+              zIndex: '5000000',
+            }}
             items={tokens.map(token => {
-              return {id: token.address, label: token.label}
+              return { id: token.address, label: token.label }
             })}
             shouldItemRender={(item, value) => item.label.toLowerCase().includes(value.toLowerCase())}
             getItemValue={item => item.id}
             renderItem={(item, highlighted) =>
               <div
                 key={item.id}
-                style={{ backgroundColor: highlighted ? '#eee' : 'transparent'}}
+                style={{ backgroundColor: highlighted ? '#eee' : '#fff' }}
               >
                 {item.label}
               </div>
             }
             {...this.props.field.$('address').bind()}
-            onSelect={value => this.props.field.$('address').value = value}
+            onSelect={(value) => { this.props.field.$('address').value = value }}
           />
         </div>
       </div>

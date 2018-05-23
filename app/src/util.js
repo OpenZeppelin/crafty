@@ -1,9 +1,9 @@
 import { reaction, observable, runInAction } from 'mobx'
 import { fromResource } from 'mobx-utils'
 
-import pMap from 'p-map'
+import pMap from 'promise.map'
 import range from 'lodash/range'
-import { asyncComputed as originalAsyncComputed } from 'computed-async-mobx'
+import { asyncComputed as originalAsyncComputed, promisedComputed as originalPromiseComputed } from 'computed-async-mobx'
 
 export const uid = () => {
   return `${+(new Date())}-${Math.random()}`
@@ -23,7 +23,6 @@ export const createFromEthereumBlock = (blockNumber) => (initial, dataFn, fn) =>
           } catch (error) {
             // @TODO(handle errors)
             console.error(error)
-            debugger
           } finally {
             runInAction(() => isBusy.set(false))
           }
@@ -48,12 +47,29 @@ export const asyncComputed = (initial, fn) => {
   const computed = originalAsyncComputed(initial, 15000, fn)
   return {
     busy: () => computed.busy,
-    current: computed.get,
+    current: () => computed.get(),
+  }
+}
+
+export const promiseComputed = (initial, fn) => {
+  const computed = originalPromiseComputed(initial, fn)
+  return {
+    busy: () => computed.busy,
+    current: () => computed.get(),
   }
 }
 
 export const collect = async (times, mapper) => pMap(
   range(times),
   mapper,
-  { concurrency: 10 }
+  10
 )
+
+export const pFilter = async (iterable, mapper) => {
+  const all = await pMap(iterable, async (thing) => ({
+    thing,
+    shouldKeep: await mapper(thing),
+  }), 10)
+
+  return all.filter((ts) => ts.shouldKeep).map((ts) => ts.thing)
+}

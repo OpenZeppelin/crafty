@@ -56,7 +56,7 @@ def get_metadata_key(uuid):
 
 @app.route('/%s/thumbnail' % DIR , methods=['POST'], cors=True)
 @error_catching
-@limit_raw_body_kb(400)
+@limit_raw_body_kb(1000)
 def upload_thumbnail():
   uuid = randint(0, 2 ** 32)
 

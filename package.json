@@ -5,21 +5,24 @@
   "main": "truffle.js",
   "scripts": {
     "test": "npx truffle test",
-    "build": "bash scripts/build.sh",
-    "deploy": "bash scripts/deploy.sh",
-    "copy-artifacts": "bash scripts/copy-artifacts.sh",
-    "app": "bash scripts/app.sh"
+    "build": "bash bin/build.sh",
+    "deploy": "bash bin/deploy.sh",
+    "build-app": "bash bin/build-app.sh",
+    "lint:sol": "solium -d contracts",
+    "lint:sol:fix": "solium -d contracts --fix",
+    "copy-artifacts": "bash bin/copy-artifacts.sh",
+    "app": "bash bin/app.sh"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nventuro/crafty.git"
+    "url": "git+https://github.com/zeppelinos/crafty.git"
   },
   "author": "Nicolás Venturo",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nventuro/crafty/issues"
+    "url": "https://github.com/zeppelinos/crafty/issues"
   },
-  "homepage": "https://github.com/nventuro/crafty#readme",
+  "homepage": "https://github.com/zeppelinos/crafty#readme",
   "dependencies": {
     "openzeppelin-zos": "^1.9.1",
     "zos-lib": "^0.1.27"
@@ -39,6 +42,7 @@
     "minimist": "^1.2.0",
     "mocha-eslint": "^4.1.0",
     "shelljs": "^0.8.2",
+    "solium": "^1.1.7",
     "truffle": "^4.1.9",
     "truffle-hdwallet-provider": "0.0.5",
     "underscore": "^1.9.0",

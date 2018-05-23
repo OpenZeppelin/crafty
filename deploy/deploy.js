@@ -27,12 +27,36 @@ const canonicals = [
     symbol: 'REP',
     decimals: 18
   }, {
-    name: '0x',
-    symbol: 'ZRX',
-    decimals: 18
-  }, {
     name: 'Decentraland',
     symbol: 'MANA',
+    decimals: 18
+  }, {
+    name: 'Tether',
+    symbol: 'USDT',
+    decimals: 18
+  }, {
+    name: 'OmiseGO',
+    symbol: 'OMG',
+    decimals: 18
+  }, {
+    name: 'Golem',
+    symbol: 'GNT',
+    decimals: 18
+  }, {
+    name: 'Loom Network',
+    symbol: 'LOOM',
+    decimals: 18
+  }, {
+    name: 'Mithril',
+    symbol: 'MITH',
+    decimals: 18
+  }, {
+    name: 'Power Ledger',
+    symbol: 'POWR',
+    decimals: 18
+  }, {
+    name: 'Gnosis',
+    symbol: 'GNO',
     decimals: 18
   }
 ];
@@ -74,10 +98,11 @@ function deployCrafty() {
 async function deployCanonicals() {
   console.log('- Deploying canonicals');
 
-  for (let canonical of canonicals) { // eslint-disable-line no-await-in-loop
+  for (let canonical of canonicals) {
     const token = await DetailedMintableToken.new();
     const callData = encodeCall('initialize', ['address', 'string', 'string', 'uint8'], [adminAddress, canonical.name, canonical.symbol, canonical.decimals]);
     await token.sendTransaction({data: callData});
+
     console.log(`${canonical.name} (${canonical.symbol}): ${token.address}`);
   }
 }
@@ -87,7 +112,7 @@ async function deployEmojis(crafty) {
 
   const emojis = JSON.parse(fs.readFileSync('deploy/assets/emoji-tokens.json', 'utf8'));
 
-  for (let emoji of emojis) { // eslint-disable-line no-await-in-loop
+  for (let emoji of emojis) {
     const picture = fs.readFileSync(`deploy/assets/${emoji.picture}`);
     const imageResponse = await axios.post(`${API}/thumbnail`, {'image-base64': picture.toString('base64')});
     if (imageResponse.status !== 200) {
@@ -96,7 +121,7 @@ async function deployEmojis(crafty) {
 
     const rawName = emoji.picture.split(/\./)[0]; // Filename, minus extension
     const name = capitalize(rawName);
-    const symbol = `EMJ-${unvowel.parse(rawName).toUpperCase()}`;
+    const symbol = `${unvowel.parse(rawName).toUpperCase()}`;
 
     const metadataResponse = await axios.post(`${API}/metadata`, {
       'name': name,

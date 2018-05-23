@@ -1,4 +1,4 @@
-import { observable, flow, action, transaction, computed } from 'mobx'
+import { observable, flow, action, computed } from 'mobx'
 import Web3 from 'web3'
 
 const networkDescById = {
@@ -23,18 +23,16 @@ export default class Web3ContextStore {
     this.root = root
 
     setImmediate(() => {
-      transaction(() => {
-        this._getAndSetWeb3()
-      })
+      this._getAndSetWeb3()
     })
   }
 
   @computed get hasWeb3 () {
-    return !!this.root.web3Context.web3
+    return !!this.web3
   }
 
   @computed get hasNetwork () {
-    return !!this.root.web3Context.network.id
+    return !!this.network.id
   }
 
   @computed get isLocked () {
@@ -42,7 +40,7 @@ export default class Web3ContextStore {
   }
 
   @computed get isUnlocked () {
-    return !!this.root.web3Context.currentAddress
+    return !!this.currentAddress
   }
 
   @computed get canRead () {
@@ -70,10 +68,7 @@ export default class Web3ContextStore {
       this.web3 = new Web3(window.web3.currentProvider)
     }
 
-    if (this.web3.currentProvider.isMetaMask) {
-      this.root.ui.isMetaMask = true
-    }
-
+    this.root.ui.isMetaMask = !!this.web3.currentProvider.isMetaMask
     this._getAndSetInfo(5000)
   })
 

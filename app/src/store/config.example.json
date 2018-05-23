@@ -18,6 +18,10 @@
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1966.png"
         }
       ]
+    },
+    "1337": {
+      "crafty": "0x0",
+      "canonicals": []
     }
   }
 }

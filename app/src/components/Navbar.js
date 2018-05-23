@@ -6,35 +6,37 @@ import './NavBar.css'
 
 const NavBar = withRouter(inject('store')(observer(({ className, store }) => (
   <div className={`${className} nav-bar`}>
+{
+ //    <NavLink
+ //     className='nav-item'
+ //     exact
+ //     to={'/'}
+ //   >
+ //     Featured
+ //   </NavLink>
+}
     <NavLink
-      className='nav-item with-border'
+      className='nav-item'
       exact
       to={'/'}
-    >
-      Featured
-    </NavLink>
-    <NavLink
-      className='nav-item with-border'
-      exact
-      to={'/discover'}
     >
       Discover
     </NavLink>
     {store.web3Context.currentAddress &&
       <NavLink
-        className='nav-item with-border'
+        className='nav-item'
         exact
         to={`/tokens/${store.web3Context.currentAddress}`}
       >
-        My Craftable Tokens
+        Wallet
       </NavLink>
     }
     <NavLink
-      className='nav-item with-border'
+      className='nav-item'
       exact
       to={'/craft'}
     >
-      + Build a Craftable Token
+      New Recipe
     </NavLink>
   </div>
 ))))
