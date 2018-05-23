@@ -25,7 +25,7 @@
   "homepage": "https://github.com/zeppelinos/crafty#readme",
   "dependencies": {
     "openzeppelin-zos": "^1.9.1",
-    "zos-lib": "^0.1.27"
+    "zos-lib": "^0.1.28"
   },
   "devDependencies": {
     "axios": "^0.18.0",
