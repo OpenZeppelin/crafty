@@ -54,7 +54,7 @@ class InputTokenField extends React.Component {
               alt='the token'
               src={this.inferredToken
                 ? this.inferredToken.image
-                : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+                : 'images/no-img.svg'
               }
             />
           </div>

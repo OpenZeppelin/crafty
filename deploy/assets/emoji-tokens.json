@@ -1,45 +1,36 @@
 [
   {
-    "picture": "atm.png",
-    "description": "Soon working with crypto!"
+    "picture": "water.png",
+    "description": "Is wet"
   }, {
-    "picture": "champagne.png",
-    "description": "Pulling it out"
+    "picture": "rock.png",
+    "description": "a.k.a. Dwayne Johnson"
   }, {
-    "picture": "coffee.png",
-    "description": "We run on this"
+    "picture": "fire.png",
+    "description": "Don't touch it!"
   }, {
-    "picture": "cool.png",
-    "description": "Are we not?"
+    "picture": "air.png",
+    "description": "The fresh prince of Bel"
   }, {
-    "picture": "fist.png",
-    "description": "Fight the power"
+    "picture": "energy.png",
+    "description": "Used to mine crypto"
   }, {
-    "picture": "fork.png",
-    "description": "What's the worse that could happen?"
+    "picture": "idea.png",
+    "description": "Do you have any?"
   }, {
-    "picture": "ghost.png",
-    "description": "Casper the Friendly Ghost"
+    "picture": "money.png",
+    "description": "\"I'm here for the tech\""
   }, {
-    "picture": "hammer.png",
+    "picture": "poop.png",
+    "description": "Don't hodl it!"
+  }, {
+    "picture": "earth.png",
+    "description": "Maybe it's flat"
+  }, {
+    "picture": "time.png",
+    "description": "real user sys"
+  }, {
+    "picture": "tools.png",
     "description": "BUIDL!"
-  }, {
-    "picture": "muscle.png",
-    "description": "Harder, better, faster, stronger"
-  }, {
-    "picture": "ok.png",
-    "description": "Just okay"
-  }, {
-    "picture": "rain.png",
-    "description": "Red rain is pouring down"
-  }, {
-    "picture": "rainbow.png",
-    "description": "Double rainbow all the way"
-  }, {
-    "picture": "rocket.png",
-    "description": "To the moon!"
-  }, {
-    "picture": "sun.png",
-    "description": "Here comes the sun (doo doo doo doo)"
   }
 ]
