@@ -160,6 +160,17 @@ button.button {
 .dropzone.reject {
   border-color: red;
 }
+.dropzone-image {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  background: white;
+  align-items: center;
+  justify-content: center;
+}
+.dropzone-image img {
+  max-height: 200px;
+}
 input {
   background: transparent !important;
   border: solid 0 !important;
