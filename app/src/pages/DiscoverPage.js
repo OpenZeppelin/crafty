@@ -18,7 +18,7 @@ class DiscoverPage extends React.Component {
       <div>
         <Header>Discover Craftable Tokens</Header>
         <Subtitle>
-          {'Here\'s a list of all the craftable tokens, have fun!'}
+          {'Here are the tokens, have fun!'}
         </Subtitle>
         <SectionHeader>
           All Craftable Tokens
