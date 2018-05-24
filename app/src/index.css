@@ -118,6 +118,9 @@ button.button {
   color: #ff0000b5!important;
   margin-bottom: 0!important;
 }
+.normal-margin-ugh {
+  margin: 0;
+}
 .craftable-token-form {
   display: flex;
   justify-content: center;

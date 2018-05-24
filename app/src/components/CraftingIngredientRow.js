@@ -8,7 +8,6 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
   const pending = field.$('pending').values()
   const hasEnough = balance.gte(amount)
 
-
   let borderColor = ''
   if (!approved) {
     borderColor = 'orange-row'
@@ -16,11 +15,11 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
     borderColor = 'red-row'
   }
 
-  let imgSrc = '/images/unapproved.svg';
+  let imgSrc = '/images/unapproved.svg'
   if (pending) {
-    imgSrc = '/images/pending.svg';
+    imgSrc = '/images/pending.svg'
   } else if (approved) {
-    imgSrc = '/images/approved.svg';
+    imgSrc = '/images/approved.svg'
   }
 
   return (
@@ -53,15 +52,15 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
           </div>
           <div className='craftable-ingredient-balance'>
             <h6>BALANCE</h6>
-            <p style={{ color: hasEnough ? '' : 'red', }}>
+            <p style={{ color: hasEnough ? '' : 'red' }}>
               {valueFormatter(balance)} {token.shortSymbol}
             </p>
           </div>
         </div>
       </div>
-      {!hasEnough && <p className="low-balance-alert">YOU DONT HAVE ENOUGH FOUNDS</p>}
-      {!approved && !pending && <p className="approve-token-alert">PLEASE APPROVE THIS TOKEN</p>}
-      {pending && <p className="pending-approval-alert">APPROVAL PENDING</p>}
+      {!hasEnough && <p className='low-balance-alert'>YOU DONT HAVE ENOUGH FOUNDS</p>}
+      {!approved && !pending && <p className='approve-token-alert'>PLEASE APPROVE THIS TOKEN</p>}
+      {pending && <p className='pending-approval-alert'>APPROVAL PENDING</p>}
     </div>
   )
 })

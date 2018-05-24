@@ -26,6 +26,16 @@ class InputTokenField extends React.Component {
     return new ExtendedERC20(tokenAddress)
   }
 
+  _onSelect = (value) => {
+    this.props.field.$('address').value = value
+    this.props.field.container().validate()
+  }
+
+  _onChange = (e, value) => {
+    this.props.field.$('address').value = value
+    this.props.field.container().validate()
+  }
+
   @action
   _remove = () => {
     this.deleting = true
@@ -84,6 +94,11 @@ class InputTokenField extends React.Component {
         <div className='cell auto token-field'>
           <label>{this.inferredToken ? this.inferredToken.label : 'Token Address'}</label>
           <Autocomplete
+            inputProps={{
+              autoComplete: 'off',
+              autoCorrect: 'off',
+              autoCapitalize: 'off',
+            }}
             menuStyle={{
               borderRadius: '3px',
               boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
@@ -108,9 +123,13 @@ class InputTokenField extends React.Component {
                 {item.label}
               </div>
             }
-            {...this.props.field.$('address').bind()}
-            onSelect={(value) => { this.props.field.$('address').value = value }}
+            value={this.props.field.$('address').value}
+            onSelect={this._onSelect}
+            onChange={this._onChange}
           />
+          <p className='help-text normal-margin-ugh'>
+            {this.props.field.$('address').error || <span>&nbsp;</span>}
+          </p>
         </div>
       </div>
     )
