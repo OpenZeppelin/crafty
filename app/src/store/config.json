@@ -36,6 +36,42 @@
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1659.png"
         }
       ]
+    },
+    "1337": {
+      "crafty": "0x0b29d47cac3aee41a187ceb7daadc6dc04dcae12",
+      "canonicals": [
+        {
+          "address": "0x67b5656d60a809915323bf2c40a8bef15a152e3e",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1680.png"
+        }, {
+          "address": "0xa57b8a5584442b467b4689f1144d269d096a3daf",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1104.png"
+        }, {
+          "address": "0x630589690929e9cdefdef0734717a9ef3ec7fcfe",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1966.png"
+        }, {
+          "address": "0xdb56f2e9369e0d7bd191099125a3f6c370f8ed15",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/825.png"
+        }, {
+          "address": "0x6ed79aa1c71fd7bdbc515efda3bd4e26394435cc",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1808.png"
+        }, {
+          "address": "0xfc628dd79137395f3c9744e33b1c5de554d94882",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/2588.png"
+        }, {
+          "address": "0x21a59654176f2689d12e828b77a783072cd26680",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1455.png"
+        }, {
+          "address": "0x4bf749ec68270027c5910220ceab30cc284c7ba2",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/2608.png"
+        }, {
+          "address": "0x7c728214be9a0049e6a86f2137ec61030d0aa964",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/2132.png"
+        }, {
+          "address": "0x86072cbff48da3c1f01824a6761a03f105bcc697",
+          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1659.png"
+        }
+      ]
     }
   }
 }

@@ -29,7 +29,7 @@ class CraftableTokenCard extends React.Component {
         onClick={() => this.setState({ clicked: true })}
       >
         {this.state.clicked &&
-          <Redirect to={`/craft/${token.address}`} />
+          <Redirect push to={`/craft/${token.address}`} />
         }
         <div className='cell small-8 grid-y align-center-middle'>
           <img
@@ -49,7 +49,7 @@ class CraftableTokenCard extends React.Component {
                 <p className='balance-text'>Balance: {balance.toString(10)}</p>
               }
               {token.basicCraftable &&
-                <img className='basic-img' src='./images/ethereum.svg' title='Basic' alt='basic'/>
+                <img className='basic-img' src='/images/ethereum.svg' title='Basic' alt='basic'/>
               }
             </div>
           </div>

@@ -10,6 +10,7 @@ import Footer from '../components/Footer'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
+import SectionHeader from '../components/SectionHeader'
 import SectionLoader from '../components/SectionLoader'
 import InputTokenField from '../components/InputTokenField'
 
@@ -49,11 +50,9 @@ const BuildRecipeForm = observer(({
               </div>
             </div>
           }/>
-        <div>
-          <div className='grid-container medium'>
-            <p className='black-bold-text'>Add Ingredients</p>
-          </div>
-        </div>
+        <SectionHeader>
+          <p className='black-bold-text'>Add Ingredients</p>
+        </SectionHeader>
         <div className='recipe-background'>
           <SectionLoader
             loading={!form}
@@ -118,7 +117,7 @@ const Thing = inject('store')(observer(({
     <div>
       <Header/>
       {totallyDone &&
-          <Redirect to={`/craft/${tokenAddress}`} />
+          <Redirect push to={`/craft/${tokenAddress}`} />
       }
       <BlockingLoader
         title='Deploying your Craftable Token'
