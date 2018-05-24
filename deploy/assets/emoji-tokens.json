@@ -1,36 +1,55 @@
 [
   {
     "picture": "water.png",
+    "symbol": "WTR",
     "description": "Is wet"
   }, {
     "picture": "rock.png",
+    "symbol": "RCK",
     "description": "a.k.a. Dwayne Johnson"
   }, {
     "picture": "fire.png",
+    "symbol": "FIR",
     "description": "Don't touch it!"
   }, {
     "picture": "air.png",
+    "symbol": "AIR",
     "description": "The fresh prince of Bel"
   }, {
     "picture": "energy.png",
+    "symbol": "NRGY",
     "description": "Used to mine crypto"
   }, {
     "picture": "idea.png",
+    "symbol": "IDEA",
     "description": "Do you have any?"
   }, {
     "picture": "money.png",
+    "symbol": "MNY",
     "description": "\"I'm here for the tech\""
   }, {
+    "picture": "btc.png",
+    "symbol": "BTC",
+    "description": "Fake internet money"
+  }, {
+    "picture": "eth.png",
+    "symbol": "ETH",
+    "description": "Fake internet computer"
+  }, {
     "picture": "poop.png",
+    "symbol": "PP",
     "description": "Don't hodl it!"
   }, {
     "picture": "earth.png",
+    "symbol": "RTH",
     "description": "Maybe it's flat"
   }, {
     "picture": "time.png",
+    "symbol": "TM",
     "description": "real user sys"
   }, {
     "picture": "tools.png",
+    "symbol": "TLS",
     "description": "BUIDL!"
   }
 ]
