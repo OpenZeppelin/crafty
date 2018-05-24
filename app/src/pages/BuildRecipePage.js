@@ -150,7 +150,7 @@ class BuildRecipePage extends React.Component {
       <div>
         <Header/>
         {this.totallyDone &&
-          <Redirect to={`/craft/${this.tokenAddress}`} />
+          <Redirect push to={`/craft/${this.tokenAddress}`} />
         }
         <BlockingLoader
           title='Deploying your Craftable Token'
@@ -208,28 +208,28 @@ class BuildRecipePage extends React.Component {
                   </div>
                 } />
             </div>
-            <div className="recipe-submit-container">
-            <SectionLoader
-              loading={!this.form}
-              render={() =>
-                <div className='grid-x grid-margin-x align-center'>
-                  <div className='cell shrink grid-y align-center'>
-                    {!this.form.isValid && this.form.error}
-                    <button
-                      className='btn'
-                      onClick={this.deploy}
-                      disabled={this.playing || !this.form.isValid || !this._canDeploy()}
-                    >
+            <div className='recipe-submit-container'>
+              <SectionLoader
+                loading={!this.form}
+                render={() =>
+                  <div className='grid-x grid-margin-x align-center'>
+                    <div className='cell shrink grid-y align-center'>
+                      {!this.form.isValid && this.form.error}
+                      <button
+                        className='btn'
+                        onClick={this.deploy}
+                        disabled={this.playing || !this.form.isValid || !this._canDeploy()}
+                      >
                       CREATE RECIPE
-                    </button>
-                    {!this._canDeploy() &&
+                      </button>
+                      {!this._canDeploy() &&
                       <p className='cell help-text'>
                         {'We can\'t find the crafty contract! Are you on the right network?'}
                       </p>
-                    }
+                      }
+                    </div>
                   </div>
-                </div>
-              } />
+                } />
             </div>
           </div>
         )} />

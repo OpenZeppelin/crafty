@@ -2,7 +2,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const network = argv['network'];
 
 const Crafty = artifacts.require('Crafty');
-const DetailedMintableToken = artifacts.require('DetailedMintableToken');
+const DetailedMintableToken = artifacts.require('openzeppelin-zos/DetailedMintableToken');
 
 const encodeCall = require('zos-lib/lib/helpers/encodeCall').default;
 

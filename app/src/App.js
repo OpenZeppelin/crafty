@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Switch, Route, withRouter } from 'react-router-dom'
 import { configure } from 'mobx'
 import { observer, inject } from 'mobx-react'
-//import IndexPage from './pages/IndexPage'
+// import IndexPage from './pages/IndexPage'
 import DiscoverPage from './pages/DiscoverPage'
 import BuildRecipePage from './pages/BuildRecipePage'
 import ShowcasePage from './pages/ShowcasePage'
@@ -24,7 +24,7 @@ class App extends Component {
         }
         <Switch>
           {
-          //<Route exact path='/' component={IndexPage} />
+          // <Route exact path='/' component={IndexPage} />
           }
           <Route exact path='/' component={DiscoverPage} />
           <Route exact path='/craft' component={BuildRecipePage} />

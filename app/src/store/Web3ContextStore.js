@@ -86,7 +86,7 @@ export default class Web3ContextStore {
 
       this.latestBlock = yield this.web3.eth.getBlockNumber()
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       this.root.ui.error = new Error('Could not get info from MetaMask')
     }
 
