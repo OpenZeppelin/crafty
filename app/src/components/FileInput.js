@@ -17,7 +17,7 @@ export default observer(({ field }) => (
       {field.label}
     </label>
     <Dropzone
-      className='dropzone'
+      className={(!field.files || field.files.length === 0) ? 'dropzone' : 'dropzone transparent'}
       activeClassName='active'
       acceptClassName='accept'
       rejectClassName='reject'

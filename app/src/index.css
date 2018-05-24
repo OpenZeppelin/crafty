@@ -152,6 +152,9 @@ button.button {
 .dropzone.active {
   border: 3px solid #000000;
 }
+.dropzone.transparent{
+  background: transparent !important;
+}
 
 .dropzone.accept {
   border-color: green;
@@ -164,7 +167,7 @@ button.button {
   width: 200px;
   height: 200px;
   display: flex;
-  background: white;
+  background: transparent;
   align-items: center;
   justify-content: center;
 }
