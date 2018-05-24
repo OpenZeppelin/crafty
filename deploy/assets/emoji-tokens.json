@@ -28,11 +28,11 @@
     "symbol": "MNY",
     "description": "\"I'm here for the tech\""
   }, {
-    "picture": "btc.png",
+    "picture": "bitcoin.png",
     "symbol": "BTC",
     "description": "Fake internet money"
   }, {
-    "picture": "eth.png",
+    "picture": "ethereum.png",
     "symbol": "ETH",
     "description": "Fake internet computer"
   }, {
