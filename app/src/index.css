@@ -324,10 +324,10 @@ input:checked~.switch-paddle {
 }
 .token-info-container .description {
   font-family: 'Open Sans';
-  font-size: 16px;
+  font-size: 13px;
   letter-spacing: 0.2px;
   color: #141414;
-  height: 27px;
+  height: auto;
   overflow: hidden;
 }
 .token-info-container h6 {
