@@ -42,15 +42,12 @@ class CraftableTokenPage extends React.Component {
       () => this.approvalsInfo,
       () => {
         runInAction(() => (this.weAreChangingItSoChill = true))
-        this.approvalsInfo.forEach((ai, i) => {
+        this.approvalsInfo.filter(ai => !ai.busy).forEach((ai, i) => {
           const field = this.form
             .$(`approvals.${i}`)
           field
             .$('approved')
             .set(ai.approved)
-          field
-            .$('pending')
-            .set(ai.busy)
         })
         runInAction(() => (this.weAreChangingItSoChill = false))
       },
@@ -144,8 +141,8 @@ class CraftableTokenPage extends React.Component {
           approvals: this.token.ingredientsAndAmounts.map(i => ({
             address: i.token.address,
             amount: i.amount,
-            pending: true,
-            approved: true,
+            pending: false,
+            approved: false,
           })),
         },
       })
@@ -264,9 +261,14 @@ class CraftableTokenPage extends React.Component {
     const token = this.ingredientsByAddress[address]
     const amount = this.amountsByAddress[address].amount
 
-    const balance = token
-      .balanceOf(this.props.store.web3Context.currentAddress)
-      .current()
+    const updatedBalance = token
+        .balanceOf(this.props.store.web3Context.currentAddress)
+
+    const balance = (updatedBalance.busy() && token.cachedBalance) ?
+      token.cachedBalance :
+      updatedBalance.current()
+
+    token.cachedBalance = balance
 
     const image = token.image
 
