@@ -177,7 +177,6 @@ class CraftableTokenPage extends React.Component {
     // @TODO(shrugs) - I can't check busy here, because it causes
     // a loop ??
     // if (this.myPendingBalance.busy()) {
-    //   console.log('busy')
     //   return `... ${this.token.shortSymbol}`
     // }
     const balance = pendingBalance.current()

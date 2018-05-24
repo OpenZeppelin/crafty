@@ -10,7 +10,9 @@ import 'foundation-sites/dist/css/foundation.min.css'
 import './index.css'
 
 ReactDOM.render(
-  <Provider store={RootStore}>
+  <Provider
+    store={RootStore}
+  >
     <Router>
       <App />
     </Router>

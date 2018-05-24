@@ -1,8 +1,9 @@
 import React from 'react'
-import { action, observable, runInAction, when } from 'mobx'
+import { action, observable, runInAction, when, computed } from 'mobx'
 import { observer, inject } from 'mobx-react'
 import { Redirect } from 'react-router-dom'
 import axios from 'axios'
+import _ from 'lodash'
 
 import Header from '../components/Header'
 import Footer from '../components/Footer'
@@ -19,6 +20,125 @@ import buildRecipeForm from '../forms/BuildRecipe'
 
 import { uid } from '../util'
 
+const BuildRecipeForm = observer(({
+  form,
+  addInput,
+  deploy,
+  playing,
+  canDeploy,
+}) => {
+  return (
+    <WithWeb3Context read write render={() => (
+      <div className='mosaic-background'>
+        <SectionLoader
+          loading={!form}
+          render={() =>
+            <div className='craftable-token-form'>
+              <Input field={form.$('image')} />
+              <div>
+                <div className='craft-form-card'>
+                  <div className='grid-x grid-margin-x'>
+                    <div className='cell small-12 medium-6'>
+                      <Input field={form.$('name')} />
+                    </div>
+                    <div className='cell small-12 medium-6'>
+                      <Input field={form.$('symbol')} />
+                    </div>
+                  </div>
+                  <Input field={form.$('description')} />
+                </div>
+              </div>
+            </div>
+          }/>
+        <SectionHeader>
+          <p className='black-bold-text'>Add Ingredients</p>
+        </SectionHeader>
+        <div className='recipe-background'>
+          <SectionLoader
+            loading={!form}
+            render={() =>
+              <div className='grid-container'>
+                <div className='grid-x grid-margin-x'>
+                  {form.$('inputs').map((field, index) =>
+                    <InputTokenField
+                      key={index}
+                      field={field}
+                      editing />
+                  )}
+                  <div className='small-12 medium-6 large-4'>
+                    <button
+                      className='one-more-token-button'
+                      onClick={addInput}
+                    > + ADD ANOTHER INGREDIENT </button>
+                  </div>
+                </div>
+              </div>
+            } />
+        </div>
+        <div className='recipe-submit-container'>
+          <SectionLoader
+            loading={!form}
+            render={() =>
+              <div className='grid-x grid-margin-x align-center'>
+                <div className='cell shrink grid-y align-center'>
+                  <button
+                    className='btn'
+                    onClick={deploy}
+                    disabled={playing || !form.isValid || !canDeploy}
+                  >
+                      CREATE RECIPE
+                  </button>
+                  {!canDeploy &&
+                      <p className='cell help-text'>
+                        {'We can\'t find the crafty contract! Are you on the right network?'}
+                      </p>
+                  }
+                </div>
+              </div>
+            } />
+        </div>
+      </div>
+    )} />
+  )
+})
+
+const Thing = inject('store')(observer(({
+  form,
+  totallyDone,
+  tokenAddress,
+  playing,
+  deploying,
+  closeLoader,
+  addInput,
+  deploy,
+  canDeploy,
+}) => {
+  return (
+    <div>
+      <Header/>
+      {totallyDone &&
+          <Redirect push to={`/craft/${tokenAddress}`} />
+      }
+      <BlockingLoader
+        title='Deploying your Craftable Token'
+        open={playing}
+        canClose={!deploying}
+        requestClose={closeLoader}
+      />
+
+      <BuildRecipeForm
+        form={form}
+        addInput={addInput}
+        deploy={deploy}
+        playing={playing}
+        canDeploy={canDeploy}
+      />
+
+      <Footer />
+    </div>
+  )
+}))
+
 @inject('store')
 @observer
 class BuildRecipePage extends React.Component {
@@ -26,42 +146,43 @@ class BuildRecipePage extends React.Component {
   @observable playing = false
   @observable totallyDone = false
   @observable tokenAddress
-  @observable form = null
+  @observable form = (() => {
+    const form = buildRecipeForm()
+    form.$('inputs').add({ id: uid() })
+    form.$('inputs').observe(({ path, field }) => {
+      const values = field.values()
+      values.reverse()
+      const fields = field.fields.values()
+      const count = _.countBy(_.map(values, v => v.address))
+      _.forEach(count, (v, k) => {
+        if (v > 1) {
+          // there's a duplicate at k
+          let field
+          for (const f of fields) {
+            console.log(k, f.$('address').values())
+            if (f.$('address').values() === k) {
+              field = f
+              break
+            }
+          }
+          if (field) {
+            console.log('invalidating field', field.path)
+            field.$('address').invalidate('Already included!')
+          }
+        }
+      })
+    })
+    return form
+  })()
 
-  constructor (props) {
-    super(props)
-
-    this._lazyInitForm()
-  }
-
-  _lazyInitForm = async () => {
-    const start = Date.now()
-
-    await when(() => !this.props.store.domain.isLoadingCanonicalTokens)
-    const finished = Date.now()
-    const diff = finished - start // ms
-
-    const minimumDelay = 800
-    const timeLeft = minimumDelay - diff
-    const restDelay = Math.max(0, timeLeft)
-
-    setTimeout(action(() => {
-      this.form = buildRecipeForm(this.props.store.domain.canonicalTokensInfo)
-
-      // add initial input
-      this._addInput()
-    }), restDelay)
-  }
-
-  _canDeploy = () => {
-    const crafty = this.props.store.domain.crafty
-    if (!crafty) { return false }
-
-    return true
+  // has Crafty?
+  @computed get canDeploy () {
+    return !!this.props.store.domain.crafty
   }
 
   _addInput = () => {
-    this.form.$('inputs').add({ id: uid() })
+    const form = this.form
+    form.$('inputs').add({ id: uid() })
   }
 
   @action
@@ -72,21 +193,22 @@ class BuildRecipePage extends React.Component {
 
   @action
   deploy = async () => {
-    if (!this._canDeploy()) { return }
+    const form = this.form
+    if (!this.canDeploy) { return }
     this.deploying = true
 
     try {
       this.playing = true
 
       const crafty = this.props.store.domain.crafty
-      const values = this.form.values()
+      const values = form.values()
       const ingredients = values.inputs.map(i => i.address)
 
       const ERC20 = makeERC20(this.props.store)
 
       // A bit hacky - we need to fetch the decimals for each token in order to calculate
       // the actual number of required tokens for each ingredient
-      values.inputs.forEach(i => i.token = new ERC20(i.address))
+      values.inputs.forEach(i => { i.token = new ERC20(i.address) })
       await when(() => values.inputs.every(i => {
         const decimals = i.token.decimals.current()
         if (decimals === null) {
@@ -146,94 +268,18 @@ class BuildRecipePage extends React.Component {
   }
 
   render () {
-    this.form && this.form.validate()
     return (
-      <div>
-        <Header/>
-        {this.totallyDone &&
-          <Redirect push to={`/craft/${this.tokenAddress}`} />
-        }
-        <BlockingLoader
-          title='Deploying your Craftable Token'
-          open={this.playing}
-          canClose={!this.deploying}
-          requestClose={this.closeLoader}
-        />
-
-        <WithWeb3Context read write render={() => (
-          <div className='mosaic-background'>
-            <SectionLoader
-              loading={!this.form}
-              render={() =>
-                <div className='craftable-token-form'>
-                  <Input field={this.form.$('image')} />
-                  <div>
-                    <div className='craft-form-card'>
-                      <div className='grid-x grid-margin-x'>
-                        <div className='cell small-12 medium-6'>
-                          <Input field={this.form.$('name')} />
-                        </div>
-                        <div className='cell small-12 medium-6'>
-                          <Input field={this.form.$('symbol')} />
-                        </div>
-                      </div>
-                      <Input field={this.form.$('description')} />
-                    </div>
-                  </div>
-                </div>
-              }/>
-            <SectionHeader>
-              Add Ingredients
-            </SectionHeader>
-            <div className='recipe-background'>
-              <SectionLoader
-                loading={!this.form}
-                render={() =>
-                  <div className='grid-container'>
-                    <div className='grid-x grid-margin-x'>
-                      {this.form.$('inputs').map((field, index) =>
-                        <InputTokenField
-                          key={index}
-                          field={field}
-                          editing />
-                      )}
-                      <div className='small-12 medium-6 large-4'>
-                        <button
-                          className='one-more-token-button'
-                          onClick={this._addInput}
-                        > + ADD ANOTHER INGREDIENT </button>
-                      </div>
-                    </div>
-                  </div>
-                } />
-            </div>
-            <div className='recipe-submit-container'>
-              <SectionLoader
-                loading={!this.form}
-                render={() =>
-                  <div className='grid-x grid-margin-x align-center'>
-                    <div className='cell shrink grid-y align-center'>
-                      {!this.form.isValid && this.form.error}
-                      <button
-                        className='btn'
-                        onClick={this.deploy}
-                        disabled={this.playing || !this.form.isValid || !this._canDeploy()}
-                      >
-                      CREATE RECIPE
-                      </button>
-                      {!this._canDeploy() &&
-                      <p className='cell help-text'>
-                        {'We can\'t find the crafty contract! Are you on the right network?'}
-                      </p>
-                      }
-                    </div>
-                  </div>
-                } />
-            </div>
-          </div>
-        )} />
-        <Footer />
-      </div>
+      <Thing
+        form={this.form}
+        totallyDone={this.totallyDone}
+        tokenAddress={this.tokenAddress}
+        playing={this.playing}
+        deploying={this.deploying}
+        closeLoader={this.closeLoader}
+        addInput={this._addInput}
+        deploy={this.deploy}
+        canDeploy={this.canDeploy}
+      />
     )
   }
 }

@@ -1,5 +1,5 @@
 import Form from 'mobx-react-form'
-import * as validatorjs from 'validatorjs'
+import * as Validator from 'validatorjs'
 
 const fields = [
   'name',
@@ -49,9 +49,9 @@ const rules = {
   name: 'required|string|between:4,42',
   symbol: 'required|string|between:2,10',
   description: 'required|string|between:10,400',
-  // image: 'required|string',
+  image: 'required|string|max:1048000', // About 1MB
   'inputs': 'required|array|min:1',
-  // 'inputs[].address': 'required|string|alpha_num|size:42',
+  'inputs[].address': 'required|string|alpha_num|size:42',
   'inputs[].amount': 'required|numeric|min:0.01',
 }
 
@@ -67,7 +67,7 @@ const interceptors = {
   }],
 }
 
-export default (canonicalTokensInfo) => {
+export default () => {
   const defaults = {
     inputs: [],
     'inputs[].amount': 1,
@@ -89,9 +89,14 @@ export default (canonicalTokensInfo) => {
     initials,
     interceptors,
   }, {
+    options: {
+      validateOnChange: true,
+      validationDebounceWait: 250,
+      validationDebounceOptions: { trailing: true },
+    },
     plugins: {
       dvr: {
-        package: validatorjs,
+        package: Validator,
         extendInstance: ($validator) => {
           $validator.setAttributeNames({
             'name': 'name',
