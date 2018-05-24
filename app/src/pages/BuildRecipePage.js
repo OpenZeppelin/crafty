@@ -9,6 +9,7 @@ import Footer from '../components/Footer'
 import Input from '../components/Input'
 import WithWeb3Context from '../components/WithWeb3Context'
 import BlockingLoader from '../components/BlockingLoader'
+import SectionHeader from '../components/SectionHeader'
 import SectionLoader from '../components/SectionLoader'
 import InputTokenField from '../components/InputTokenField'
 
@@ -181,11 +182,9 @@ class BuildRecipePage extends React.Component {
                   </div>
                 </div>
               }/>
-            <div>
-              <div className='grid-container medium'>
-                <p className='black-bold-text'>Add Ingredients</p>
-              </div>
-            </div>
+            <SectionHeader>
+              Add Ingredients
+            </SectionHeader>
             <div className='recipe-background'>
               <SectionLoader
                 loading={!this.form}
