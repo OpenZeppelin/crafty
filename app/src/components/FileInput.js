@@ -17,7 +17,7 @@ export default observer(({ field }) => (
       {field.label}
     </label>
     <Dropzone
-      className='dropzone'
+      className={(!field.files || field.files.length === 0) ? 'dropzone' : 'dropzone transparent'}
       activeClassName='active'
       acceptClassName='accept'
       rejectClassName='reject'
@@ -47,11 +47,13 @@ export default observer(({ field }) => (
       accept='image/*'
     >
       {(field.files && field.files.length > 0) &&
-        <div>
-          <img
-            src={field.values()}
-            alt='token'
-          />
+        <div className="dropzone-image">
+          <div>
+            <img
+              src={field.values()}
+              alt='token'
+            />
+          </div>
         </div>
       }
       {(!field.files || field.files.length === 0) &&

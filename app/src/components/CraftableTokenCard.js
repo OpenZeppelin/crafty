@@ -31,7 +31,7 @@ class CraftableTokenCard extends React.Component {
         {this.state.clicked &&
           <Redirect push to={`/craft/${token.address}`} />
         }
-        <div className='cell small-8 grid-y align-center-middle'>
+        <div className='cell small-8 grid-y align-center-middle overflow-hidden'>
           <img
             className='cell shrink craftable-image'
             alt='the craftable token'

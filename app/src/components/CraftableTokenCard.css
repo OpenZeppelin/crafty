@@ -13,10 +13,13 @@
 .craftable-image-container {
   display: flex;
 }
-
+.overflow-hidden {
+  overflow: hidden !important;
+}
 .craftable-image {
-  width: 128px !important;
   height: 128px !important;
+  max-width: inherit!important;
+  width: auto!important;
 }
 
 .craftable-text-container {
@@ -49,6 +52,8 @@
   letter-spacing: 0.1px;
   color: #141414;
   margin: 0 0 8px 0;
+  height: 22px;
+  overflow: hidden;
 }
 .craftable-text .balance-text {
   opacity: 0.6;

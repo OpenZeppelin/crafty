@@ -155,6 +155,9 @@ button.button {
 .dropzone.active {
   border: 3px solid #000000;
 }
+.dropzone.transparent{
+  background: transparent !important;
+}
 
 .dropzone.accept {
   border-color: green;
@@ -162,6 +165,17 @@ button.button {
 
 .dropzone.reject {
   border-color: red;
+}
+.dropzone-image {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+}
+.dropzone-image img {
+  max-height: 200px;
 }
 input {
   background: transparent !important;
@@ -262,6 +276,10 @@ input:checked~.switch-paddle {
   align-items: center;
   justify-content: center;
 }
+.token-container img {
+  height: 200px;
+  max-width: inherit !important;
+}
 .relative {
   position: relative;
 }
@@ -281,8 +299,9 @@ input:checked~.switch-paddle {
   position: absolute;
   width: auto;
   min-width: 400px;
+  max-width: 450px;
   bottom: -40px;
-  right: -295px;
+  right: -354px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -308,9 +327,11 @@ input:checked~.switch-paddle {
 }
 .token-info-container .description {
   font-family: 'Open Sans';
-  font-size: 16px;
+  font-size: 13px;
   letter-spacing: 0.2px;
   color: #141414;
+  height: auto;
+  overflow: hidden;
 }
 .token-info-container h6 {
   font-family: 'Open Sans';
@@ -321,6 +342,9 @@ input:checked~.switch-paddle {
   text-align: right;
   color: #000000;
   margin: 0;
+}
+.token-info-container .description-box {
+  width: calc(100% - 172px);
 }
 .token-info-container h5 {
   opacity: 0.6;

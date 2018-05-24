@@ -5,7 +5,7 @@ import './PacmanLoader.css'
 import './BallBeatLoader.css'
 
 const PacmanLoader = () => (
-  <div className='cell grid-x align-middle align-center with-border with-background'>
+  <div className='cell grid-x align-middle align-center'>
     <div className='pacman hella-spacing'>
       <div></div>
       <div></div>

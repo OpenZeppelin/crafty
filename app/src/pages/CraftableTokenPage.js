@@ -333,20 +333,16 @@ class CraftableTokenPage extends React.Component {
           title='Crafting your token'
           open={this.crafting}
           canClose={!this.deploying}
-          requestClose={this.closeLoader}
-        />
+          requestClose={this.closeLoader} />
 
         <WithWeb3Context read render={() => (
           <div className='token-container'>
             <div className='grid-x grid-margin-x relative'>
-              <div key='img' className='craftable-image cell small-12 medium-shrink'>
-                <img
-                  src={this.token.image}
-                  alt='the token'
-                />
-              </div>
+              <img key='img'
+                src={this.token.image}
+                alt='the token' />
               <div key='text' className='token-info-container'>
-                <div>
+                <div className="description-box ">
                   <h3>{this.token.name.current()}</h3>
                   <p className='description'>{this.token.description}</p>
                 </div>
