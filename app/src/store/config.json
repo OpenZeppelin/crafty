@@ -2,7 +2,7 @@
   "api": "https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty",
   "networks": {
     "3": {
-      "crafty": "0x8a5b4b8ebd5d7e2c68642bb3d94ddd8ac2529a73",
+      "crafty": "0xe32805a30b854ab75bed350459377b783b7dbe7e",
       "canonicals": [
         {
           "address": "0x4813c40748f6b59469d95d642d4c5790a305ef0e",
