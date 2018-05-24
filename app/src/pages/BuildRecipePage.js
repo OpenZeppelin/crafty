@@ -82,8 +82,6 @@ const BuildRecipeForm = observer(({
             render={() =>
               <div className='grid-x grid-margin-x align-center'>
                 <div className='cell shrink grid-y align-center'>
-                  {!form.isValid && form.error}
-                  {form.$('inputs').error || 'NO INPUTS ERROR'}
                   <button
                     className='btn'
                     onClick={deploy}
