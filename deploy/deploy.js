@@ -71,7 +71,7 @@ async function deploy() {
   if (network !== 'mainnet') {
     await deployCanonicals();
   } else {
-    console.log('Mainnet, skipping canonicals deployment')
+    console.log('Mainnet, skipping canonicals deployment');
   }
 
   await deployEmojis(crafty);
