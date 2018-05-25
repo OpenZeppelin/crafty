@@ -5,8 +5,8 @@
       "bytecodeHash": "7f1f52c5212da0280e2ecdd317d3dc091baf136e84a6d0c30789473afb040295"
     },
     "Crafty": {
-      "address": "0x2fcae66ce07bc9d8007dd01b6e26adc7aee5c938",
-      "bytecodeHash": "8552e10b6e98a42e2bfda219b3dc83af331b00f82fb684adef269975eacb693e"
+      "address": "0xd8ece50affd9e80b6f539ed170cb333463478e26",
+      "bytecodeHash": "4bee967c0b3b85059b062b15c37508d58d1bf1d085fdff44c243fd1c05e1f292"
     }
   },
   "proxies": {
@@ -15,6 +15,16 @@
         "address": "0xe32805a30b854ab75bed350459377b783b7dbe7e",
         "version": "0.1.0",
         "implementation": "0x2fcae66ce07bc9d8007dd01b6e26adc7aee5c938"
+      },
+      {
+        "address": "0xc158ad2e721849e9800644120872c0787dd846e3",
+        "version": "0.1.0",
+        "implementation": "0xd8ece50affd9e80b6f539ed170cb333463478e26"
+      },
+      {
+        "address": "0x4f0c9d751a01829a8b41f728aa84bd9afb5d990d",
+        "version": "0.1.0",
+        "implementation": "0xd8ece50affd9e80b6f539ed170cb333463478e26"
       }
     ],
     "CraftableToken": [
@@ -85,6 +95,81 @@
       },
       {
         "address": "0x69c71105ac057c825b32edd39d37354e08bcf6f8",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x61d52728f2bf18053c3cb7a77db2308985863c8e",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x020c166016f32a3f7956619444b857f7dfe15f60",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xf3a25d9365b65a4a9647e70fe64be1a9336d25bc",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x627648faddb88d1c8ffb4131f5eb9f80232a8ba1",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x538e4c3ece4fa77fee01edc0a629c546bb7abfdb",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xade00bf876ba79bfd3dbe3dc8902ca40cc3c0a8b",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x8b7ef330112bd6183f9229900aca5341ec8d0feb",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x34422fa03d24ab71e07db947c074f3e926554b32",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x2a13d98352abfcd9489c60315a0b5ec9b8978485",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xa8194ad332cc9c516514d00d4a95b8510b69827f",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x881bfe1b6617b7b41d8e388bedbd336a2aa7b497",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0xd5ef50dfdddbcfdf1c7e63109f904d111c079c79",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x3d0a2e70f78557436ba9c8c01875c19ce3945d2d",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x8842003f39c245eb849cc896b5ede5660a0a9083",
+        "version": "0.1.0",
+        "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
+      },
+      {
+        "address": "0x8583106a8b4b5137e19e759deedf862d54af0616",
         "version": "0.1.0",
         "implementation": "0x3bf14e4931adb74b62c7378e15b41d72ee903d6a"
       }
