@@ -62,7 +62,7 @@ class InputTokenField extends React.Component {
             <div>
               {this._renderTokenSelector()}
             </div>
-            <div className='ammount-field'>
+            <div className='amount-field'>
               <Input field={this.props.field.$('amount')} />
             </div>
             {this.props.editing &&

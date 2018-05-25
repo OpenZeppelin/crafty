@@ -395,19 +395,19 @@ input:checked~.switch-paddle {
   display: flex;
   flex-direction: column;
 }
-.ingredient-row .ammount-field .input-container {
+.ingredient-row .amount-field .input-container {
   width: auto;
   height: auto;
   position: relative;
   top: inherit;
   right: inherit;
 }
-.ammount-field label {
+.amount-field label {
   display: inline-flex;
   align-items: center;
   color: #505050;
 }
-.ammount-field input {
+.amount-field input {
   width: 70px;
   margin-left: 13px;
 }

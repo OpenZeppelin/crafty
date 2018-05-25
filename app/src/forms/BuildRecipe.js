@@ -35,7 +35,7 @@ const labels = {
   image: 'Image',
   inputs: 'Sacrificial Tokens',
   'inputs[].address': 'Click here or paste an ERC20 token address',
-  'inputs[].amount': 'Ammount required:',
+  'inputs[].amount': 'Amount required:',
 }
 
 const placeholders = {
