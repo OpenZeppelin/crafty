@@ -82,6 +82,16 @@
         "address": "0x0ffcdb77d68b3feada862cbb262bf0164bd62473",
         "version": "0.1.0",
         "implementation": "0x2de5bcf289be8bf251b5fc817592979b1d5de409"
+      },
+      {
+        "address": "0x5a363278b7cbbe300dc26b4684f23820cf24bfa7",
+        "version": "0.1.0",
+        "implementation": "0x2de5bcf289be8bf251b5fc817592979b1d5de409"
+      },
+      {
+        "address": "0xb0c433fa6a4bf5496173801f5cc6bbc93a9e40a2",
+        "version": "0.1.0",
+        "implementation": "0x2de5bcf289be8bf251b5fc817592979b1d5de409"
       }
     ]
   },
