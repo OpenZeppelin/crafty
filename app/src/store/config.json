@@ -5,9 +5,6 @@
       "crafty": "0xa7cd6cc6b7bdb26b7732d6a58fd39b8f243c8393",
       "canonicals": [
         {
-          "address": "0x86Fa049857E0209aa7D9e616F7eb3b3B78ECfdb0",
-          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1765.png"
-        }, {
           "address": "0xf230b790e05390fc8295f4d3f60332c93bed42e2",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1958.png"
         }, {
@@ -19,9 +16,6 @@
         }, {
           "address": "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1808.png"
-        }, {
-          "address": "0xb5a5f22694352c15b00323844ad545abb2b11028",
-          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/2099.png"
         }, {
           "address": "0x05f4a42e251f2d52b8ed15e9fedaacfcef1fad27",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/2469.png"
@@ -37,9 +31,6 @@
         }, {
           "address": "0xd4fa1460f537bb9085d22c7bccb5dd450ef28e3a",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1789.png"
-        }, {
-          "address": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
-          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1518.png"
         }, {
           "address": "0xe94327d07fc17907b4db788e5adf2ed424addff6",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1104.png"
@@ -65,14 +56,8 @@
           "address": "0xa974c709cfb4566686553a20790685a47aceaa33",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/2349.png"
         }, {
-          "address": "0xe0b7927c4af23765cb51314a0e0521a9645f0e2a",
-          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1229.png"
-        }, {
           "address": "0x0d8775f648430679a709e98d2b0cb6250d2887ef",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1697.png"
-        }, {
-          "address": "0xEF68e7C694F40c8202821eDF525dE3782458639f",
-          "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1934.png"
         }, {
           "address": "0x960b236A07cf122663c4303350609A66A7B288C0",
           "image": "https://s2.coinmarketcap.com/static/img/coins/128x128/1680.png"
