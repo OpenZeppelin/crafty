@@ -24,10 +24,6 @@ export default class DomainStore {
       return null
     }
     const web3 = this.root.web3Context.web3
-    const craftyAddress = this.root.config.crafty
-    if (!craftyAddress) {
-      return null
-    }
 
     try {
       this._crafty = new this.Crafty(web3)
