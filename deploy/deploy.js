@@ -11,7 +11,6 @@ const capitalize = require('capitalize');
 const colors = require('colors/safe');
 const fs = require('fs');
 const shell = require('shelljs');
-const unvowel = require('unvowel');
 
 const API = 'https://wrbirbjyzf.execute-api.us-east-2.amazonaws.com/api/crafty';
 
@@ -71,6 +70,8 @@ async function deploy() {
 
   if (network !== 'mainnet') {
     await deployCanonicals();
+  } else {
+    console.log('Mainnet, skipping canonicals deployment');
   }
 
   await deployEmojis(crafty);
@@ -121,7 +122,7 @@ async function deployEmojis(crafty) {
 
     const rawName = emoji.picture.split(/\./)[0]; // Filename, minus extension
     const name = capitalize(rawName);
-    const symbol = `${unvowel.parse(rawName).toUpperCase()}`;
+    const symbol = emoji.symbol;
 
     const metadataResponse = await axios.post(`${API}/metadata`, {
       'name': name,

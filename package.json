@@ -46,7 +46,6 @@
     "truffle": "^4.1.9",
     "truffle-hdwallet-provider": "0.0.5",
     "underscore": "^1.9.0",
-    "unvowel": "^1.1.0",
     "zos": "^0.8.0"
   }
 }

@@ -7,7 +7,7 @@ import {
   asyncComputed,
 } from '../util'
 
-const fallbackImage = 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+const fallbackImage = '/images/no-img.svg'
 
 export default (rootStore) => {
   const ERC20 = makeERC20WithStore(rootStore)

@@ -54,7 +54,7 @@ class InputTokenField extends React.Component {
               alt='the token'
               src={this.inferredToken
                 ? this.inferredToken.image
-                : 'https://s2.coinmarketcap.com/static/img/coins/128x128/2165.png'
+                : 'images/no-img.svg'
               }
             />
           </div>
@@ -62,7 +62,7 @@ class InputTokenField extends React.Component {
             <div>
               {this._renderTokenSelector()}
             </div>
-            <div className='ammount-field'>
+            <div className='amount-field'>
               <Input field={this.props.field.$('amount')} />
             </div>
             {this.props.editing &&
