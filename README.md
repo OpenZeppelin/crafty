@@ -14,12 +14,14 @@ The `CraftableToken`s themselves are ERC20 tokens, and can therefore be freely t
 
 ## Dependencies
 - [npm](https://www.npmjs.com/): v5.8.0.
-
+- [zos](https://www.npmjs.com/package/zos): v1.0.0
 You can check if the dependencies are installed correctly by running the following command:
 
 ```
 $ npm --version
 5.8.0
+$ zos --version
+1.0.0
 ```
 
 ## Build and Test
@@ -59,11 +61,11 @@ Once both steps are complete, a `.env` file needs to be created on the root dire
 ### Contracts deployment
 Once the connection to a node has been setup, the contracts can be deployed using:
 
-`$ npm run deploy -- local`
+`$ npm run deploy local`
 
 or
 
-`$ npm run deploy -- ropsten`
+`$ npm run deploy ropsten`
 
 During deployment, the addresses of all deployed contracts will be printed. These should be used to create the configuration file for the app, which is stored in `app/src/store/config.json`. A sample config file exists in [`app/src/store/config.example.json`](https://github.com/zeppelinos/crafty/tree/master/app/src/store/config.example.json).
 
