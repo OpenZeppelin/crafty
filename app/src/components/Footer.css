@@ -32,6 +32,7 @@ footer .light {
   letter-spacing: 0.1px;
   text-align: right;
   color: #505050;
+  padding-left: 1rem;
 }
 footer span {
   padding: 0 3px;
