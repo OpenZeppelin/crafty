@@ -9,6 +9,24 @@ module.exports = {
       port: 8545
     },
 
+    mainnet: {
+      network_id: 1,
+      gas: 7000000,
+      gasPrice: 50000000000,
+      host: process.env.MAINNET_HOST,
+      port: process.env.MAINNET_PORT,
+      from: process.env.MAINNET_FROM_ADDRESS
+    },
+
+    mainnet_infura: {
+      network_id: 1,
+      gas: 7000000,
+      gasPrice: 50000000000,
+      provider: function() {
+        return new HDWalletProvider(process.env.WALLET_MNEMONIC, `https://mainnet.infura.io/${process.env.INFURA_API_KEY}`)
+      }
+    },
+
     ropsten: {
       network_id: 3,
       gas: 4900000,
