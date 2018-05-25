@@ -58,7 +58,7 @@ const CraftingIngredientRow = observer(({ token, amount, balance, image, field }
           </div>
         </div>
       </div>
-      {!hasEnough && <p className='low-balance-alert'>YOU DONT HAVE ENOUGH FOUNDS</p>}
+      {!hasEnough && <p className='low-balance-alert'>YOU DONT HAVE ENOUGH FUNDS</p>}
       {!approved && !pending && <p className='approve-token-alert'>PLEASE APPROVE THIS TOKEN</p>}
       {pending && <p className='pending-approval-alert'>APPROVAL PENDING</p>}
     </div>
