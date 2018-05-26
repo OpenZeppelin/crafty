@@ -16,7 +16,7 @@ const Footer = () => (
     </div>
     <div className='flex-center'>
       <a target='_blank' href='https://github.com/zeppelinos/crafty' rel='noopener noreferrer'>
-        <img alt='Github' className='github' src='./images/github.svg'/>
+        <img alt='Github' className='github' src='/images/github.svg'/>
       </a>
     </div>
   </footer>
