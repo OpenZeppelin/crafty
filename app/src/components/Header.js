@@ -29,7 +29,7 @@ const InfoBar = inject('store')(observer(({ store, className }) => (
   </div>
 )))
 
-const Header = ({ children }) => (
+const Header = () => (
   <header className='grid-y grid-padding-y'>
     <InfoBar className='shrink' />
     <Navbar className='shrink' />

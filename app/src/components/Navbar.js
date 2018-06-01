@@ -38,6 +38,13 @@ const NavBar = withRouter(inject('store')(observer(({ className, store }) => (
     >
       New Recipe
     </NavLink>
+    <NavLink
+      className='nav-item'
+      exact
+      to={'/help'}
+    >
+      Help
+    </NavLink>
   </div>
 ))))
 

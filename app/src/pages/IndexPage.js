@@ -16,7 +16,7 @@ class IndexPage extends React.Component {
     const { domain } = this.props.store
     return (
       <div>
-        <Header>Welcome to the Crafting Game</Header>
+        <Header></Header>
         <Subtitle>
           <b>Build recipes</b> that turn ordinary ERC20 tokens
           into <b>craftable tokens</b> that can be <b>literally anything else.</b>
