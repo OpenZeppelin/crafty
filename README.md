@@ -41,7 +41,7 @@ To make sure everything is set up correctly, the tests should be run:
 `$ npm test`
 
 ## Setup
-First, a game contract needs to be deployed to an Ethereum network for the dApp to be able to interact with it. Using a local blockchain is recommended during development, since deployment is faster, allowing for faster iterations, though some aspects of its behavior are quite different from the real thing (both the testnets and mainnet). Both local blockchains and testnets, however, require some setup.
+For the dApp to be able to interact with a game contract, it first needs to be deployed to an Ethereum network. Using a local blockchain is recommended during development, since deployment is faster, allowing for faster iterations, though some aspects of its behavior are quite different from the real thing (both the testnets and mainnet). Both local blockchains and testnets, however, require some setup.
 
 ### Local
 We use [Ganache CLI](https://github.com/trufflesuite/ganache-cli) to run the local blockchain, by executing (on a separate terminal):
@@ -58,8 +58,15 @@ Setting up a testnet is a bit more involved, since it requires two steps:
 
 Once both steps are complete, a `.env` file needs to be created on the root directory, containing the secret data required to connect to the node of your choice. [`env.sample`](https://github.com/zeppelinos/crafty/blob/master/env.sample) shows an example on how to do this. Do **NOT** commit or share the `.env` file.
 
+### Building
+The deployment script will require access to the bytecode and ABI of the contracts in the project, so we need to compile those:
+
+`$ npm run build`
+
+This command will create `.json` artifacts for each contract in the `build/contracts` directory.
+
 ### Contracts deployment
-Once the connection to a node has been setup, the contracts can be deployed using:
+Once the connection to a node has been setup and the contract artifacts generated, the contracts can be deployed using:
 
 `$ npm run deploy local`
 
